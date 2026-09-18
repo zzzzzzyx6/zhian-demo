@@ -1,0 +1,215 @@
+{
+  "batch": 3,
+  "metadata": {
+    "batch_id": "stream-static-003",
+    "candidate_ids": [
+      "VULN-003"
+    ],
+    "focus": "流式候选快速筛选验证",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "streaming": true,
+    "wave": "static",
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-003",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "line": 101,
+      "location": "top-level",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "exec(self.tool_code, exec_globals, exec_locals)",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-003",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+        "line": 101,
+        "location": "top-level",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "exec(self.tool_code, exec_globals, exec_locals)",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+        "line": 101,
+        "start_line": 31,
+        "end_line": 146,
+        "source": "31:     parent_tool_id: Optional[str] = None\n32:     mutation_history: list = field(default_factory=list)\n33:     intelligence_source: str=\"\"\n34:     vulnerability_pattern: str=\"\"\n35:     \n36: \n37: @dataclass\n38: class ToolPerformance:\n39:     \"\"\"Performance tracking for tools\"\"\"\n40:     execution_count: int = 0\n41:     success_count: int = 0\n42:     failure_count: int = 0\n43:     average_execution_time: float = 0.0\n44:     last_execution_time: Optional[datetime] = None\n45:     error_history: list = field(default_factory=list)\n46:     performance_score: float = 0.0\n47:     attack_results: list = field(default_factory=list)\n48:     best_single_tool_use_performance: float = 0.0\n49:     multi_turn_conversation_history: list = field(default_factory=list)\n50:     best_multi_turn_score: float = 0.0\n51:     \n52:     # Query-specific performance tracking\n53:     query_performance: list = field(default_factory=list)  # List of {\"query\": str, \"score\": float, \"timestamp\": str}\n54:     \n55: \n56: @dataclass\n57: class AIGeneratedTool:\n58:     \"\"\"Simplified data structure for AI-generated attack tools\"\"\"\n59:     tool_id: str = field(default_factory=lambda: str(uuid.uuid4()))\n60:     tool_name: str = \"\"\n61:     tool_description: str = \"\"\n62:     tool_category: str = \"attack\"\n63:     tool_code: str = \"\"\n64:     tool_function: Optional[Callable] = None\n65:     metadata: ToolMetadata = field(default_factory=ToolMetadata)\n66:     performance: ToolPerformance = field(default_factory=ToolPerformance)\n67:     \n68:     def execute(self, *args, **kwargs) -> object:\n69:         \"\"\"Execute the tool with direct code execution\"\"\"\n70:         start_time = datetime.now()\n71:         self.performance.execution_count += 1\n72:         \n73:         try:\n74:             # Execute the code directly with query as parameter\n75:             if self.tool_function:\n76:                 result = self.tool_function(*args, **kwargs)\n77:             else:\n78:                 # If no function exists, execute code directly\n79:                 import sys\n80:                 import os\n81:                 \n82:                 # Add exec_env directory to Python path for ai_response module access\n83:                 exec_env_path = os.path.join(os.path.dirname(__file__), \"..\", \"exec_env\")\n84:                 if exec_env_path not in sys.path:\n85:                     sys.path.append(exec_env_path)\n86:                 \n87:                 exec_globals = {\n88:                     \"__builtins__\": __builtins__,\n89:                     \"str\": str,\n90:                     \"int\": int,\n91:                     \"float\": float,\n92:                     \"list\": list,\n93:                     \"dict\": dict,\n94:                     \"bool\": bool,\n95:                     \"sys\": sys,\n96:                     \"os\": os\n97:                 }\n98:                 exec_locals = {}\n99:                 \n100:                 # Execute the code\n101:                 exec(self.tool_code, exec_globals, exec_locals)\n102:                 \n103:                 # Find the main function (callable and not starting with _)\n104:                 main_func = None\n105:                 for name, obj in exec_locals.items():\n106:                     if callable(obj) and not name.startswith('_'):\n107:                         main_func = obj\n108:                         break\n109:                 \n110:                 if not main_func:\n111:                     raise RuntimeError(f\"No executable function found in tool {self.tool_name}\")\n112:                 \n113:                 result = main_func(*args, **kwargs)\n114:             \n115:             execution_time = (datetime.now() - start_time).total_seconds()\n116:             self.performance.average_execution_time = (\n117:                 (self.performance.average_execution_time * (self.performance.execution_count - 1) + execution_time) \n118:                 / self.performance.execution_count\n119:             )\n120:             self.performance.last_execution_time = datetime.now()\n121:             self.performance.success_count += 1\n122:             \n123:             success_rate = self.performance.success_count / self.performance.execution_count\n124:             self.performance.performance_score = success_rate\n125:             \n126:             # Update best single tool use performance\n127:             if success_rate > self.performance.best_single_tool_use_performance:\n128:                 self.performance.best_single_tool_use_performance = success_rate\n129:             \n130:             return result\n131:             \n132:         except Exception as e:\n133:             self.performance.failure_count += 1\n134:             \n135:             # Extract line number from traceback\n136:             error_line = None\n137:             code_context = None\n138:             \n139:             # Get line number from traceback\n140:             tb_lines = traceback.format_exc().split('\\n')\n141:             for line in tb_lines:\n142:                 if 'line ' in line and 'in execute' not in line and 'in <module>' not in line:\n143:                     try:\n144:                         import re\n145:                         line_match = re.search(r'line (\\d+)', line)\n146:                         if line_match:",
+        "nearby_symbols": [
+          "24: class ToolMetadata:",
+          "26: created_at: datetime = field(default_factory=datetime.now)",
+          "32: mutation_history: list = field(default_factory=list)",
+          "38: class ToolPerformance:",
+          "45: error_history: list = field(default_factory=list)",
+          "47: attack_results: list = field(default_factory=list)",
+          "49: multi_turn_conversation_history: list = field(default_factory=list)",
+          "57: class AIGeneratedTool:",
+          "59: tool_id: str = field(default_factory=lambda: str(uuid.uuid4()))",
+          "65: metadata: ToolMetadata = field(default_factory=ToolMetadata)",
+          "66: performance: ToolPerformance = field(default_factory=ToolPerformance)",
+          "68: def execute(self, *args, **kwargs) -> object:",
+          "70: start_time = datetime.now()",
+          "76: result = self.tool_function(*args, **kwargs)",
+          "78: # If no function exists, execute code directly",
+          "83: exec_env_path = os.path.join(os.path.dirname(__file__), \"..\", \"exec_env\")",
+          "85: sys.path.append(exec_env_path)",
+          "101: exec(self.tool_code, exec_globals, exec_locals)",
+          "103: # Find the main function (callable and not starting with _)",
+          "111: raise RuntimeError(f\"No executable function found in tool {self.tool_name}\")"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+        "language": "python",
+        "lines": 848,
+        "risk_score": 1.0,
+        "underexplored_score": 0.26,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "large_file",
+          "memory_safety",
+          "no_obvious_tests",
+          "parser",
+          "resource"
+        ],
+        "category_hits": {
+          "memory_safety": 1,
+          "authorization": 2,
+          "parser": 2,
+          "injection": 5,
+          "configuration": 2,
+          "resource": 1
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "解析器序列化候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "并发资源候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src"
+      },
+      "ranking_hint": {
+        "id": "VULN-003",
+        "priority": 1.07,
+        "reason": "候选合并排序智能体失败，使用本地严重性和置信度排序。",
+        "validation_focus": [
+          "源码证据",
+          "可达性",
+          "运行证据"
+        ]
+      },
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

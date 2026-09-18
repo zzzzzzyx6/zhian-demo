@@ -1,0 +1,445 @@
+{
+  "max_workers": 4,
+  "min_workers": 2,
+  "running_total": 0,
+  "by_stage": {
+    "validation": {
+      "running": 0,
+      "completed": 13,
+      "failed": 0
+    },
+    "discovery": {
+      "running": 0,
+      "completed": 8,
+      "failed": 0
+    }
+  },
+  "active": [],
+  "recent": [
+    {
+      "id": "agent-0021",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-016",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-015"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:50:05",
+      "updated_at": "2026-09-14T17:50:10",
+      "ended_at": "2026-09-14T17:50:10",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0020",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-015",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-016"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:50:03",
+      "updated_at": "2026-09-14T17:50:08",
+      "ended_at": "2026-09-14T17:50:08",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0019",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-014",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-014"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:50:02",
+      "updated_at": "2026-09-14T17:50:07",
+      "ended_at": "2026-09-14T17:50:07",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0018",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-013",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-013"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:50:01",
+      "updated_at": "2026-09-14T17:50:06",
+      "ended_at": "2026-09-14T17:50:06",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0017",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-012",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-012"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:59",
+      "updated_at": "2026-09-14T17:50:04",
+      "ended_at": "2026-09-14T17:50:04",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0016",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-011",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-011"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:58",
+      "updated_at": "2026-09-14T17:50:03",
+      "ended_at": "2026-09-14T17:50:03",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0015",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-010",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-010"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:57",
+      "updated_at": "2026-09-14T17:50:02",
+      "ended_at": "2026-09-14T17:50:02",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0014",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-009",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-008"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:56",
+      "updated_at": "2026-09-14T17:50:01",
+      "ended_at": "2026-09-14T17:50:01",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0013",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-008",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-007"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:51",
+      "updated_at": "2026-09-14T17:49:59",
+      "ended_at": "2026-09-14T17:49:59",
+      "elapsed_seconds": 8
+    },
+    {
+      "id": "agent-0012",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-007",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-006"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:50",
+      "updated_at": "2026-09-14T17:49:58",
+      "ended_at": "2026-09-14T17:49:58",
+      "elapsed_seconds": 8
+    },
+    {
+      "id": "agent-0011",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-006",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-005"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:50",
+      "updated_at": "2026-09-14T17:49:57",
+      "ended_at": "2026-09-14T17:49:57",
+      "elapsed_seconds": 7
+    },
+    {
+      "id": "agent-0010",
+      "stage": "validation",
+      "function": "source_validation_batch",
+      "name": "漏洞验证-batch-005",
+      "priority": "漏洞确认/安全确认",
+      "status": "completed",
+      "metadata": {
+        "candidate_ids": [
+          "VULN-009"
+        ],
+        "serial": false
+      },
+      "started_at": "2026-09-14T17:49:50",
+      "updated_at": "2026-09-14T17:49:56",
+      "ended_at": "2026-09-14T17:49:56",
+      "elapsed_seconds": 6
+    },
+    {
+      "id": "agent-0009",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "通用候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-08-general-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+        ],
+        "specialty": "general"
+      },
+      "started_at": "2026-09-14T17:49:34",
+      "updated_at": "2026-09-14T17:49:39",
+      "ended_at": "2026-09-14T17:49:39",
+      "elapsed_seconds": 5
+    },
+    {
+      "id": "agent-0008",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "低关注面候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-07-underexplored-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/models/implementations/mock_model.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py"
+        ],
+        "specialty": "underexplored"
+      },
+      "started_at": "2026-09-14T17:49:33",
+      "updated_at": "2026-09-14T17:49:37",
+      "ended_at": "2026-09-14T17:49:37",
+      "elapsed_seconds": 4
+    },
+    {
+      "id": "agent-0007",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "并发资源候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-06-resource-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+        ],
+        "specialty": "resource"
+      },
+      "started_at": "2026-09-14T17:49:30",
+      "updated_at": "2026-09-14T17:49:34",
+      "ended_at": "2026-09-14T17:49:34",
+      "elapsed_seconds": 4
+    },
+    {
+      "id": "agent-0006",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "配置密钥候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-05-config-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+        ],
+        "specialty": "configuration"
+      },
+      "started_at": "2026-09-14T17:49:29",
+      "updated_at": "2026-09-14T17:49:33",
+      "ended_at": "2026-09-14T17:49:33",
+      "elapsed_seconds": 4
+    },
+    {
+      "id": "agent-0005",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "动态输入候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-04-injection-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+        ],
+        "specialty": "injection"
+      },
+      "started_at": "2026-09-14T17:49:26",
+      "updated_at": "2026-09-14T17:49:30",
+      "ended_at": "2026-09-14T17:49:30",
+      "elapsed_seconds": 4
+    },
+    {
+      "id": "agent-0004",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "解析器序列化候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-03-parser-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+        ],
+        "specialty": "parser"
+      },
+      "started_at": "2026-09-14T17:49:25",
+      "updated_at": "2026-09-14T17:49:29",
+      "ended_at": "2026-09-14T17:49:29",
+      "elapsed_seconds": 4
+    },
+    {
+      "id": "agent-0003",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "权限认证候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-02-authz-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+        ],
+        "specialty": "authorization"
+      },
+      "started_at": "2026-09-14T17:49:20",
+      "updated_at": "2026-09-14T17:49:26",
+      "ended_at": "2026-09-14T17:49:26",
+      "elapsed_seconds": 6
+    },
+    {
+      "id": "agent-0002",
+      "stage": "discovery",
+      "function": "source_slice_discovery",
+      "name": "内存安全候选发现智能体",
+      "priority": "候选发现智能体",
+      "status": "completed",
+      "metadata": {
+        "task_id": "discover-01-memory-shard-01",
+        "files": [
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+          "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+        ],
+        "specialty": "memory_safety"
+      },
+      "started_at": "2026-09-14T17:49:20",
+      "updated_at": "2026-09-14T17:49:25",
+      "ended_at": "2026-09-14T17:49:25",
+      "elapsed_seconds": 5
+    }
+  ],
+  "updated_at": "2026-09-14T17:50:10"
+}

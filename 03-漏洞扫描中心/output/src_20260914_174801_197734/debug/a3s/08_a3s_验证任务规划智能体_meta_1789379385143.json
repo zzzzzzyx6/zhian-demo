@@ -1,0 +1,18 @@
+{
+  "label": "验证任务规划智能体",
+  "safe_label": "验证任务规划智能体",
+  "stamp": 1789379385143,
+  "status": "completed",
+  "started_at": "2026-09-14T17:49:45+0800",
+  "timeout_seconds": 180,
+  "read_only_stage": true,
+  "max_tool_rounds": 1000,
+  "max_execution_time_ms": 180000,
+  "prompt_path": "08_a3s_验证任务规划智能体_prompt_1789379385143.txt",
+  "response_path": "08_a3s_验证任务规划智能体_response_1789379385143.txt",
+  "events_path": "08_a3s_验证任务规划智能体_events_1789379385143.jsonl",
+  "snapshot_path": "08_a3s_验证任务规划智能体_snapshot_1789379385143.json",
+  "interaction_log_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\debug\\logs\\a3s_interactions.jsonl",
+  "completed_at": "2026-09-14T17:49:49+0800",
+  "response_bytes": 0
+}

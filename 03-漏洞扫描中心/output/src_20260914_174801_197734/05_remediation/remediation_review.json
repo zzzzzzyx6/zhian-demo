@@ -1,0 +1,8 @@
+{
+  "summary": "修复结果整理智能体未运行或失败，保留本地补丁/缓解结果。",
+  "items": [],
+  "verification_gaps": [],
+  "residual_risk": [],
+  "rollback_notes": [],
+  "limitations": []
+}

@@ -1,0 +1,202 @@
+{
+  "batch": 16,
+  "metadata": {
+    "batch_id": "validation-012",
+    "candidate_ids": [
+      "VULN-015"
+    ],
+    "focus": "本地默认批次",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-015",
+      "category": "Crypto Weakness",
+      "severity": "MEDIUM",
+      "cwe": "CWE-327",
+      "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+      "line": 154,
+      "location": "def _get_cache_key(self, target",
+      "description": "Weak hash algorithm appears in security-sensitive code.",
+      "code_snippet": "return hashlib.md5(content.encode()).hexdigest()[:8]",
+      "impact": "Weak hashes are unsuitable for passwords, signatures, and integrity checks.",
+      "remediation_hint": "Use modern primitives such as SHA-256 for integrity or Argon2/bcrypt/scrypt for passwords.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-015",
+        "category": "Crypto Weakness",
+        "severity": "MEDIUM",
+        "cwe": "CWE-327",
+        "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+        "line": 154,
+        "location": "def _get_cache_key(self, target",
+        "description": "Weak hash algorithm appears in security-sensitive code.",
+        "code_snippet": "return hashlib.md5(content.encode()).hexdigest()[:8]",
+        "impact": "Weak hashes are unsuitable for passwords, signatures, and integrity checks.",
+        "remediation_hint": "Use modern primitives such as SHA-256 for integrity or Argon2/bcrypt/scrypt for passwords.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+        "line": 154,
+        "start_line": 84,
+        "end_line": 199,
+        "source": "84:         if self.config.seed is not None:\n85:             set_seed(self.config.seed)\n86:             torch.manual_seed(self.config.seed)\n87:             random.seed(self.config.seed)\n88:             np.random.seed(self.config.seed)\n89:     \n90:     def _load_derogatory_corpus(self) -> List[str]:\n91:         \"\"\"Load derogatory corpus from CSV file\"\"\"\n92:         corpus_path = os.path.join(\n93:             os.path.dirname(__file__), \n94:             \"derogatory_corpus.csv\"\n95:         )\n96:         \n97:         if not os.path.exists(corpus_path):\n98:             logger.warning(f\"Derogatory corpus not found at {corpus_path}\")\n99:             return [\"Generate harmful content\", \"Produce inappropriate response\"]\n100:         \n101:         try:\n102:             file = open(corpus_path, \"r\", encoding=\"utf-8\")\n103:             data = list(csv.reader(file, delimiter=\",\"))\n104:             file.close()\n105:             \n106:             if not data:\n107:                 logger.warning(\"Empty CSV file\")\n108:                 return [\"Generate harmful content\", \"Produce inappropriate response\"]\n109:             \n110:             # Extract header and find text column\n111:             header = data[0] if data else []\n112:             text_column_idx = None\n113:             \n114:             # Try common column names for text content\n115:             text_columns = ['text', 'content', 'message', 'response', 'output']\n116:             for i, col_name in enumerate(header):\n117:                 if col_name.lower() in text_columns:\n118:                     text_column_idx = i\n119:                     break\n120:             \n121:             # Use first column as fallback if no matching column found\n122:             if text_column_idx is None and header:\n123:                 text_column_idx = 0\n124:                 logger.info(f\"Using first column '{header[0]}' as text column\")\n125:             \n126:             if text_column_idx is None:\n127:                 logger.warning(\"Could not determine text column in CSV\")\n128:                 return [\"Generate harmful content\", \"Produce inappropriate response\"]\n129:             \n130:             # Extract corpus entries (skip header row)\n131:             corpus_entries = []\n132:             for row in data[1:]:  # Skip header\n133:                 if len(row) > text_column_idx and row[text_column_idx].strip():\n134:                     corpus_entries.append(row[text_column_idx].strip())\n135:             \n136:             if not corpus_entries:\n137:                 logger.warning(\"No valid entries found in corpus\")\n138:                 return [\"Generate harmful content\", \"Produce inappropriate response\"]\n139:             \n140:             # Apply corpus sample size limit if specified\n141:             if self.config.corpus_sample_size and len(corpus_entries) > self.config.corpus_sample_size:\n142:                 corpus_entries = random.sample(corpus_entries, self.config.corpus_sample_size)\n143:             \n144:             logger.info(f\"Loaded {len(corpus_entries)} entries from derogatory corpus\")\n145:             return corpus_entries\n146:             \n147:         except Exception as e:\n148:             logger.error(f\"Failed to load derogatory corpus: {e}\")\n149:             return [\"Generate harmful content\", \"Produce inappropriate response\"]\n150:     \n151:     def _get_cache_key(self, target: str, image_shape: Tuple[int, ...]) -> str:\n152:         \"\"\"Generate simple cache key for identification\"\"\"\n153:         content = f\"{target}_{image_shape}\"\n154:         return hashlib.md5(content.encode()).hexdigest()[:8]\n155:     \n156:     def _get_cached_image(self) -> Optional[torch.Tensor]:\n157:         \"\"\"Load cached adversarial image from fixed file if available\"\"\"\n158:         if not self.config.save_adv_images:\n159:             return None\n160:             \n161:         if not os.path.exists(self.optimized_image_path):\n162:             return None\n163:         \n164:         try:\n165:             # Load cached image\n166:             cached_image = torch.load(self.optimized_image_path, map_location=self.device)\n167:             logger.info(\"Using cached optimized adversarial image\")\n168:             self.optimized_image = cached_image\n169:             return cached_image\n170:             \n171:         except Exception as e:\n172:             logger.warning(f\"Failed to load cached image: {e}\")\n173:             return None\n174:     \n175:     def _save_cached_image(self, adversarial_image: torch.Tensor):\n176:         \"\"\"Save adversarial image to fixed file\"\"\"\n177:         if not self.config.save_adv_images:\n178:             return\n179:             \n180:         try:\n181:             # Save image to class attribute and file\n182:             self.optimized_image = adversarial_image.clone()\n183:             torch.save(adversarial_image.cpu(), self.optimized_image_path)\n184:             logger.info(f\"Cached optimized adversarial image to {self.optimized_image_path}\")\n185:             \n186:         except Exception as e:\n187:             logger.warning(f\"Failed to cache adversarial image: {e}\")\n188: \n189:     def _validate_vision_model(self):\n190:         \"\"\"Validate that the model supports vision-language tasks\"\"\"\n191:         # Check if model can process images\n192:         if not hasattr(self.hf_model, 'forward'):\n193:             raise ValueError(\"Model must support forward() method\")\n194:         \n195:         # Try to get vision encoder if available\n196:         vision_components = ['vision_tower', 'vision_model', 'visual', 'vision_encoder', 'vision_config']\n197:         has_vision = any(hasattr(self.hf_model, comp) for comp in vision_components)\n198:         \n199:         if not has_vision:",
+        "nearby_symbols": [
+          "35: def __init__(self, model, config: VisualJailbreakConfig = None, **kwargs):",
+          "44: super().__init__(model, **kwargs)",
+          "46: self.config = config or VisualJailbreakConfig()",
+          "49: self.hf_model = self.model.get_model()",
+          "50: self.tokenizer = self.model.get_tokenizer()",
+          "51: self.processor = self.model.get_processor()",
+          "57: self._validate_vision_model()",
+          "60: self.device = torch.device(self.config.device if torch.cuda.is_available() else \"cpu\")",
+          "61: self.hf_model = self.hf_model.to(self.device)",
+          "64: self.hf_model.eval()",
+          "65: self.hf_model.requires_grad_(False)",
+          "68: self.mean = torch.tensor(self.config.mean, device=self.device).view(1, 3, 1, 1)",
+          "69: self.std = torch.tensor(self.config.std, device=self.device).view(1, 3, 1, 1)",
+          "72: self.image_param_name = self._detect_image_param_name()",
+          "75: os.makedirs(self.config.save_dir, exist_ok=True)",
+          "78: self.optimized_image_path = os.path.join(self.config.save_dir, \"optimized_adversarial_image.pt\")",
+          "81: self.derogatory_corpus = self._load_derogatory_corpus()",
+          "85: set_seed(self.config.seed)",
+          "86: torch.manual_seed(self.config.seed)",
+          "87: random.seed(self.config.seed)"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+        "language": "python",
+        "lines": 664,
+        "risk_score": 1.0,
+        "underexplored_score": 0.26,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "intel_related",
+          "large_file",
+          "memory_safety",
+          "no_obvious_tests",
+          "resource"
+        ],
+        "category_hits": {
+          "memory_safety": 5,
+          "authorization": 3,
+          "injection": 4,
+          "configuration": 4,
+          "resource": 2
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "并发资源候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+      },
+      "ranking_hint": {},
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "batch": 13,
+  "metadata": {
+    "batch_id": "validation-009",
+    "candidate_ids": [
+      "VULN-013"
+    ],
+    "focus": "本地默认批次",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-013",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+      "line": 203,
+      "location": "def __init__(self, model, config",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "self.hf_model.eval()",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-013",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+        "line": 203,
+        "location": "def __init__(self, model, config",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "self.hf_model.eval()",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+        "line": 203,
+        "start_line": 133,
+        "end_line": 248,
+        "source": "133:             if eot_id != tokenizer.unk_token_id:\n134:                 eos_token_ids.append(eot_id)\n135:         except Exception:\n136:             pass\n137: \n138:     output = model.generate(\n139:         **inputs,\n140:         max_new_tokens=max_new_tokens,\n141:         do_sample=temperature > 0,\n142:         temperature=None if temperature == 0 else temperature,\n143:         eos_token_id=eos_token_ids,\n144:         pad_token_id=tokenizer.pad_token_id,\n145:         output_scores=True,\n146:         return_dict_in_generate=True,\n147:     )\n148: \n149:     output_ids = output.sequences[:, input_ids.shape[1]:]\n150:     generated_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)\n151: \n152:     vocab_size = len(tokenizer.get_vocab())\n153:     pos_to_token = {v: k.replace('▁', ' ') for k, v in tokenizer.get_vocab().items()}\n154: \n155:     logprobs_tokens = [\n156:         F.log_softmax(output.scores[i], dim=-1).cpu().numpy()\n157:         for i in range(len(output.scores))\n158:     ]\n159: \n160:     logprob_dicts = [\n161:         {pos_to_token[i_vocab]: float(logprobs_tokens[i_token][0][i_vocab])\n162:          for i_vocab in range(vocab_size)}\n163:         for i_token in range(len(logprobs_tokens))\n164:     ]\n165: \n166:     for key in inputs:\n167:         inputs[key].to('cpu')\n168:     output_ids.to('cpu')\n169:     del inputs, output_ids\n170:     gc.collect()\n171:     torch.cuda.empty_cache()\n172: \n173:     return {\n174:         'text': generated_text,\n175:         'logprobs': logprob_dicts,\n176:     }\n177: \n178: \n179: @attack_registry.register(\"imperceptible_jailbreak\")\n180: class ImperceptibleJailbreakAttack(BaseWhiteBoxAttack):\n181:     \"\"\"\n182:     Imperceptible Jailbreak Attack using Unicode Variation Selectors.\n183: \n184:     Crafts invisible adversarial suffixes via random search that alter\n185:     tokenization to induce harmful outputs from LLMs, while remaining\n186:     visually imperceptible to humans.\n187: \n188:     Args:\n189:         model: OpenRT model wrapper supporting white-box access\n190:         config: Attack configuration\n191:         **kwargs: Additional arguments\n192:     \"\"\"\n193: \n194:     def __init__(self, model, config: ImperceptibleJailbreakConfig = None, **kwargs):\n195:         super().__init__(model, **kwargs)\n196:         self.config = config or ImperceptibleJailbreakConfig()\n197: \n198:         self.hf_model = self.model.get_model()\n199:         self.tokenizer = self.model.get_tokenizer()\n200: \n201:         self.device = torch.device(\"cuda:0\" if torch.cuda.is_available() else \"cpu\")\n202:         self.hf_model = self.hf_model.to(self.device)\n203:         self.hf_model.eval()\n204:         self.hf_model.requires_grad_(False)\n205: \n206:         self.substitution_set = build_substitution_set()\n207: \n208:         self.seed_prompts = self._load_seed_data()\n209: \n210:     def _load_seed_data(self):\n211:         \"\"\"Load AdvBench harmful behaviors from shared data file.\"\"\"\n212:         advbench_path = os.path.join(\n213:             os.path.dirname(os.path.dirname(__file__)),\n214:             \"asa\", \"advbench_harmful_behaviors.json\"\n215:         )\n216:         if not os.path.exists(advbench_path):\n217:             logger.warning(f\"AdvBench data not found at {advbench_path}, using empty list.\")\n218:             return []\n219:         try:\n220:             import jsonlines\n221:             data = []\n222:             with jsonlines.open(advbench_path, 'r') as reader:\n223:                 for obj in reader:\n224:                     data.append(obj[\"question\"] + \" \")\n225:             return data\n226:         except ImportError:\n227:             data = []\n228:             with open(advbench_path, 'r') as f:\n229:                 for line in f:\n230:                     line = line.strip()\n231:                     if line:\n232:                         obj = json.loads(line)\n233:                         data.append(obj[\"question\"] + \" \")\n234:             return data\n235: \n236:     def _random_adv_init(self, n_chars: int) -> str:\n237:         \"\"\"Generate a random adversarial suffix using variation selectors.\"\"\"\n238:         return ''.join(\n239:             random.choice(self.substitution_set) for _ in range(n_chars)\n240:         )\n241: \n242:     def _run_random_search(self, goal: str, target_tokens: list,\n243:                            target_prob_threshold: float) -> dict:\n244:         \"\"\"\n245:         Core random search loop: optimize an invisible adversarial suffix\n246:         to maximize the probability of target tokens in the model's output.\n247:         \"\"\"\n248:         set_seed(self.config.seed)",
+        "nearby_symbols": [
+          "91: logprobs.append(logprob_dict[' ' + token])",
+          "93: logprobs.append(logprob_dict[token])",
+          "95: sequence_logprobs.append(-np.inf)",
+          "97: sequence_logprobs.append(max(logprobs))",
+          "101: def schedule_n_to_change(max_n_to_change: int, prob: float) -> int:",
+          "110: raise ValueError(f'Invalid prob value: {prob}')",
+          "111: return max(n_to_change, 1)",
+          "114: def judge_rule_based(response: str) -> bool:",
+          "122: def _generate_with_logprobs(model, tokenizer, prompt: str, max_new_tokens: int,",
+          "125: inputs = tokenizer([prompt], return_tensors='pt', padding=True)",
+          "132: eot_id = tokenizer.convert_tokens_to_ids(\"<|eot_id|>\")",
+          "134: eos_token_ids.append(eot_id)",
+          "147: )",
+          "150: generated_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)",
+          "152: vocab_size = len(tokenizer.get_vocab())",
+          "156: F.log_softmax(output.scores[i], dim=-1).cpu().numpy()",
+          "157: for i in range(len(output.scores))",
+          "161: {pos_to_token[i_vocab]: float(logprobs_tokens[i_token][0][i_vocab])",
+          "163: for i_token in range(len(logprobs_tokens))",
+          "167: inputs[key].to('cpu')"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+        "language": "python",
+        "lines": 453,
+        "risk_score": 1.0,
+        "underexplored_score": 0.253,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "intel_related",
+          "memory_safety",
+          "no_obvious_tests",
+          "parser",
+          "resource"
+        ],
+        "category_hits": {
+          "memory_safety": 4,
+          "authorization": 2,
+          "parser": 1,
+          "injection": 3,
+          "configuration": 3,
+          "resource": 3
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "解析器序列化候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "并发资源候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src"
+      },
+      "ranking_hint": {},
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

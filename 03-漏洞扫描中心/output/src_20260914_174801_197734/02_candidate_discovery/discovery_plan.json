@@ -1,0 +1,37 @@
+{
+  "plan": {
+    "strategy": "候选发现规划智能体未运行或失败，使用本地默认分片策略。",
+    "enabled_specialties": [],
+    "specialty_priorities": [],
+    "max_tasks": 8,
+    "max_tasks_per_specialty": 0,
+    "slice_size": 8,
+    "deprioritized_paths": [],
+    "limitations": []
+  },
+  "effective": {
+    "max_tasks": 8,
+    "max_tasks_per_specialty": 0,
+    "slice_size": 8,
+    "enabled_specialties": [],
+    "specialty_order": [],
+    "deprioritized_paths": []
+  },
+  "defaults": {
+    "max_tasks": 8,
+    "max_tasks_per_specialty": 0,
+    "slice_size": 8
+  },
+  "agent_pool": {
+    "max_workers": 4,
+    "min_workers": 2,
+    "running_total": 0,
+    "by_stage": {
+      "validation": {
+        "running": 0,
+        "completed": 1,
+        "failed": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "purpose": "给 A3S agent 的命令行能力上下文；agent 可以按任务需要多轮使用当前环境中的任意本地 CLI 工具，但工具使用必须围绕假设和证据闭环，而不是脚本式全量扫描。",
+  "project": {
+    "name": "20260914_173107_f48600",
+    "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src",
+    "languages": {
+      "python": 232
+    },
+    "manifests": [],
+    "test_commands": []
+  },
+  "cli_tool_policy": {
+    "allowed": "可以使用当前环境中的任意命令行工具，不预设命令类型白名单。",
+    "selection": "由 agent 根据当前阶段、目标形态、候选假设和环境可达性自主选择命令；工具类别只是启发，不是必须逐项执行的清单。",
+    "recording": "所有实际运行过的命令都必须写入 tool_runs，包含 command、cwd、预算/超时、退出码和关键证据。"
+  },
+  "inventory": {
+    "mode": "not_enumerated"
+  },
+  "artifact_root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_173934_382488",
+  "provisioning_policy": {
+    "model": "open-local-cli",
+    "description": "平台不向 agent 展开固定工具清单；agent 自行按目标形态选择本地命令。",
+    "agent_may_use_cli": true
+  },
+  "adaptive_tool_use": {
+    "principle": "工具由 agent 智能选择，用来回答当前假设问题、缩小不确定性或收集确认/驳回证据；不要把可用工具简单顺序调用一遍。",
+    "workflow": [
+      "先写清楚当前要回答的问题或候选假设。",
+      "选择最小、最相关、可限时且可清理的工具或命令组合。",
+      "解释为什么选择该工具，以及为什么不需要更重的扫描。",
+      "运行后提炼关键输出，判断它支持、削弱还是改变原假设。",
+      "根据结果决定继续深入、进入验证、驳回、降级或记录为证据不足。"
+    ],
+    "tool_categories": [
+      {
+        "category": "static_security_rules",
+        "examples": [
+          "semgrep",
+          "codeql",
+          "bandit",
+          "gosec",
+          "spotbugs",
+          "eslint-security"
+        ],
+        "use_when": "源码目标需要快速发现危险 API、权限边界、注入、反序列化、路径和加密误用线索。"
+      },
+      {
+        "category": "dependency_and_supply_chain",
+        "examples": [
+          "osv-scanner",
+          "pip-audit",
+          "npm audit",
+          "cargo audit",
+          "govulncheck",
+          "syft",
+          "grype",
+          "trivy"
+        ],
+        "use_when": "存在 manifest、锁文件、容器镜像、第三方库或二进制依赖，需要判断依赖风险和版本暴露面。"
+      },
+      {
+        "category": "secret_and_config_scan",
+        "examples": [
+          "gitleaks",
+          "trufflehog",
+          "detect-secrets",
+          "ripgrep"
+        ],
+        "use_when": "候选或专长涉及默认凭据、证书、token、配置权限、TLS/加密默认值或敏感路径。"
+      },
+      {
+        "category": "binary_metadata_and_hardening",
+        "examples": [
+          "file",
+          "readelf",
+          "checksec",
+          "ldd",
+          "nm",
+          "objdump",
+          "strings",
+          "rabin2",
+          "rizin"
+        ],
+        "use_when": "无源码/二进制目标需要文件类型、架构、动态依赖、符号、字符串、RPATH/RUNPATH 或 hardening 证据。"
+      },
+      {
+        "category": "dynamic_diagnostics",
+        "examples": [
+          "asan",
+          "ubsan",
+          "valgrind",
+          "gdb",
+          "strace",
+          "ltrace",
+          "perf",
+          "coverage tools"
+        ],
+        "use_when": "验证阶段需要崩溃、core、栈、越界诊断、运行行为、权限检查点或覆盖反馈。"
+      },
+      {
+        "category": "input_generation_and_fuzzing",
+        "examples": [
+          "afl-fuzz",
+          "libFuzzer",
+          "honggfuzz",
+          "radamsa",
+          "boofuzz",
+          "sqlancer",
+          "sqlsmith"
+        ],
+        "use_when": "环境已提供输入入口和隔离策略，候选需要短预算随机输入、协议/SQL/文件格式输入或 corpus 反馈。"
+      },
+      {
+        "category": "protocol_api_and_infra_checks",
+        "examples": [
+          "curl",
+          "openssl",
+          "nmap-local",
+          "hadolint",
+          "checkov",
+          "kube-linter",
+          "trivy config"
+        ],
+        "use_when": "目标暴露本地服务、HTTP/RPC/TLS/数据库协议、容器/IaC/部署配置或管理面。"
+      },
+      {
+        "category": "web_site_security_baseline",
+        "examples": [
+          "curl",
+          "openssl",
+          "testssl.sh",
+          "sslscan",
+          "whatweb",
+          "webanalyze",
+          "httpx",
+          "nuclei-safe",
+          "nikto-low",
+          "zap-baseline"
+        ],
+        "use_when": "目标是已授权 HTTP(S) 站点、管理面或 API，需要非破坏性确认 TLS、响应头、Cookie、CORS、技术指纹、敏感暴露和安全扫描器线索。",
+        "constraints": "仅限授权 origin 的低强度只读探测；禁止目录爆破、参数 fuzz、撞库、主动漏洞利用、资源耗尽、深度爬取和写操作。"
+      }
+    ],
+    "anti_patterns": [
+      "不要因为某个 scanner 可用就无差别全量运行。",
+      "不要把 scanner 命中、CVE 命中或可疑字符串直接当作已确认漏洞。",
+      "不要把大量原始输出塞进报告；只保留能影响判断的证据。",
+      "不要扫描无关目录、第三方目标或超出授权范围的网络目标。",
+      "Web 站点工具只能在明确授权、限时限量和只读边界内使用；不要运行 intrusive、dos、fuzz、bruteforce 或 destructive 模板。",
+      "不要让候选发现无限延伸；有高价值候选时优先交给验证阶段。"
+    ]
+  },
+  "agent_contract": {
+    "role": "agent builds or selects a bounded experiment environment and decides which local CLI commands are useful for the current target and candidate.",
+    "must_record": [
+      "tool_strategy: question/hypothesis, selected tool class, reason, outcome, next decision",
+      "tool_runs: command, cwd, timeout/budget, exit code, key output tail",
+      "coverage_observations: what feedback was observed or why it was unavailable",
+      "crash_artifacts: crash input path, sanitizer/core/log path, stack summary when available",
+      "environment_setup: dependencies, sandbox/container, runtime arguments, logs/core/sanitizer/coverage settings and cleanup plan",
+      "limitations: why a tool was not run or why evidence remains inconclusive"
+    ],
+    "safety": [
+      "Only run commands against the local authorized workspace, artifact directory, temp directory, or explicitly configured local test target.",
+      "Use time, CPU, memory, corpus and output limits.",
+      "Prefer temporary harnesses and artifacts under /tmp or the configured artifact_root.",
+      "Do not operate on third-party targets or unrelated user directories.",
+      "For authorized web targets, use only bounded read-only HTTP/TLS checks unless the stage explicitly configures a local test environment.",
+      "Do not generate exploit deliverables or third-party attack payloads."
+    ]
+  },
+  "recommended_workflow": [
+    "First decide whether the target is a source tree, single source file, binary, or no-source archive.",
+    "Prepare the smallest repeatable experiment environment before running invasive validation.",
+    "Choose tools by hypothesis: static/security scanners, SCA, secret scanners, binary metadata tools, dynamic diagnostics, fuzzers, protocol/API checks, web baseline tools, or infra scanners only when they answer the current question.",
+    "Inspect existing tests, fuzz targets, build scripts and corpus before inventing a harness.",
+    "Treat automated tool findings as leads until the agent has triaged reachability, impact and evidence quality.",
+    "For memory candidates, prefer sanitizer or existing fuzz harness evidence over static reasoning alone.",
+    "Use coverage feedback as a guide for the next agent decision, not as the sole success criterion.",
+    "If no coverage tool is available, report scenario/input coverage and missing observability explicitly."
+  ]
+}

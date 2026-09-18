@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101928"><title>智安 · AI 安全平台</title><style>/* APP_STYLES */</style></head><body>
+<div id="app" class="app-shell" style="display:none"><aside id="center-sidebar" class="center-sidebar" aria-label="当前中心导航"></aside><div class="main-shell">
+<header class="topbar standalone-topbar">
+  <div class="standalone-left">
+    <button class="standalone-brand" onclick="App.navigate('workspace')" aria-label="智安工作台首页">
+      <span class="brand-mark"><svg class="icon" width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 4.5 6v5c0 4.8 3 8.2 7.5 10 4.5-1.8 7.5-5.2 7.5-10V6L12 3Z M8.8 11.8l2.2 2.2 4.5-4.5"/></svg></span>
+      <span><span class="brand-name">智安</span><span class="brand-sub">AI SECURITY</span></span>
+    </button>
+    <span class="standalone-divider"></span><span id="current-crumb" class="standalone-context">安全工作台</span>
+    <button id="workspace-return" class="btn ghost workspace-return" onclick="App.navigate('workspace')"><svg class="icon" width="14" height="14" viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></svg>回到首页</button>
+  </div>
+  <div class="top-actions"><button class="btn ghost workspace-help" onclick="App.help()" aria-label="演示使用指南"><svg class="icon" width="17" height="17" viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM9 8a3 3 0 0 1 6 0c0 2-3 2-3 5m0 3v1"/></svg><span>使用指南</span></button><span class="top-sep"></span><button class="user-button" onclick="App.account()" aria-label="账号与退出登录"><span class="avatar">安</span><span>安全管理员</span><span class="muted">⌄</span></button></div>
+</header><main id="view" class="main-content"></main></div></div>
+<div id="modal" class="overlay" onclick="if(event.target===this)App.closeModal()"></div><div id="drawer" class="overlay drawer-overlay" onclick="if(event.target===this)App.closeDrawer()"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>/* APP_SCRIPTS */</script></body></html>

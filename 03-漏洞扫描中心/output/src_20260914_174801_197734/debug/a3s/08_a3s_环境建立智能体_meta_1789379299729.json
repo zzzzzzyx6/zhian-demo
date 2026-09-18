@@ -1,0 +1,18 @@
+{
+  "label": "环境建立智能体",
+  "safe_label": "环境建立智能体",
+  "stamp": 1789379299729,
+  "status": "completed",
+  "started_at": "2026-09-14T17:48:20+0800",
+  "timeout_seconds": 1200,
+  "read_only_stage": true,
+  "max_tool_rounds": 12,
+  "max_execution_time_ms": 1200000,
+  "prompt_path": "08_a3s_环境建立智能体_prompt_1789379299729.txt",
+  "response_path": "08_a3s_环境建立智能体_response_1789379299729.txt",
+  "events_path": "08_a3s_环境建立智能体_events_1789379299729.jsonl",
+  "snapshot_path": "08_a3s_环境建立智能体_snapshot_1789379299729.json",
+  "interaction_log_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\debug\\logs\\a3s_interactions.jsonl",
+  "completed_at": "2026-09-14T17:48:23+0800",
+  "response_bytes": 0
+}

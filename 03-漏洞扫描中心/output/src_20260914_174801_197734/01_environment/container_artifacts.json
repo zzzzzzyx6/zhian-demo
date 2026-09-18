@@ -1,0 +1,59 @@
+{
+  "context_dir": "01_environment/artifacts/container",
+  "image_name": "shuan-env-src-20260914-174801-197734:latest",
+  "files": [
+    {
+      "path": "01_environment/artifacts/container/Dockerfile",
+      "purpose": "container_dockerfile"
+    },
+    {
+      "path": "01_environment/artifacts/container/scripts/entrypoint.sh",
+      "purpose": "entrypoint.sh"
+    },
+    {
+      "path": "01_environment/artifacts/scripts/entrypoint.sh",
+      "purpose": "runtime_entrypoint.sh"
+    },
+    {
+      "path": "01_environment/artifacts/container/scripts/check_container.sh",
+      "purpose": "check_container.sh"
+    },
+    {
+      "path": "01_environment/artifacts/scripts/check_container.sh",
+      "purpose": "runtime_check_container.sh"
+    },
+    {
+      "path": "01_environment/artifacts/container/scripts/provision_runtime.sh",
+      "purpose": "provision_runtime.sh"
+    },
+    {
+      "path": "01_environment/artifacts/scripts/provision_runtime.sh",
+      "purpose": "runtime_provision_runtime.sh"
+    },
+    {
+      "path": "01_environment/artifacts/container/build.log",
+      "purpose": "container_build_log"
+    }
+  ],
+  "build_result": {
+    "status": "failed",
+    "tool": "docker",
+    "command": "docker build -t shuan-env-src-20260914-174801-197734:latest C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\container",
+    "exit_code": 1,
+    "elapsed_seconds": 3.782,
+    "log_path": "01_environment/artifacts/container/build.log"
+  },
+  "run_command": "docker run --user 0:0 --rm -it --network none --cpus 2 --memory 4g -v C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src:/target:ro -v C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts:/artifacts:rw shuan-env-src-20260914-174801-197734:latest check",
+  "mounts": [
+    {
+      "source": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+      "target": "/target",
+      "mode": "ro"
+    },
+    {
+      "source": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts",
+      "target": "/artifacts",
+      "mode": "rw"
+    }
+  ]
+}

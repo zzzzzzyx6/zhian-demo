@@ -1,0 +1,12 @@
+{
+  "task_id": "src_20260914_174801_197734",
+  "status": "succeeded",
+  "stage": "report",
+  "message": "流水线完成",
+  "error": "",
+  "phase": "agent-detect",
+  "pid": 26156,
+  "updated_at": "2026-09-14T17:50:13",
+  "output_dir": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734",
+  "target": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+}

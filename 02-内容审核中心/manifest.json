@@ -1,0 +1,19 @@
+{
+  "css": [
+    "style.css",
+    "workspace.css",
+    "attack-setup.css",
+    "console-theme.css",
+    "attack-arena.css",
+    "product-refinement.css",
+    "shared-sidebar.css"
+  ],
+  "js": [
+    "core.js",
+    "review.js",
+    "review-governance.js",
+    "center-shell.js",
+    "finish.js",
+    "standalone.js"
+  ]
+}

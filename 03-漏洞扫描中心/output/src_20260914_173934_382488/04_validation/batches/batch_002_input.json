@@ -1,0 +1,217 @@
+{
+  "batch": 2,
+  "metadata": {
+    "batch_id": "stream-static-002",
+    "candidate_ids": [
+      "VULN-002"
+    ],
+    "focus": "流式候选快速筛选验证",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "streaming": true,
+    "wave": "static",
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-002",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "line": 647,
+      "location": "top-level",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "exec(tool_to_execute.tool_code, exec_globals, exec_locals)",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-002",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+        "line": 647,
+        "location": "top-level",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "exec(tool_to_execute.tool_code, exec_globals, exec_locals)",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+        "line": 647,
+        "start_line": 577,
+        "end_line": 692,
+        "source": "577:             \"created_tools\": limited_created_tools,\n578:             \"ai_generated_tools\": limited_ai_generated_tools,\n579:             \"exploitation_conversations\": limited_conversations,\n580:             \"evolution_session\": limited_evolution_data,\n581:             \"history_depth_applied\": history_depth,\n582:             \"context_type\": type(ctx.context).__name__,\n583:             \"accessed_at\": datetime.now().isoformat()\n584:         }\n585:         \n586:     except Exception as e:\n587:         return {\n588:             \"history_accessed\": False,\n589:             \"error\": str(e),\n590:             \"error_type\": type(e).__name__,\n591:             \"context_type\": type(ctx.context).__name__,\n592:             \"accessed_at\": datetime.now().isoformat()\n593:         }\n594: \n595: \n596: \n597: async def conduct_multi_turn_conversation(\n598:     ctx: RunContextWrapper,\n599:     tool_name: str,\n600:     original_query: str,\n601:     strategy_plan: str,\n602:     initial_query: str = None,\n603:     max_turns: int = 10\n604: ) -> dict:\n605:     \"\"\"\n606:     Conduct multi-turn conversation using strategic attack model (ASYNC)\n607: \n608:     All model calls are executed asynchronously to prevent blocking the asyncio event loop.\n609: \n610:     Args:\n611:         ctx: Runtime context wrapper\n612:         tool_name: Name of the tool to use\n613:         original_query: Original query for the conversation\n614:         strategy_plan: Strategic plan for the attack model\n615:         initial_query: Initial query to start conversation\n616:         max_turns: Maximum number of conversation turns\n617: \n618:     Returns:\n619:         Complete conversation results with scores and analysis\n620:     \"\"\"\n621:     # Find the tool by name\n622:     tool_to_execute = None\n623:     if hasattr(ctx.context, 'created_tools'):\n624:         for tool in ctx.context.created_tools:\n625:             tool_name_attr = getattr(tool, 'tool_name', None)\n626:             if tool_name_attr == tool_name:\n627:                 tool_to_execute = tool\n628:                 break\n629:     if not tool_to_execute:\n630:         return {\n631:             \"conversation_completed\": False,\n632:             \"reason\": f\"Tool {tool_name} not found in context\",\n633:             \"tool_name\": tool_name\n634:         }\n635:     \n636:     # Generate initial query if not provided\n637:     if not initial_query:\n638:         try:\n639:             loop = asyncio.get_event_loop()\n640:             if hasattr(tool_to_execute, 'execute') and callable(tool_to_execute.execute):\n641:                 initial_query = await loop.run_in_executor(None, tool_to_execute.execute, original_query)\n642:             elif hasattr(tool_to_execute, 'tool_function') and callable(tool_to_execute.tool_function):\n643:                 initial_query = await loop.run_in_executor(None, tool_to_execute.tool_function, original_query)\n644:             elif hasattr(tool_to_execute, 'tool_code') and tool_to_execute.tool_code:\n645:                 exec_globals = {\"__builtins__\": __builtins__}\n646:                 exec_locals = {}\n647:                 exec(tool_to_execute.tool_code, exec_globals, exec_locals)\n648: \n649:                 main_func = None\n650:                 for name, obj in exec_locals.items():\n651:                     if callable(obj) and not name.startswith('_'):\n652:                         main_func = obj\n653:                         break\n654: \n655:                 if main_func:\n656:                     initial_query = await loop.run_in_executor(None, main_func, original_query)\n657:                 else:\n658:                     raise RuntimeError(\"No executable function found in tool code\")\n659:             else:\n660:                 raise RuntimeError(f\"Tool {tool_name} has no executable method\")\n661:         except Exception as e:\n662:             print(\"Init context error in Multi-turn Conversation: \",str(e))\n663:             return {\n664:                 \"conversation_completed\": False,\n665:                 \"reason\": f\"Error generating initial query: {str(e)}\",\n666:                 \"tool_name\": tool_name\n667:             }\n668:     \n669:     # Initialize attack model with strategy\n670:     try:\n671:         print(\"tool exec completed\")\n672:         from OpenRT.models.implementations.openai_model import OpenAIModel\n673:         \n674:         # Get attack model config from context or .env\n675:         attack_model_config = getattr(ctx.context, 'attack_model_config', {\n676:             'api_key': os.environ.get('OPENAI_API_KEY', 'dummy-key'),\n677:             'model_name': os.environ.get('OPENAI_MODEL', 'deepseek-chat'),\n678:             'temperature': float(os.environ.get('OPENAI_TEMPERATURE', '0.7')),\n679:             \"base_url\":os.environ.get(\"OPENAI_BASE_URL\"),\n680:         })\n681:         \n682:         # Create attack model with strategy system prompt\n683:         attack_model = OpenAIModel(\n684:             api_key=attack_model_config.get('api_key', 'dummy-key'),\n685:             base_url=attack_model_config.get('base_url', os.environ.get(\"OPENAI_BASE_URL\")),\n686:             model_name=attack_model_config.get('model_name', 'deepseek-chat'),\n687:             temperature=attack_model_config.get('temperature', 0.7),\n688:             system_message=f\"\"\"You are a strategic attack assistant. Your goal is to gradually guide the conversation toward the original query: \"{original_query}\"\n689: \n690: STRATEGY PLAN:\n691: {strategy_plan}\n692: ",
+        "nearby_symbols": [
+          "528: ai_generated_tools = getattr(ctx.context, 'ai_generated_tools', [])",
+          "529: exploitation_conversations = getattr(ctx.context, 'exploitation_conversations', [])",
+          "547: \"created_at\": getattr(evolution_context, 'created_at', None)",
+          "551: def get_last_items(data, depth):",
+          "557: limited_session_data = get_last_items(session_data, history_depth)",
+          "558: limited_created_tools = get_last_items(created_tools, history_depth)",
+          "559: limited_ai_generated_tools = get_last_items(ai_generated_tools, history_depth)",
+          "560: limited_conversations = get_last_items(exploitation_conversations, history_depth)",
+          "583: \"accessed_at\": datetime.now().isoformat()",
+          "592: \"accessed_at\": datetime.now().isoformat()",
+          "597: async def conduct_multi_turn_conversation(",
+          "606: Conduct multi-turn conversation using strategic attack model (ASYNC)",
+          "625: tool_name_attr = getattr(tool, 'tool_name', None)",
+          "639: loop = asyncio.get_event_loop()",
+          "641: initial_query = await loop.run_in_executor(None, tool_to_execute.execute, original_query)",
+          "643: initial_query = await loop.run_in_executor(None, tool_to_execute.tool_function, original_query)",
+          "647: exec(tool_to_execute.tool_code, exec_globals, exec_locals)",
+          "656: initial_query = await loop.run_in_executor(None, main_func, original_query)",
+          "658: raise RuntimeError(\"No executable function found in tool code\")",
+          "660: raise RuntimeError(f\"Tool {tool_name} has no executable method\")"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+        "language": "python",
+        "lines": 837,
+        "risk_score": 1.0,
+        "underexplored_score": 0.64,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "large_file",
+          "low_attention_area",
+          "memory_safety",
+          "no_obvious_tests",
+          "parser",
+          "resource",
+          "underexplored_path"
+        ],
+        "category_hits": {
+          "memory_safety": 2,
+          "authorization": 4,
+          "parser": 1,
+          "injection": 5,
+          "configuration": 5,
+          "resource": 5
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "解析器序列化候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "并发资源候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src"
+      },
+      "ranking_hint": {
+        "id": "VULN-002",
+        "priority": 1.07,
+        "reason": "候选合并排序智能体失败，使用本地严重性和置信度排序。",
+        "validation_focus": [
+          "源码证据",
+          "可达性",
+          "运行证据"
+        ]
+      },
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

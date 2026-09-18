@@ -1,0 +1,200 @@
+{
+  "batch": 15,
+  "metadata": {
+    "batch_id": "validation-011",
+    "candidate_ids": [
+      "VULN-016"
+    ],
+    "focus": "本地默认批次",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-016",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/models/implementations/huggingface_model.py",
+      "line": 86,
+      "location": "top-level",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "self.model.eval()",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-016",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/models/implementations/huggingface_model.py",
+        "line": 86,
+        "location": "top-level",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "self.model.eval()",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/models/implementations/huggingface_model.py",
+        "line": 86,
+        "start_line": 16,
+        "end_line": 131,
+        "source": "16:         model: Optional[transformers.PreTrainedModel] = None,\n17:         tokenizer: Optional[transformers.PreTrainedTokenizer] = None,\n18:         processor: Optional[Any] = None,\n19:         device: str = \"auto\",\n20:         torch_dtype: Optional[torch.dtype] = None,\n21:         use_processor: bool = False,\n22:         cache_dir: Optional[str] = None,\n23:         use_fast_tokenizer: bool = True,\n24:         **kwargs\n25:     ):\n26:         \"\"\"\n27:         Initialize HuggingFace model\n28: \n29:         Args:\n30:             model_name: HuggingFace model name or path (for traditional LLMs)\n31:             model: Pre-initialized model instance (for VLMs or direct model passing)\n32:             tokenizer: Pre-initialized tokenizer instance (for direct LLM tokenizer passing)\n33:             processor: Pre-initialized processor instance (for VLMs)\n34:             device: Device (\"auto\", \"cpu\", \"cuda\", \"cuda:0\", etc.)\n35:             torch_dtype: Model data type\n36:             use_processor: Whether to use AutoProcessor instead of AutoTokenizer (only effective in model_name mode)\n37:             cache_dir: Directory to cache downloaded models\n38:             use_fast_tokenizer: Whether to use fast tokenizer (set to False for Llama 3.1 compatibility)\n39:             **kwargs: Other parameters passed to the model\n40:         \"\"\"\n41:         super().__init__(**kwargs)\n42: \n43:         self.device = self._resolve_device(device)\n44:         self.torch_dtype = torch_dtype or torch.float16\n45:         self.use_processor = use_processor\n46:         self.cache_dir = cache_dir\n47:         self.use_fast_tokenizer = use_fast_tokenizer\n48: \n49:         # Determine initialization mode\n50:         if model is not None and processor is not None:\n51:             # VLM mode: use pre-initialized model and processor\n52:             print(\"Initializing in VLM mode with pre-initialized model and processor\")\n53:             self.model_name = None\n54:             self.model = model\n55:             self.tokenizer = None\n56:             self.processor = processor\n57:             self._setup_pretrained_model()\n58: \n59:         elif model is not None and tokenizer is not None:\n60:             # Direct model and tokenizer passing mode\n61:             print(\"Initializing with pre-initialized model and tokenizer\")\n62:             self.model_name = None\n63:             self.model = model\n64:             self.tokenizer = tokenizer\n65:             self.processor = None\n66:             self._setup_pretrained_model()\n67: \n68:         elif model_name is not None:\n69:             # Traditional LLM mode: load via model_name\n70:             print(\"Initializing in LLM mode with model_name\")\n71:             self.model_name = model_name\n72:             self.model = None\n73:             self.tokenizer = None\n74:             self.processor = None\n75:             self._load_model_and_tokenizer()\n76: \n77:         else:\n78:             raise ValueError(\n79:                 \"Invalid initialization parameters. Use one of:\\n\"\n80:                 \"1. VLM mode: provide both 'model' and 'processor'\\n\"\n81:                 \"2. Direct mode: provide both 'model' and 'tokenizer'\\n\"\n82:                 \"3. LLM mode: provide 'model_name'\"\n83:             )\n84: \n85:         # Set to evaluation mode\n86:         self.model.eval()\n87: \n88:         # If GPU, enable gradient computation\n89:         if self.device.type == \"cuda\":\n90:             self.model.requires_grad_(True)\n91: \n92:     def _resolve_device(self, device: str) -> torch.device:\n93:         \"\"\"Resolve device string\"\"\"\n94:         if device == \"auto\":\n95:             if torch.cuda.is_available():\n96:                 return torch.device(\"cuda\")\n97:             elif torch.backends.mps.is_available():\n98:                 return torch.device(\"mps\")\n99:             else:\n100:                 return torch.device(\"cpu\")\n101:         return torch.device(device)\n102: \n103:     def _setup_pretrained_model(self):\n104:         \"\"\"Setup pre-initialized model\"\"\"\n105:         model_type = \"VLM\" if self.processor is not None else \"LLM\"\n106:         print(f\"Using pre-initialized {model_type} model: {type(self.model).__name__}\")\n107: \n108:         # Get actual tokenizer (from processor or use tokenizer directly)\n109:         actual_tokenizer = self._get_tokenizer()\n110: \n111:         # Configure padding token\n112:         if actual_tokenizer.pad_token is None:\n113:             if actual_tokenizer.unk_token is not None:\n114:                 actual_tokenizer.pad_token = actual_tokenizer.unk_token\n115:             elif actual_tokenizer.eos_token is not None:\n116:                 actual_tokenizer.pad_token = actual_tokenizer.eos_token\n117:             else:\n118:                 actual_tokenizer.add_special_tokens({\"pad_token\": \"<|pad|>\"})\n119: \n120:         # Move model to specified device\n121:         if self.device.type != \"cpu\" and next(self.model.parameters()).device != self.device:\n122:             self.model = self.model.to(self.device)\n123: \n124:         print(f\"Model setup completed on {next(self.model.parameters()).device}\")\n125: \n126:     def _load_model_and_tokenizer(self):\n127:         \"\"\"Load model and tokenizer/processor (only for model_name mode)\"\"\"\n128:         if self.model_name is None:\n129:             raise ValueError(\"model_name is required for automatic loading\")\n130: \n131:         print(f\"Loading HuggingFace model: {self.model_name}\")",
+        "nearby_symbols": [
+          "7: @model_registry.register(\"huggingface_model\")",
+          "8: class HuggingFaceModel(BaseModel):",
+          "13: def __init__(",
+          "30: model_name: HuggingFace model name or path (for traditional LLMs)",
+          "31: model: Pre-initialized model instance (for VLMs or direct model passing)",
+          "32: tokenizer: Pre-initialized tokenizer instance (for direct LLM tokenizer passing)",
+          "33: processor: Pre-initialized processor instance (for VLMs)",
+          "34: device: Device (\"auto\", \"cpu\", \"cuda\", \"cuda:0\", etc.)",
+          "36: use_processor: Whether to use AutoProcessor instead of AutoTokenizer (only effective in model_name mode)",
+          "38: use_fast_tokenizer: Whether to use fast tokenizer (set to False for Llama 3.1 compatibility)",
+          "41: super().__init__(**kwargs)",
+          "43: self.device = self._resolve_device(device)",
+          "52: print(\"Initializing in VLM mode with pre-initialized model and processor\")",
+          "57: self._setup_pretrained_model()",
+          "61: print(\"Initializing with pre-initialized model and tokenizer\")",
+          "66: self._setup_pretrained_model()",
+          "70: print(\"Initializing in LLM mode with model_name\")",
+          "75: self._load_model_and_tokenizer()",
+          "83: )",
+          "86: self.model.eval()"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/models/implementations/huggingface_model.py",
+        "language": "python",
+        "lines": 334,
+        "risk_score": 0.934,
+        "underexplored_score": 0.224,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "memory_safety",
+          "no_obvious_tests",
+          "resource"
+        ],
+        "category_hits": {
+          "memory_safety": 2,
+          "authorization": 2,
+          "injection": 2,
+          "configuration": 2,
+          "resource": 1
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "并发资源候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+      },
+      "ranking_hint": {},
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

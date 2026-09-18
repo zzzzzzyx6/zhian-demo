@@ -1,0 +1,267 @@
+{
+  "environment_ready": true,
+  "target_mode": "source_tree",
+  "source": "local_deterministic_probe",
+  "environment_summary": "本地编排器已建立只读、可复现、可清理的基础环境；后续验证在独立临时目录或受限命令中按候选执行。",
+  "workspace": {
+    "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+    "build_dir": "",
+    "artifact_dir": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts",
+    "temp_dirs": [
+      "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\tmp"
+    ]
+  },
+  "validated_commands": {
+    "build": [],
+    "test": [],
+    "sanitizer": [],
+    "coverage": [],
+    "safe_runtime": [
+      "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+    ],
+    "fuzz_smoke": [],
+    "metadata": [
+      "find . -maxdepth 2 -type d",
+      "find . -maxdepth 3 -type f -perm /111"
+    ]
+  },
+  "runtime_entrypoints": {
+    "start": [],
+    "stop": [],
+    "health_check": [],
+    "client": [],
+    "packaged_start": [],
+    "packaged_client": [],
+    "blocked": false,
+    "blocked_reason": ""
+  },
+  "embedded_binary_inventory": [],
+  "input_surface_matrix": [],
+  "available_inputs": {
+    "test_dirs": [],
+    "sample_inputs": [
+      "OpenRT-main/example/configs",
+      "OpenRT-main/docs",
+      "OpenRT-main/docs/materials",
+      "OpenRT-main/example",
+      "OpenRT-main/pyproject.toml"
+    ],
+    "existing_random_test_targets": [],
+    "seed_sources": [
+      "OpenRT-main/example/configs",
+      "OpenRT-main/docs",
+      "OpenRT-main/docs/materials",
+      "OpenRT-main/example",
+      "OpenRT-main/pyproject.toml"
+    ],
+    "planned_input_surfaces": []
+  },
+  "test_input_plan": {
+    "surfaces": [
+      {
+        "name": "file_format",
+        "entrypoint": "",
+        "input_location": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\seeds",
+        "driver": "环境智能体需按目标类型补充具体输入驱动。",
+        "command_template": "",
+        "observability": [
+          "exit_code",
+          "stderr",
+          "logs",
+          "core"
+        ],
+        "safety_limits": "timeout 60s; local-only; inputs under artifact_dir/inputs",
+        "ready": false,
+        "blocked_reason": "本地探针只发现样例目录，尚未建立目标专用输入驱动。"
+      }
+    ],
+    "coverage_expectation": {
+      "memory_safety_surfaces": [],
+      "not_exhaustive": true,
+      "note": "这里枚举可控输入类别和验证前置条件；是否实际构造样本取决于验证阶段是否具备安全运行入口。"
+    },
+    "corpus_layout": {
+      "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs",
+      "seeds": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\seeds",
+      "generated": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\generated",
+      "crashes": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\crashes"
+    }
+  },
+  "fuzz_capabilities": {
+    "tools": [
+      {
+        "name": "afl-fuzz",
+        "available": false,
+        "command": "",
+        "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+      },
+      {
+        "name": "honggfuzz",
+        "available": false,
+        "command": "",
+        "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+      },
+      {
+        "name": "radamsa",
+        "available": false,
+        "command": "",
+        "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+      },
+      {
+        "name": "boofuzz",
+        "available": false,
+        "command": "",
+        "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+      },
+      {
+        "name": "sqlancer",
+        "available": false,
+        "command": "",
+        "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+      },
+      {
+        "name": "sqlsmith",
+        "available": false,
+        "command": "",
+        "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+      },
+      {
+        "name": "zzuf",
+        "available": false,
+        "command": "",
+        "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+      }
+    ],
+    "applicable_surfaces": [],
+    "seed_corpus_plan": [
+      "将可复用样例输入复制或引用到 C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\seeds，生成输入放入 C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\generated。"
+    ],
+    "harness_strategy": [
+      "等待环境智能体根据目标运行方式补充。"
+    ],
+    "short_budget_commands": [],
+    "blocked_reason": "尚未由环境智能体确认可运行入口、输入驱动和适用 fuzz 工具。"
+  },
+  "runtime_limits": {
+    "timeout_seconds": 60,
+    "memory": "按验证任务设置；默认只读探查不限制内存。",
+    "network": "disabled/local-only"
+  },
+  "isolation_policy": {
+    "default": "shared_readonly",
+    "requires_clone": [
+      "stateful_test",
+      "patch",
+      "random_test_crash",
+      "unknown_binary_execution"
+    ],
+    "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+  },
+  "environment_cache": {
+    "dependency_status": [],
+    "tool_status": [
+      {
+        "tool": "file",
+        "status": "missing"
+      },
+      {
+        "tool": "readelf",
+        "status": "missing"
+      },
+      {
+        "tool": "strings",
+        "status": "missing"
+      },
+      {
+        "tool": "objdump",
+        "status": "missing"
+      },
+      {
+        "tool": "gdb",
+        "status": "missing"
+      },
+      {
+        "tool": "strace",
+        "status": "available"
+      },
+      {
+        "tool": "valgrind",
+        "status": "missing"
+      },
+      {
+        "tool": "timeout",
+        "status": "available"
+      },
+      {
+        "tool": "docker",
+        "status": "available"
+      },
+      {
+        "tool": "podman",
+        "status": "missing"
+      }
+    ],
+    "failed_commands": [
+      {
+        "command": "find . -maxdepth 2 -type d",
+        "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+        "budget": "5s",
+        "exit_code": 2,
+        "evidence": ""
+      },
+      {
+        "command": "find . -maxdepth 3 -type f -perm /111",
+        "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+        "budget": "5s",
+        "exit_code": 2,
+        "evidence": ""
+      }
+    ],
+    "key_binaries": [],
+    "config_files": [
+      "OpenRT-main/pyproject.toml"
+    ],
+    "top_attention_paths": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py",
+      "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+      "OpenRT-main/OpenRT/eval.py",
+      "OpenRT-main/eval.py",
+      "OpenRT-main/eval_async.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/tree_attack.py",
+      "OpenRT-main/OpenRT/core/async_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/crescendo_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/jailbroken_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/const.py",
+      "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/master_coordinator_agent.py"
+    ]
+  },
+  "tool_runs": [
+    {
+      "command": "find . -maxdepth 2 -type d",
+      "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+      "budget": "5s",
+      "exit_code": 2,
+      "evidence": ""
+    },
+    {
+      "command": "find . -maxdepth 3 -type f -perm /111",
+      "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+      "budget": "5s",
+      "exit_code": 2,
+      "evidence": ""
+    }
+  ],
+  "cleanup_strategy": "删除本次输出目录下的临时目录：C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\tmp",
+  "limitations": [
+    "未发现可直接复用的测试命令。"
+  ]
+}

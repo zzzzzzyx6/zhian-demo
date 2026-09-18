@@ -1,0 +1,217 @@
+{
+  "batch": 1,
+  "metadata": {
+    "batch_id": "stream-static-001",
+    "candidate_ids": [
+      "VULN-001"
+    ],
+    "focus": "流式候选快速筛选验证",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "streaming": true,
+    "wave": "static",
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-001",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "line": 321,
+      "location": "top-level",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "exec(code, exec_globals)",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-001",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+        "line": 321,
+        "location": "top-level",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "exec(code, exec_globals)",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+        "line": 321,
+        "start_line": 251,
+        "end_line": 366,
+        "source": "251:     Returns:\n252:         Formatted code context with line numbers\n253:     \"\"\"\n254:     lines = code.split('\\n')\n255:     \n256:     if error_line is None:\n257:         # Show entire code with line numbers\n258:         result = []\n259:         for i, line in enumerate(lines, 1):\n260:             result.append(f\"{i:3d}: {line}\")\n261:         return '\\n'.join(result)\n262:     \n263:     # Show context around error line\n264:     start_line = max(1, error_line - context_lines)\n265:     end_line = min(len(lines), error_line + context_lines)\n266:     \n267:     result = []\n268:     for i in range(start_line, end_line + 1):\n269:         line_content = lines[i - 1]\n270:         prefix = f\"{i:3d}: \"\n271:         if i == error_line:\n272:             # Highlight error line\n273:             result.append(f\"{prefix}>>> {line_content} <<< ERROR\")\n274:         else:\n275:             result.append(f\"{prefix}    {line_content}\")\n276:     \n277:     return '\\n'.join(result)\n278: \n279: \n280: def execute_code(\n281:     ctx: RunContextWrapper,\n282:     code: str,\n283:     expected_output: str = None,\n284:     timeout_seconds: int = 10\n285: ) -> dict:\n286:     \"\"\"\n287:     Execute Python code and measure performance\n288:     \n289:     Args:\n290:         ctx: Runtime context wrapper\n291:         code: Python code to execute\n292:         expected_output: Expected output pattern (optional)\n293:         timeout_seconds: Maximum execution time in seconds\n294:     \n295:     Returns:\n296:         Execution results with performance metrics and code context\n297:     \"\"\"\n298:     start_time = asyncio.get_event_loop().time()\n299:     execution_success = False\n300:     execution_result = None\n301:     execution_error = None\n302:     execution_time = None\n303:     error_line = None\n304:     code_context = None\n305:     \n306:     try:\n307:         # Create a restricted environment for execution\n308:         exec_globals = {\n309:             \"__builtins__\": __builtins__,\n310:             \"print\": print,\n311:             \"len\": len,\n312:             \"str\": str,\n313:             \"int\": int,\n314:             \"float\": float,\n315:             \"list\": list,\n316:             \"dict\": dict,\n317:             \"bool\": bool\n318:         }\n319:         \n320:         # Execute the code\n321:         exec(code, exec_globals)\n322:         \n323:         # Capture the result if there's a return value\n324:         if \"result\" in exec_globals:\n325:             execution_result = exec_globals[\"result\"]\n326:         else:\n327:             execution_result = \"Code executed successfully (no explicit result)\"\n328:         \n329:         execution_success = True\n330:         execution_time = asyncio.get_event_loop().time() - start_time\n331:         \n332:     except Exception as e:\n333:         execution_success = False\n334:         execution_error = str(e)\n335:         execution_time = asyncio.get_event_loop().time() - start_time\n336:         execution_result = None\n337:         \n338:         # Try to extract line number from error message\n339:         import re\n340:         line_match = re.search(r'line (\\d+)', execution_error)\n341:         if line_match:\n342:             error_line = int(line_match.group(1))\n343:         \n344:         # Generate code context\n345:         code_context = get_code_context(code, error_line)\n346:     \n347:     # Check if output matches expected pattern\n348:     output_matches = False\n349:     if expected_output and execution_result:\n350:         output_matches = expected_output.lower() in str(execution_result).lower()\n351:     \n352:     return {\n353:         \"execution_completed\": True,\n354:         \"execution_success\": execution_success,\n355:         \"execution_time\": execution_time,\n356:         \"execution_result\": str(execution_result) if execution_result else None,\n357:         \"execution_error\": execution_error,\n358:         \"code_context\": code_context,\n359:         \"error_line\": error_line,\n360:         \"output_matches_expected\": output_matches,\n361:         \"timeout_seconds\": timeout_seconds,\n362:         \"within_timeout\": execution_time <= timeout_seconds if execution_time else False,\n363:         \"executed_at\": datetime.now().isoformat()\n364:     }\n365: \n366: def _fallback_judge_response(response: str, query: str) -> int:",
+        "nearby_symbols": [
+          "202: loop = asyncio.get_event_loop()",
+          "205: score, reasoning = await loop.run_in_executor(None, judge.evaluate_response, original_query, target_response)",
+          "211: target_model_analysis = await loop.run_in_executor(None, _ask_target_model_about_refusal, original_query, target_response, attack_prompt, target_model)",
+          "212: judge_model_analysis = await loop.run_in_executor(None, _ask_judge_model_about_safety, original_query, target_response, attack_prompt, judge_model_instance)",
+          "224: \"judged_at\": datetime.now().isoformat()",
+          "228: print(f\"Error in judge_response: {e}\")",
+          "237: \"judged_at\": datetime.now().isoformat()",
+          "242: def get_code_context(code: str, error_line: int = None, context_lines: int = 3) -> str:",
+          "248: error_line: Line number where error occurred (if available)",
+          "254: lines = code.split('\\n')",
+          "260: result.append(f\"{i:3d}: {line}\")",
+          "261: return '\\n'.join(result)",
+          "264: start_line = max(1, error_line - context_lines)",
+          "265: end_line = min(len(lines), error_line + context_lines)",
+          "273: result.append(f\"{prefix}>>> {line_content} <<< ERROR\")",
+          "275: result.append(f\"{prefix}    {line_content}\")",
+          "277: return '\\n'.join(result)",
+          "280: def execute_code(",
+          "292: expected_output: Expected output pattern (optional)",
+          "298: start_time = asyncio.get_event_loop().time()"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+        "language": "python",
+        "lines": 837,
+        "risk_score": 1.0,
+        "underexplored_score": 0.64,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "large_file",
+          "low_attention_area",
+          "memory_safety",
+          "no_obvious_tests",
+          "parser",
+          "resource",
+          "underexplored_path"
+        ],
+        "category_hits": {
+          "memory_safety": 2,
+          "authorization": 4,
+          "parser": 1,
+          "injection": 5,
+          "configuration": 5,
+          "resource": 5
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "解析器序列化候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "并发资源候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src"
+      },
+      "ranking_hint": {
+        "id": "VULN-001",
+        "priority": 1.07,
+        "reason": "候选合并排序智能体失败，使用本地严重性和置信度排序。",
+        "validation_focus": [
+          "源码证据",
+          "可达性",
+          "运行证据"
+        ]
+      },
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

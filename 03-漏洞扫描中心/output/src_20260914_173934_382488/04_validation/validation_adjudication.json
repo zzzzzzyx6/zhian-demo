@@ -1,0 +1,9 @@
+{
+  "summary": "验证结果裁决智能体未运行或失败，保留验证智能体的原始确认结果。",
+  "confirmed_finding_ids": [],
+  "demote_confirmed_ids": [],
+  "needs_recheck": [],
+  "conflicts": [],
+  "environment_effects": [],
+  "limitations": []
+}

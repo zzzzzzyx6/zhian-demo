@@ -1,0 +1,7 @@
+{
+  "strategy": "没有确认问题，跳过修复/缓解规划。",
+  "tasks": [],
+  "ordering": [],
+  "rollback_plan": "源码补丁使用 git diff 回滚；无源码缓解按配置/隔离变更记录回退。",
+  "limitations": []
+}

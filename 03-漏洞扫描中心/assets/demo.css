@@ -1,0 +1,46 @@
+/* demo.css — 静态 demo 对构建 CSS 的少量补丁。 */
+
+/* 原 main.css 未定义 .l-error（parseLog 的 error 级别）。 */
+.log .l-error { color: #e0998a; }
+
+/* hash 路由下 .tabs 的下划块宽度兜底 */
+.tabs { position: relative; }
+
+/* 项目详情头部动作区在窄屏下换行 */
+.page-head .actions { flex-wrap: wrap; }
+
+/* 账户区：简化为 icon+名称，点击展开二级菜单（主页 / 退出登录） */
+.sidebar-foot { position: relative; }
+.user-chip { cursor: pointer; border-radius: var(--r); transition: background .12s; }
+.user-chip:hover, .user-chip:focus-visible { background: var(--side-bg-2); outline: none; }
+.user-chev { margin-left: auto; color: var(--side-text-faint); font-size: 16px; transition: transform .15s; }
+.user-menu {
+  position: absolute; left: 8px; right: 8px; bottom: calc(100% - 4px);
+  display: none; flex-direction: column; gap: 2px;
+  padding: 6px; border-radius: var(--r);
+  background: var(--bg-elev); border: 1px solid var(--line);
+  box-shadow: var(--shadow-pop); z-index: 60;
+}
+.user-menu.open { display: flex; }
+.user-menu-item {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  padding: 8px 10px; border-radius: 6px; cursor: pointer;
+  color: var(--text); font-size: 13.5px; text-align: left; text-decoration: none;
+  background: transparent; border: 0;
+}
+.user-menu-item:hover { background: var(--brand-softer); color: var(--brand-ink); }
+.user-menu-item .muted { margin-left: auto; }
+
+/* 写操作按钮（删除/停止/升级确认/应用补丁等）在原站需要后端持久化，
+   原站即 disabled（title 说明原因），demo 保持一致。 */
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* 打印时只保留漏洞报告（与原站 @media print 行为一致）。 */
+@media print {
+  body.printing-report .sidebar,
+  body.printing-report .page-head,
+  body.printing-report .tabs,
+  body.printing-report .card-h { display: none !important; }
+  body.printing-report .page-body { padding: 0 !important; }
+  body.printing-report .report { border: 0; box-shadow: none; }
+}

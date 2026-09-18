@@ -1,0 +1,9 @@
+{
+  "dataset": "OpenSafetyLab/Salad-Data",
+  "revision": "d21a325e276a99bd69b1fbb8aa51a9f249486b72",
+  "url": "https://huggingface.co/datasets/OpenSafetyLab/Salad-Data",
+  "license": "Apache-2.0",
+  "upstreamCount": 21318,
+  "selection": "1000 questions; round-robin across sorted level-3 categories; within each category sorted by SHA-256 of original qid; original question text unchanged",
+  "sha256": "0987630d953961ac9d9e3e272db72dea20079aa29df769378fa96e9f653f2ca1"
+}

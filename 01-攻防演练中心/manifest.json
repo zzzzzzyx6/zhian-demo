@@ -1,0 +1,29 @@
+{
+  "css": [
+    "style.css",
+    "workspace.css",
+    "attack-setup.css",
+    "console-theme.css",
+    "attack-arena.css",
+    "product-refinement.css",
+    "shared-sidebar.css"
+  ],
+  "js": [
+    "core.js",
+    "attack.js",
+    "attack-setup.js",
+    "demo-content.js",
+    "bank-data.js",
+    "salad-bank-data.js",
+    "banks.js",
+    "connections-extraction.js",
+    "attack-arena.js",
+    "product-refinement.js",
+    "blue-strategy.js",
+    "bank-builder.js",
+    "agent-presets.js",
+    "center-shell.js",
+    "finish.js",
+    "standalone.js"
+  ]
+}

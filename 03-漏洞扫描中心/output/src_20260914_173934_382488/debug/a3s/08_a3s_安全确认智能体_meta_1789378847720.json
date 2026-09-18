@@ -1,0 +1,18 @@
+{
+  "label": "安全确认智能体",
+  "safe_label": "安全确认智能体",
+  "stamp": 1789378847720,
+  "status": "completed",
+  "started_at": "2026-09-14T17:40:48+0800",
+  "timeout_seconds": 900,
+  "read_only_stage": false,
+  "max_tool_rounds": 1000,
+  "max_execution_time_ms": 600000,
+  "prompt_path": "08_a3s_安全确认智能体_prompt_1789378847720.txt",
+  "response_path": "08_a3s_安全确认智能体_response_1789378847720.txt",
+  "events_path": "08_a3s_安全确认智能体_events_1789378847720.jsonl",
+  "snapshot_path": "08_a3s_安全确认智能体_snapshot_1789378847720.json",
+  "interaction_log_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_173934_382488\\debug\\logs\\a3s_interactions.jsonl",
+  "completed_at": "2026-09-14T17:40:53+0800",
+  "response_bytes": 0
+}

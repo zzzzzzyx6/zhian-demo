@@ -1,0 +1,197 @@
+{
+  "batch": 5,
+  "metadata": {
+    "batch_id": "validation-001",
+    "candidate_ids": [
+      "VULN-009"
+    ],
+    "focus": "本地默认批次",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-009",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/bert_toxic.py",
+      "line": 13,
+      "location": "def optimize_cipher_tokens(toxic_texts, num_iterations)",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "model.eval()",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-009",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/bert_toxic.py",
+        "line": 13,
+        "location": "def optimize_cipher_tokens(toxic_texts, num_iterations)",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "model.eval()",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/bert_toxic.py",
+        "line": 13,
+        "start_line": 1,
+        "end_line": 58,
+        "source": "1: from transformers import AutoTokenizer, AutoModelForSequenceClassification\n2: import torch\n3: import torch.nn.functional as F\n4: import os\n5: import random\n6: \n7: def optimize_cipher_tokens(toxic_texts, num_iterations):\n8:     os.environ[\"CUDA_VISIBLE_DEVICES\"] = \"0\"\n9:     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\n10:     model_name = \"toxic-bert\"\n11:     tokenizer = AutoTokenizer.from_pretrained(model_name)\n12:     model = AutoModelForSequenceClassification.from_pretrained(model_name).to(device)\n13:     model.eval()\n14: \n15:     def calculate_toxicity_score(input_text):\n16:         inputs = tokenizer(input_text, return_tensors=\"pt\", padding=True, truncation=True, max_length=512).to(device)\n17:         with torch.no_grad():\n18:             logits = model(**inputs).logits\n19:             probabilities = F.softmax(logits, dim=1)\n20:             toxicity_score = probabilities[:, 0]\n21:         return toxicity_score.item()\n22: \n23:     emoji_chars = (\n24:         \"😀😃😄😁😆😅😂🤣😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😜😝😛🤑🤗🤔🤐🤨😶😏😒😞😔😟😕🙁☹️😣😖😫😩🥺\"\n25:         \"😤😠😡🤬😳🥵🥶😱😨😰😥😓🤯😢😭😤😠😡🤬🤢🤮🤧😷🤒🤕🤑😎🥳🤠🥸🤓🧐😶‍🌫️😬🤥😵‍💫😵🤯🤡\"\n26:         \"👹👺💀☠️👻👽👾🤖💩🔥💫🌟✨💥💢💤💦💨🕳️🛑🕵️‍♂️🕵️‍♀️👨‍🚀👩‍🚀🧑‍🚀👨‍⚖️👩‍⚖️🤴👸👳‍♂️👳‍♀️🧕\"\n27:         \"👮‍♂️👮‍♀️👷‍♂️👷‍♀️💂‍♂️💂‍♀️👨‍🏫👩‍🏫👨‍💻👩‍💻🕺💃🕴️👯‍♂️👯‍♀️🎅🤶🧑‍🎄👼🤰🤱👶👦👧👨👩👴👵\"\n28:         \"🐶🐱🐭🐹🐰🦊🦝🐻🐼🐨🐯🦁🐮🐷🐽🐸🐵🐔🐧🐦🐤🦆🦅🦉🦇🐺🐗🐴🦄🐝🐛🦋🐌🐞🐜🦗🕷️🕸️🦂🐢🐍🦎\"\n29:         \"🦖🦕🐙🦑🦐🦞🐠🐟🐡🐬🦭🐳🐋🦈🐊🐅🐆🦓🦍🦧🐘🦛🦏🐪🐫🦒🦘🦬🐄🐎🐖🐏🐑🦙🐐🦌🐕‍🦺🐩🐈🐓🦃🕊️\"\n30:     )\n31:     additional_special_chars = (\n32:         \"€£¥₹©®™✓✔✕✖✗✘⚠️⚡☔✨❌❗❓❕❔➡️⬅️⬆️⬇️➕➖➗✱✲\"\n33:         \"🔴🟠🟡🟢🔵🟣🟤⚫⚪🟥🟧🟨🟩🟦🟪🟫🔺🔻🔸🔹🔶🔷🔳🔲🧡💛💚💙💜🤎🖤🤍♥️♠️♣️♦️♤♧♢♣️♔♕♚♛🎲🎯🧩\"\n34:         \"💎⚜️🎖️🏆🎁🎈🎉🎊🎇🎆✨🏅🎨🎵🎶🎧🎤🎬🎸🎻🎺🥁🎷🎹💿📀🎞️🎥📷📸📹📼🖼️🎮🕹️🗡️⚔️🔪🪓🔫\"\n35:     )\n36: \n37:     vocab_tokens = list(tokenizer.get_vocab().keys())\n38:     char_tokens = tokenizer.tokenize(emoji_chars + additional_special_chars)\n39:     initial_token_set = vocab_tokens + char_tokens\n40:     random.shuffle(initial_token_set)\n41: \n42:     initial_text = [\"!\"] * 20\n43:     initial_text_tokens = tokenizer.convert_tokens_to_ids(initial_text)\n44: \n45:     best_initial_tokens = initial_text_tokens.copy()\n46:     best_overall_score = float('inf')\n47: \n48:     for iteration in range(num_iterations):\n49:         for toxic_text in toxic_texts:\n50:             modified_toxic_text = ' '.join(\n51:                 [f\"{tokenizer.decode(best_initial_tokens)} {word} {tokenizer.decode(best_initial_tokens)}\" for word in\n52:                  toxic_text.split()]\n53:             )\n54: \n55:             current_score = calculate_toxicity_score(modified_toxic_text)\n56: \n57:             for position in range(len(best_initial_tokens)):\n58:                 best_token = best_initial_tokens[position]",
+        "nearby_symbols": [
+          "7: def optimize_cipher_tokens(toxic_texts, num_iterations):",
+          "9: device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",
+          "11: tokenizer = AutoTokenizer.from_pretrained(model_name)",
+          "12: model = AutoModelForSequenceClassification.from_pretrained(model_name).to(device)",
+          "13: model.eval()",
+          "15: def calculate_toxicity_score(input_text):",
+          "16: inputs = tokenizer(input_text, return_tensors=\"pt\", padding=True, truncation=True, max_length=512).to(device)",
+          "19: probabilities = F.softmax(logits, dim=1)",
+          "21: return toxicity_score.item()",
+          "30: )",
+          "35: )",
+          "37: vocab_tokens = list(tokenizer.get_vocab().keys())",
+          "38: char_tokens = tokenizer.tokenize(emoji_chars + additional_special_chars)",
+          "40: random.shuffle(initial_token_set)",
+          "43: initial_text_tokens = tokenizer.convert_tokens_to_ids(initial_text)",
+          "45: best_initial_tokens = initial_text_tokens.copy()",
+          "46: best_overall_score = float('inf')",
+          "53: )",
+          "55: current_score = calculate_toxicity_score(modified_toxic_text)",
+          "63: random_token = tokenizer.convert_tokens_to_ids(random.choice(initial_token_set))"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/bert_toxic.py",
+        "language": "python",
+        "lines": 102,
+        "risk_score": 0.721,
+        "underexplored_score": 0.166,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "memory_safety",
+          "no_obvious_tests"
+        ],
+        "category_hits": {
+          "memory_safety": 2,
+          "authorization": 1,
+          "injection": 1,
+          "configuration": 2
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+      },
+      "ranking_hint": {},
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

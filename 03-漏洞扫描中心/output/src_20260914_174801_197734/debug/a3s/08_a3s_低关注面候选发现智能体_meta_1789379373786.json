@@ -1,0 +1,18 @@
+{
+  "label": "低关注面候选发现智能体",
+  "safe_label": "低关注面候选发现智能体",
+  "stamp": 1789379373786,
+  "status": "completed",
+  "started_at": "2026-09-14T17:49:34+0800",
+  "timeout_seconds": 1800,
+  "read_only_stage": false,
+  "max_tool_rounds": 1000,
+  "max_execution_time_ms": 1800000,
+  "prompt_path": "08_a3s_低关注面候选发现智能体_prompt_1789379373786.txt",
+  "response_path": "08_a3s_低关注面候选发现智能体_response_1789379373786.txt",
+  "events_path": "08_a3s_低关注面候选发现智能体_events_1789379373786.jsonl",
+  "snapshot_path": "08_a3s_低关注面候选发现智能体_snapshot_1789379373786.json",
+  "interaction_log_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\debug\\logs\\a3s_interactions.jsonl",
+  "completed_at": "2026-09-14T17:49:37+0800",
+  "response_bytes": 0
+}

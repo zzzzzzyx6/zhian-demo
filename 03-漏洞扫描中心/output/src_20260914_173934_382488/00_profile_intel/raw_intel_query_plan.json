@@ -1,0 +1,14 @@
+[
+  {
+    "query": "20260914 173107 f48600",
+    "source": "profile_agent",
+    "reason": "目标文件或项目名称，可作为辅助检索词。",
+    "confidence": 0.4
+  },
+  {
+    "query": "src",
+    "source": "profile_agent",
+    "reason": "输入目标文件名，可作为辅助检索词。",
+    "confidence": 0.35
+  }
+]
