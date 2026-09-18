@@ -50,7 +50,9 @@
     history: '<path d="M2 8a6 6 0 1 0 1.8-4.3"/><path d="M2 2v3.5h3.5"/><path d="M8 5v3.5l2.5 1.5"/>',
     trash: '<path d="M3 4h10"/><path d="M6 4V2.8h4V4"/><path d="M5 6v7M8 6v7M11 6v7"/><path d="M4 4l.6 10h6.8L12 4"/>',
     info: '<circle cx="8" cy="8" r="6"/><path d="M8 5v.5M8 7v4"/>',
-    home: '<path d="M8 2L2.5 6.5V13.5H13.5V6.5L8 2z"/><path d="M6.6 13.5V10.2h2.8v3.3"/>'
+    home: '<path d="M8 2L2.5 6.5V13.5H13.5V6.5L8 2z"/><path d="M6.6 13.5V10.2h2.8v3.3"/>',
+    edit: '<path d="M8 13.3h6"/><path d="M11 2.3a1.4 1.4 0 0 1 2 2L4.7 12.7l-2.7.6.6-2.7Z"/>',
+    zap: '<path d="M8.7 1.3L2.7 9.3h4L6 14.6l6-8h-4l.7-5.3Z"/>'
   };
 
   function icon(name, size, cls) {
@@ -1404,53 +1406,111 @@
   }
 
   // --------------------------------------------------------------- models
-  function ModelsView() {
-    var form = STATE.modelForm;
-    var formHtml = STATE.showModelForm ?
-      '<div class="card" style="margin-bottom:18px"><div class="card-h"><h3>新增模型配置</h3>' +
-      '<button class="btn sm ghost" id="btn-model-close">' + icon('x', 12) + '</button></div><div class="card-b">' +
-      '<div class="grid grid-2">' +
-      '<div class="field"><label>配置名称</label><input class="input" data-mf="name" value="' + esc(form.name) + '"/></div>' +
-      '<div class="field"><label>模型名称</label><input class="input mono" data-mf="model" value="' + esc(form.model) + '"/></div>' +
-      '<div class="field"><label>Base URL</label><input class="input mono" data-mf="base_url" value="' + esc(form.base_url) + '"/></div>' +
-      '<div class="field"><label>API Key</label><input class="input mono" type="password" data-mf="api_key" value="' + esc(form.api_key) + '"/></div>' +
-      '</div>' +
-      '<div class="row" style="justify-content:flex-end;margin-top:14px;gap:8px">' +
-      '<button class="btn" id="btn-model-cancel">取消</button>' +
-      '<button class="btn primary" id="btn-model-save">保存配置</button></div>' +
-      '</div></div>' : '';
+  // Model configs persist to localStorage so added / edited / deleted entries survive reload.
+  var MODEL_STORE_KEY = 'zhian-scan-models';
+  function modelStoreSave() {
+    try {
+      var user = D.modelConfigs.filter(function (m) { return !m.read_only; });
+      localStorage.setItem(MODEL_STORE_KEY, JSON.stringify(user));
+    } catch (e) {}
+  }
+  function modelStoreLoad() {
+    try {
+      var raw = localStorage.getItem(MODEL_STORE_KEY);
+      if (raw === null) { modelStoreSave(); return; } // first visit: keep the seeded configs
+      var arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return;
+      D.modelConfigs = D.modelConfigs.filter(function (m) { return m.read_only; }).concat(arr);
+    } catch (e) {}
+  }
+  function modelState(m) {
+    if (m._testing) return { label: '测试中', cls: 'b-info', testing: true };
+    if (m.last_test_status === 'failed') return { label: '未连通', cls: 'b-neutral' };
+    if (m.has_api_key || m.last_test_status === 'passed') return { label: '已连通', cls: 'b-ok' };
+    return { label: '未连通', cls: 'b-neutral' };
+  }
+  function modelValidate(d) {
+    if (!(d.name || '').trim()) return '请填写模型名称';
+    if (!(d.base_url || '').trim()) return '请填写 Base URL';
+    if (!(d.api_key || '').trim() && !d.has_api_key) return '请填写 API Key';
+    return '';
+  }
+  function maskKey(k) {
+    var t = String(k || '').trim();
+    return t.length > 8 ? t.slice(0, 3) + '...' + t.slice(-4) : '已保存';
+  }
 
+  function ModelsView() {
     var list = D.modelConfigs.length ? D.modelConfigs.map(function (m) {
-      var badge = m.read_only ? '<span class="badge b-info">配置文件 · 只读</span>'
-        : '<span class="badge ' + (m.last_test_status === 'passed' ? 'b-ok' : m.last_test_status === 'failed' ? 'b-critical' : 'b-info') + '">' +
-        (m.last_test_status === 'passed' ? '已通过' : m.last_test_status === 'failed' ? '失败' : '未测试') + '</span>';
-      var action = m.read_only ? '<span class="muted xs" style="white-space:nowrap">只读</span>'
-        : '<button class="btn sm" data-test="' + esc(m.id) + '" title="演示环境不发起连通性测试">' + icon('check', 12) + ' 测试</button>';
-      return '<div class="card"><div style="padding:16px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center">' +
-        '<div style="width:44px;height:44px;border-radius:8px;background:var(--bg-tint);color:var(--brand);display:grid;place-items:center;flex-shrink:0">' + icon('model', 20) + '</div>' +
-        '<div style="min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
-        '<span class="b" style="font-size:14px;white-space:nowrap">' + esc(m.name) + '</span>' + badge + '</div>' +
-        '<div style="display:flex;gap:12px;margin-top:6px;align-items:center;flex-wrap:wrap">' +
-        '<span class="mono xs muted" style="white-space:nowrap">' + esc(m.model) + '</span><span class="muted xs">·</span>' +
-        '<span class="mono xs muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:320px">' + esc(m.base_url) + '</span>' +
-        '<span class="muted xs">·</span>' +
-        '<span class="mono xs muted" style="white-space:nowrap">' + esc(m.masked_api_key || (m.has_api_key ? '已保存' : '无 Key')) + '</span>' +
-        '</div><div class="muted xs" style="margin-top:6px">' + esc(m.last_test_message || '未测试') + '</div></div>' +
-        '<div style="display:flex;gap:6px;flex-shrink:0">' + action + '</div></div></div>';
-    }).join('') : '<div class="empty"><div class="glyph">' + icon('model') + '</div>暂无模型配置，扫描将使用服务器环境变量</div>';
+      var st = modelState(m);
+      var badge = m.read_only
+        ? '<span class="badge b-info">只读</span>'
+        : '<span class="badge ' + st.cls + (st.testing ? ' conn-testing' : '') + '">' + st.label + '</span>';
+      var actions = m.read_only
+        ? '<span class="muted xs" style="white-space:nowrap">只读</span>'
+        : '<button class="model-action" data-medit="' + esc(m.id) + '" title="编辑" aria-label="编辑 ' + esc(m.name) + '">' + icon('edit', 15) + '</button>' +
+          '<button class="model-action" data-mtest="' + esc(m.id) + '" title="测试连接" aria-label="测试 ' + esc(m.name) + '">' + icon('zap', 15) + '</button>' +
+          '<button class="model-action danger" data-mdel="' + esc(m.id) + '" title="删除" aria-label="删除 ' + esc(m.name) + '">' + icon('trash', 15) + '</button>';
+      return '<div class="card"><div class="m-card-in">' +
+        '<div class="m-card-head">' +
+        '<span class="m-mark">' + icon('model', 19) + '</span>' +
+        '<div class="m-title"><strong>' + esc(m.name) + '</strong>' +
+        '<small>' + esc(m.vendor || m.model || m.base_url || '模型接入') + '</small></div>' +
+        badge + '</div>' +
+        '<div class="m-actions">' + actions + '</div></div></div>';
+    }).join('') : '<div class="empty"><div class="glyph">' + icon('model') + '</div>暂无模型配置，点击右上角按钮接入</div>';
 
     return PageHead({
       title: '模型 API', sub: 'A3S 智能体使用的大模型端点',
-      actions: '<button class="btn primary" id="btn-model-toggle">' + icon('plus', 14) + ' 新增配置</button>'
+      actions: '<button class="btn primary" id="btn-model-add">' + icon('plus', 14) + ' 新增模型</button>'
     }) + '<div class="page-body">' +
-      (STATE.modelError ? '<div class="cand-banner" style="margin-bottom:18px;border-color:var(--sig-critical-soft);background:var(--sig-critical-softer)">' + icon('alert', 15) + '<b>' + esc(STATE.modelError) + '</b></div>' : '') +
-      formHtml +
       '<div class="stack" style="gap:12px">' + list + '</div>' +
       '<div class="card" style="margin-top:18px;background:var(--bg-sunken)"><div class="card-b row" style="gap:12px;align-items:flex-start">' +
       icon('shield', 16, '') +
-      '<div><div class="b sm">API Key 服务端保存</div>' +
-      '<div class="muted xs" style="margin-top:3px;line-height:1.55">前端不会回显完整 Key，仅展示脱敏结果。测试按钮会调用后端的 OpenAI 兼容 chat/completions 连通性检查。</div></div>' +
+      '<div><div class="b sm">API Key 本地保存</div>' +
+      '<div class="muted xs" style="margin-top:3px;line-height:1.55">前端不会回显完整 Key，仅展示脱敏结果。保存前需完成连通性测试（本地模拟，不发起真实调用）。</div></div>' +
       '</div></div></div>';
+  }
+
+  // add / edit modal: 模型名称 / 厂商 / Base URL / API Key; test required before save
+  function modelModal() {
+    var d = STATE.modelDraft;
+    var fld = function (id, label, value, placeholder, extra, type) {
+      return '<div class="field"><label for="m-' + id + '">' + label + '</label>' +
+        '<input class="input" id="m-' + id + '" type="' + (type || 'text') + '" value="' + esc(value || '') + '" placeholder="' + (placeholder || '') + '" autocomplete="off" ' + (extra || '') + '/></div>';
+    };
+    var btnLabel = d.testing ? '测试中…' : (d.tested ? '✓ 已通过' : '测试链接');
+    return '<div class="modal-back" data-mclose="1"></div>' +
+      '<div class="modal-card" role="dialog" aria-modal="true" aria-label="' + (d.id ? '编辑模型' : '新增模型') + '">' +
+      '<div class="modal-h"><h3>' + (d.id ? '编辑模型' : '新增模型') + '</h3>' +
+      '<button class="btn sm ghost" data-mclose="1" aria-label="关闭">' + icon('x', 14) + '</button></div>' +
+      '<div class="modal-b"><form onsubmit="return false">' +
+      fld('name', '模型名称 *', d.name, '例如：测试模型', 'data-mf2="name"') +
+      fld('vendor', '厂商', d.vendor, '例如：DeepSeek', 'data-mf2="vendor"') +
+      fld('base', 'Base URL *', d.base_url, '填写服务地址', 'data-mf2="base_url"') +
+      '<div class="field"><label for="m-key">API Key *</label><div class="m-row">' +
+      '<input class="input mono" id="m-key" type="password" value="' + esc(d.api_key || '') + '" placeholder="' + (d.has_api_key ? '留空保留已保存的密钥' : '填写服务调用的 API Key') + '" autocomplete="off" data-mf2="api_key"/>' +
+      '<button class="btn" type="button" id="m-test-btn"' + (d.testing ? ' disabled' : '') + '>' + icon('zap', 14) + ' ' + btnLabel + '</button>' +
+      '</div></div>' +
+      '<p id="m-error" class="m-error" role="alert">' + esc(STATE.modelError || '') + '</p>' +
+      '</form></div>' +
+      '<div class="modal-f"><button class="btn" data-mclose="1">取消</button>' +
+      '<button class="btn primary" id="m-save">保存配置</button></div>' +
+      '</div>';
+  }
+
+  // plain delete confirm: text only, no dividers or tinted backgrounds
+  function modelDeleteModal() {
+    var m = D.modelConfigs.find(function (x) { return x.id === STATE.modelDeleting; });
+    if (!m) return '';
+    return '<div class="modal-back" data-mclose="1"></div>' +
+      '<div class="modal-card" role="dialog" aria-modal="true" aria-label="删除模型">' +
+      '<div class="modal-h"><h3>删除模型</h3>' +
+      '<button class="btn sm ghost" data-mclose="1" aria-label="关闭">' + icon('x', 14) + '</button></div>' +
+      '<div class="modal-b"><p class="m-plain-text">确认删除模型「' + esc(m.name) + '」吗？</p></div>' +
+      '<div class="modal-f"><button class="btn" data-mclose="1">取消</button>' +
+      '<button class="btn danger" id="m-del-confirm">删除</button></div>' +
+      '</div>';
   }
 
   // -------------------------------------------------------------- drawers
@@ -1622,7 +1682,7 @@
       '<div class="grid grid-2">' +
       field('任务名称', '<input class="input" data-np="name" value="' + esc(STATE.np.name) + '"/>') +
       field('大模型配置', '<select class="select" data-np="model_config_id"><option value="">使用服务器环境变量</option>' +
-        D.modelConfigs.map(function (m) { return '<option value="' + esc(m.id) + '">' + esc(m.name) + ' · ' + esc(m.model) + '</option>'; }).join('') + '</select>') +
+        D.modelConfigs.map(function (m) { return '<option value="' + esc(m.id) + '">' + esc(m.name) + (m.model ? ' · ' + esc(m.model) : '') + '</option>'; }).join('') + '</select>') +
       '</div>' +
       '<div class="field" style="margin-top:14px"><label>任务备注</label>' +
       '<textarea class="textarea" data-np="description">' + esc(STATE.np.description) + '</textarea></div>' +
@@ -1720,6 +1780,8 @@
       (STATE.drawerFinding ? findingDrawer(STATE.drawerFinding, D.probesByJob[STATE.drawerFinding.project_id] || []) : '') +
       (STATE.drawerCandidate ? candidateDrawer(STATE.drawerCandidate) : '') +
       (STATE.creating ? newProjectModal() : '') +
+      (STATE.modelDraft ? modelModal() : '') +
+      (STATE.modelDeleting ? modelDeleteModal() : '') +
       '</div>' +
       '<div id="toast"></div>';
 
@@ -1807,17 +1869,105 @@
     });
 
     // models
-    onClick(root, '#btn-model-toggle', function () { STATE.showModelForm = !STATE.showModelForm; STATE.modelError = ''; render(); });
-    onClick(root, '#btn-model-close', function () { STATE.showModelForm = false; render(); });
-    onClick(root, '#btn-model-cancel', function () { STATE.showModelForm = false; render(); });
-    root.querySelectorAll('[data-mf]').forEach(function (el) {
-      el.addEventListener('input', function () { STATE.modelForm[el.getAttribute('data-mf')] = el.value; });
+    onClick(root, '#btn-model-add', function () {
+      STATE.modelDraft = { id: '', name: '', vendor: '', base_url: '', api_key: '', tested: false, testing: false };
+      STATE.modelError = ''; render();
     });
-    onClick(root, '#btn-model-save', function () {
-      var f = STATE.modelForm;
-      if (!f.name || !f.base_url || !f.api_key || !f.model) { STATE.modelError = '演示环境：四个字段均为必填（静态 demo 不会保存）。'; render(); return; }
-      STATE.modelError = '演示环境为静态快照，新增的模型配置不会持久化。';
-      STATE.showModelForm = false; render();
+    onClick(root, '[data-medit]', function (e) {
+      var m = D.modelConfigs.find(function (x) { return x.id === e.currentTarget.getAttribute('data-medit'); });
+      if (!m) return;
+      STATE.modelDraft = { id: m.id, name: m.name, vendor: m.vendor || '', base_url: m.base_url, api_key: '', has_api_key: !!m.has_api_key, tested: false, testing: false };
+      STATE.modelError = ''; render();
+    });
+    onClick(root, '[data-mdel]', function (e) {
+      STATE.modelDeleting = e.currentTarget.getAttribute('data-mdel');
+      render();
+    });
+    onClick(root, '#m-del-confirm', function () {
+      var id = STATE.modelDeleting;
+      D.modelConfigs = D.modelConfigs.filter(function (m) { return m.id !== id; });
+      modelStoreSave();
+      STATE.modelDeleting = null;
+      render(); demoToast('模型配置已删除');
+    });
+    // close add/edit/delete overlays: backdrop, X, 取消
+    onClick(root, '[data-mclose]', function () {
+      STATE.modelDraft = null; STATE.modelDeleting = null; STATE.modelError = '';
+      render();
+    });
+    // form inputs write back to the draft; editing a connectivity field invalidates a passed test
+    root.querySelectorAll('[data-mf2]').forEach(function (el) {
+      el.addEventListener('input', function () {
+        var key = el.getAttribute('data-mf2');
+        STATE.modelDraft[key] = el.value;
+        if (key === 'base_url' || key === 'api_key') {
+          STATE.modelDraft.tested = false;
+          var b = document.getElementById('m-test-btn');
+          if (b && !STATE.modelDraft.testing) { b.classList.remove('ok'); b.innerHTML = icon('zap', 14) + ' 测试链接'; }
+        }
+      });
+    });
+    // inline connectivity test: button only, 测试中… -> green ✓ 已通过
+    onClick(root, '#m-test-btn', function () {
+      var d = STATE.modelDraft;
+      if (!d || d.testing) return;
+      var err = modelValidate(d);
+      var errEl = document.getElementById('m-error');
+      if (err) { STATE.modelError = err; if (errEl) errEl.textContent = err; return; }
+      STATE.modelError = '';
+      if (errEl) errEl.textContent = '';
+      d.testing = true;
+      var btn = document.getElementById('m-test-btn');
+      if (btn) { btn.disabled = true; btn.classList.remove('ok'); btn.innerHTML = icon('zap', 14) + ' 测试中…'; }
+      setTimeout(function () {
+        if (!STATE.modelDraft) return;
+        d.testing = false; d.tested = true;
+        var b2 = document.getElementById('m-test-btn');
+        if (b2 && b2.isConnected) { b2.disabled = false; b2.classList.add('ok'); b2.innerHTML = icon('check', 14) + ' ✓ 已通过'; }
+        demoToast('连接测试成功');
+      }, 800);
+    });
+    // save requires a passed connectivity test first
+    onClick(root, '#m-save', function () {
+      var d = STATE.modelDraft;
+      if (!d) return;
+      if (!d.tested) { STATE.modelError = '请先完成连通性测试，再保存配置'; render(); return; }
+      var err = modelValidate(d);
+      if (err) { STATE.modelError = err; render(); return; }
+      var id = d.id || ('mdl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8));
+      var existing = D.modelConfigs.find(function (m) { return m.id === id; });
+      var keyEntered = (d.api_key || '').trim();
+      var rec = existing ? Object.assign({}, existing) : { id: id, created_at: Date.now() / 1000 };
+      rec.name = d.name.trim();
+      rec.vendor = (d.vendor || '').trim();
+      rec.base_url = d.base_url.trim().replace(/\/$/, '');
+      rec.model = rec.model || rec.name;
+      rec.updated_at = Date.now() / 1000;
+      rec.last_test_status = 'passed';
+      rec.last_test_message = '连通性测试通过（本地模拟）';
+      rec.last_test_at = Date.now() / 1000;
+      if (keyEntered) { rec.has_api_key = true; rec.masked_api_key = maskKey(keyEntered); }
+      else if (!existing) { rec.has_api_key = false; }
+      var at = D.modelConfigs.findIndex(function (m) { return m.id === id; });
+      if (at >= 0) D.modelConfigs[at] = rec; else D.modelConfigs.push(rec);
+      modelStoreSave();
+      STATE.modelDraft = null; STATE.modelError = '';
+      render(); demoToast('配置成功');
+    });
+    // card test: only the status tag flips, no modal
+    onClick(root, '[data-mtest]', function (e) {
+      var m = D.modelConfigs.find(function (x) { return x.id === e.currentTarget.getAttribute('data-mtest'); });
+      if (!m || m.read_only || m._testing) return;
+      m._testing = true; render();
+      setTimeout(function () {
+        m._testing = false;
+        var ok = !!m.has_api_key;
+        m.last_test_status = ok ? 'passed' : 'failed';
+        m.last_test_message = ok ? '连通性测试通过（本地模拟）' : '连接测试失败：缺少 API Key';
+        m.last_test_at = Date.now() / 1000;
+        modelStoreSave(); render();
+        demoToast(ok ? '连接测试成功' : '连接测试失败：缺少 API Key');
+      }, 800);
     });
     // 账户菜单：点击 chip 展开 / 收起，Escape 关闭，点空白处关闭
     var chip = root.querySelector('#user-chip');
@@ -1894,5 +2044,6 @@
   }
 
   window.addEventListener('hashchange', render);
+  modelStoreLoad();
   render();
 })();

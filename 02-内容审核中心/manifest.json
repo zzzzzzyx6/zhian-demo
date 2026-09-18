@@ -10,6 +10,7 @@
   ],
   "js": [
     "core.js",
+    "connections.js",
     "review.js",
     "review-governance.js",
     "center-shell.js",

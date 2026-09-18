@@ -3,7 +3,7 @@
 const A=window.App,E=A.escape,I=A.icon;
 const definitions={
  attack:{name:'攻防演练中心',icon:'activity',items:[['arena','攻防演练场','实时演练与回放','activity'],['tasks','任务管理','方案与执行记录','clock'],['banks','题库管理','题库与导入','file'],['models','模型接入','模型与智能体','layers']]},
- review:{name:'内容审核中心',icon:'shield',items:[['records','审核记录','自动审核结果','file'],['samples','治理样本','回归与标注','layers'],['rules','规则治理','验证与版本','settings']]},
+ review:{name:'内容审核中心',icon:'shield',items:[['records','审核记录','自动审核结果','file'],['samples','治理样本','回归与标注','layers'],['rules','规则治理','验证与版本','settings'],['models','模型接入','模型配置','layers']]},
  scan:{name:'漏洞扫描中心',icon:'code',items:[['tasks','扫描任务','创建与进度','activity'],['findings','漏洞处置','证据与复测','alert'],['assets','资产管理','扫描目标','layers'],['reports','扫描报告','结果与修复建议','file']]}
 };
 A.centers={
