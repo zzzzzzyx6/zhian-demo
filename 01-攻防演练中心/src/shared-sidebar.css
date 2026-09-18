@@ -55,8 +55,8 @@ body #app.has-center-nav>.main-shell>.standalone-topbar{display:none!important}
 body #app.has-center-nav.nav-collapsed:not(.scan-integrated) #view{padding-top:72px!important}
 
 
-/* Text-only sidebar navigation across all centers. */
-body #app .center-section,.sidebar-section{display:none!important}
-body #app .center-nav-item .center-nav-icon,body #app .center-create>.icon,.sidebar .nav-item>.ico{display:none!important}
+/* Sidebar shows section headings and item icons. */
+body #app .center-nav-item .center-nav-icon,body #app .center-create>.icon,.sidebar .nav-item>.ico{display:flex!important}
 body #app .center-sidebar nav,.sidebar-nav{padding-top:16px!important}
+@media(max-width:700px){body #app .center-section{display:none!important}}
 

@@ -4,3 +4,14 @@ Desktop.ini
 *.log
 .vscode/
 .idea/
+
+# agent-internal workspace state
+.workbuddy/
+
+# scratch / temp outputs
+__smoke_out.txt
+__out.txt
+__final.txt
+__patch.py
+__fix1.py
+__check_delete.js
