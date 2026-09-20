@@ -107,7 +107,7 @@ const input = (sel, v) => { const e = makeEls(captured.root, sel)[0]; if (e) { e
   check('first visit seeded the localStorage store', !!store['zhian-scan-models']);
 
   const view = captured.root;
-  check('page head says 模型 API', view.includes('模型 API'));
+  check('page head says 模型管理', view.includes('模型管理'));
   check('head has 新增模型 button', view.includes('新增模型'));
   check('head no longer has 新增配置', !view.includes('新增配置'));
   check('no inline form card remains', !view.includes('新增模型配置'));

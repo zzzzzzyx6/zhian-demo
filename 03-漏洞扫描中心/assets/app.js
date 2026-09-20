@@ -52,7 +52,8 @@
     info: '<circle cx="8" cy="8" r="6"/><path d="M8 5v.5M8 7v4"/>',
     home: '<path d="M8 2L2.5 6.5V13.5H13.5V6.5L8 2z"/><path d="M6.6 13.5V10.2h2.8v3.3"/>',
     edit: '<path d="M8 13.3h6"/><path d="M11 2.3a1.4 1.4 0 0 1 2 2L4.7 12.7l-2.7.6.6-2.7Z"/>',
-    zap: '<path d="M8.7 1.3L2.7 9.3h4L6 14.6l6-8h-4l.7-5.3Z"/>'
+    zap: '<path d="M8.7 1.3L2.7 9.3h4L6 14.6l6-8h-4l.7-5.3Z"/>',
+    box: '<path d="M8 1.2 1.8 4.3v7.4L8 14.8l6.2-3.1V4.3L8 1.2ZM1.8 4.3 8 7.4l6.2-3.1M8 7.4v7.4"/>'
   };
 
   function icon(name, size, cls) {
@@ -422,12 +423,12 @@
   // ============================================================== shell
   var SECTIONS = [
     { title: '工作台', items: [
-      { id: 'dashboard', label: '仪表盘', icon: 'dashboard', path: '/' },
-      { id: 'service', label: '运行', icon: 'scan', path: '/service' },
-      { id: 'projects', label: '任务', icon: 'project', path: '/projects' }
+      { id: 'dashboard', label: '仪表盘', desc: '总览与态势', icon: 'dashboard', path: '/' },
+      { id: 'service', label: '运行', desc: '扫描服务', icon: 'scan', path: '/service' },
+      { id: 'projects', label: '任务', desc: '创建与进度', icon: 'project', path: '/projects' }
     ] },
     { title: '系统配置', items: [
-      { id: 'models', label: '模型 API', icon: 'model', path: '/models' }
+      { id: 'models', label: '模型管理', desc: '模型连接配置', icon: 'box', path: '/models' }
     ] }
   ];
 
@@ -441,8 +442,8 @@
       var items = sec.items.map(function (item) {
         var on = item.path === '/' ? active === '/' : active.indexOf(item.path) === 0;
         var badge = c[item.id] != null ? '<span class="count mono">' + c[item.id] + '</span>' : '';
-        return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + '" href="#' + item.path + '">' +
-          '<span class="ico">' + icon(item.icon) + '</span><span>' + item.label + '</span>' + badge + '</a>';
+        return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + ' · ' + item.desc + '" href="#' + item.path + '">' +
+          '<span class="ico">' + icon(item.icon) + '</span><span class="nav-text"><strong>' + item.label + '</strong><small>' + item.desc + '</small></span>' + badge + '</a>';
       }).join('');
       return '<div class="sidebar-section">' + sec.title + '</div><nav class="sidebar-nav">' + items + '</nav>';
     }).join('');
@@ -1467,7 +1468,7 @@
     }).join('') : '<div class="empty"><div class="glyph">' + icon('model') + '</div>暂无模型配置，点击右上角按钮接入</div>';
 
     return PageHead({
-      title: '模型 API', sub: 'A3S 智能体使用的大模型端点',
+      title: '模型管理', sub: 'A3S 智能体使用的大模型端点',
       actions: '<button class="btn primary" id="btn-model-add">' + icon('plus', 14) + ' 新增模型</button>'
     }) + '<div class="page-body"><div class="m-grid">' + list + '</div></div>';
   }
