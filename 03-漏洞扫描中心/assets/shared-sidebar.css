@@ -7,7 +7,7 @@ body #app .center-brand strong,.sidebar-brand .name{font-size:21px!important;fon
 body #app .center-mobile-mark{display:none!important}
 body #app .center-toggle,body #app .center-home,.zhian-collapse,.zhian-home{display:flex;align-items:center;gap:10px;margin:6px 14px!important;padding:10px 12px!important;min-height:40px;width:auto;border:0;background:transparent;color:#52647e;border-radius:6px;font:400 13px/20px Inter,'Microsoft YaHei',sans-serif;cursor:pointer;text-decoration:none;box-sizing:border-box;justify-content:flex-start}
 body #app .center-toggle:hover,body #app .center-home:hover,.zhian-collapse:hover,.zhian-home:hover{background:#edf3ff;color:#2563eb}
-body #app .center-section,.sidebar-section{margin:0;padding:18px 20px 8px;color:#94a3b8;font:400 12px/18px Inter,'Microsoft YaHei',sans-serif;letter-spacing:0;text-align:left}
+body #app .center-section,.sidebar-section{margin:0;padding:18px 14px 8px;color:#94a3b8;font:400 12px/18px Inter,'Microsoft YaHei',sans-serif;letter-spacing:0;text-align:left}
 body #app .center-sidebar nav,.sidebar-nav{padding:8px 12px!important;display:flex;flex-direction:column;gap:5px;overflow-y:auto}
 body #app .center-nav-item,.sidebar .nav-item{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;height:auto;margin:0!important;padding:13px 14px!important;border:0;border-radius:8px!important;background:transparent;color:#46566e;box-sizing:border-box;text-decoration:none;box-shadow:none;font:400 14px/22px Inter,'Microsoft YaHei',sans-serif}
 body #app .center-nav-item:hover,.sidebar .nav-item:hover{background:#f1f5fd}
