@@ -438,18 +438,18 @@
 
   function Sidebar(active) {
     var c = counts();
-    var groups = SECTIONS.map(function (sec) {
+    var nav = SECTIONS.map(function (sec) {
       var items = sec.items.map(function (item) {
         var on = item.path === '/' ? active === '/' : active.indexOf(item.path) === 0;
         var badge = c[item.id] != null ? '<span class="count mono">' + c[item.id] + '</span>' : '';
         return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + ' · ' + item.desc + '" href="#' + item.path + '">' +
           '<span class="ico">' + icon(item.icon) + '</span><span class="nav-text"><strong>' + item.label + '</strong></span>' + badge + '</a>';
       }).join('');
-      return '<nav class="sidebar-nav">' + '<div class="sidebar-section">' + sec.title + '</div>' + items + '</nav>';
+      return '<div class="sidebar-section">' + sec.title + '</div>' + items;
     }).join('');
     return '<aside class="sidebar">' +
       '<div class="sidebar-brand"><div><div class="name">漏洞扫描中心</div></div>' +
-      '<button class="zhian-collapse" type="button" aria-label="收起侧边栏" onclick="window.zhianToggle()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button></div>' + groups +
+      '<button class="zhian-collapse" type="button" aria-label="收起侧边栏" onclick="window.zhianToggle()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button></div>' + '<nav class="sidebar-nav">' + nav + '</nav>' +
       '<div class="sidebar-foot">' +
       '<div class="user-chip" id="user-chip" role="button" tabindex="0" title="账户菜单">' +
       '<div class="avatar">安</div><div class="who"><div class="b" style="font-size:13px">安全管理员</div></div>' +
