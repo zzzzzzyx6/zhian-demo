@@ -420,11 +420,15 @@
   }
 
   // ============================================================== shell
-  var NAV = [
-    { id: 'dashboard', label: '仪表盘', icon: 'dashboard', path: '/' },
-    { id: 'service', label: '运行', icon: 'scan', path: '/service' },
-    { id: 'projects', label: '任务', icon: 'project', path: '/projects' },
-    { id: 'models', label: '模型 API', icon: 'model', path: '/models' }
+  var SECTIONS = [
+    { title: '工作台', items: [
+      { id: 'dashboard', label: '仪表盘', icon: 'dashboard', path: '/' },
+      { id: 'service', label: '运行', icon: 'scan', path: '/service' },
+      { id: 'projects', label: '任务', icon: 'project', path: '/projects' }
+    ] },
+    { title: '系统配置', items: [
+      { id: 'models', label: '模型 API', icon: 'model', path: '/models' }
+    ] }
   ];
 
   function counts() {
@@ -433,16 +437,18 @@
 
   function Sidebar(active) {
     var c = counts();
-    var workbench = NAV.map(function (item) {
-      var on = item.path === '/' ? active === '/' : active.indexOf(item.path) === 0;
-      var badge = c[item.id] != null ? '<span class="count mono">' + c[item.id] + '</span>' : '';
-      return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + '" href="#' + item.path + '">' +
-        '<span class="ico">' + icon(item.icon) + '</span><span>' + item.label + '</span>' + badge + '</a>';
+    var groups = SECTIONS.map(function (sec) {
+      var items = sec.items.map(function (item) {
+        var on = item.path === '/' ? active === '/' : active.indexOf(item.path) === 0;
+        var badge = c[item.id] != null ? '<span class="count mono">' + c[item.id] + '</span>' : '';
+        return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + '" href="#' + item.path + '">' +
+          '<span class="ico">' + icon(item.icon) + '</span><span>' + item.label + '</span>' + badge + '</a>';
+      }).join('');
+      return '<div class="sidebar-section">' + sec.title + '</div><nav class="sidebar-nav">' + items + '</nav>';
     }).join('');
     return '<aside class="sidebar">' +
       '<div class="sidebar-brand"><div><div class="name">漏洞扫描中心</div></div>' +
-      '<button class="zhian-collapse" type="button" aria-label="收起侧边栏" onclick="window.zhianToggle()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button></div>' + '' + '<div class="sidebar-section">工作台</div>' +
-      '<nav class="sidebar-nav">' + workbench + '</nav>' +
+      '<button class="zhian-collapse" type="button" aria-label="收起侧边栏" onclick="window.zhianToggle()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button></div>' + groups +
       '<div class="sidebar-foot">' +
       '<div class="user-chip" id="user-chip" role="button" tabindex="0" title="账户菜单">' +
       '<div class="avatar">安</div><div class="who"><div class="b" style="font-size:13px">安全管理员</div></div>' +
@@ -1451,25 +1457,19 @@
         : '<button class="model-action" data-medit="' + esc(m.id) + '" title="编辑" aria-label="编辑 ' + esc(m.name) + '">' + icon('edit', 15) + '</button>' +
           '<button class="model-action" data-mtest="' + esc(m.id) + '" title="测试连接" aria-label="测试 ' + esc(m.name) + '">' + icon('zap', 15) + '</button>' +
           '<button class="model-action danger" data-mdel="' + esc(m.id) + '" title="删除" aria-label="删除 ' + esc(m.name) + '">' + icon('trash', 15) + '</button>';
-      return '<div class="card"><div class="m-card-in">' +
+      return '<article class="card m-card"><div class="m-card-in">' +
         '<div class="m-card-head">' +
         '<span class="m-mark">' + icon('model', 19) + '</span>' +
         '<div class="m-title"><strong>' + esc(m.name) + '</strong>' +
         '<small>' + esc(m.vendor || m.model || m.base_url || '模型接入') + '</small></div>' +
         badge + '</div>' +
-        '<div class="m-actions">' + actions + '</div></div></div>';
+        '<div class="m-actions">' + actions + '</div></div></article>';
     }).join('') : '<div class="empty"><div class="glyph">' + icon('model') + '</div>暂无模型配置，点击右上角按钮接入</div>';
 
     return PageHead({
       title: '模型 API', sub: 'A3S 智能体使用的大模型端点',
       actions: '<button class="btn primary" id="btn-model-add">' + icon('plus', 14) + ' 新增模型</button>'
-    }) + '<div class="page-body">' +
-      '<div class="stack" style="gap:12px">' + list + '</div>' +
-      '<div class="card" style="margin-top:18px;background:var(--bg-sunken)"><div class="card-b row" style="gap:12px;align-items:flex-start">' +
-      icon('shield', 16, '') +
-      '<div><div class="b sm">API Key 本地保存</div>' +
-      '<div class="muted xs" style="margin-top:3px;line-height:1.55">前端不会回显完整 Key，仅展示脱敏结果。保存前需完成连通性测试（本地模拟，不发起真实调用）。</div></div>' +
-      '</div></div></div>';
+    }) + '<div class="page-body"><div class="m-grid">' + list + '</div></div>';
   }
 
   // add / edit modal: 模型名称 / 厂商 / Base URL / API Key; test required before save
