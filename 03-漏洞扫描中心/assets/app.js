@@ -424,7 +424,6 @@
   var SECTIONS = [
     { title: '工作台', items: [
       { id: 'dashboard', label: '仪表盘', desc: '总览与态势', icon: 'dashboard', path: '/' },
-      { id: 'service', label: '运行', desc: '扫描服务', icon: 'scan', path: '/service' },
       { id: 'projects', label: '任务', desc: '创建与进度', icon: 'project', path: '/projects' }
     ] },
     { title: '系统配置', items: [
@@ -646,12 +645,7 @@
       edgesSvg + '</svg>' + boxes + '</div>';
   }
 
-  function ServiceView() {
-    var job = pickActiveJob();
-    if (!job) {
-      return PageHead({ title: '运行' }) +
-        '<div class="page-body"><div class="empty"><div class="glyph">' + icon('scan') + '</div>暂无扫描任务 · 新建扫描后将在此实时呈现工作流进度</div></div>';
-    }
+    function WorkflowTopologyCards(job) {
     var artifacts = D.artifactsByJob[job.id] || {};
     var nodes = D.nodesByJob[job.id] || [];
     var overall = job.status;
@@ -717,11 +711,7 @@
         '</div>';
     }
 
-    return PageHead({
-      title: '运行',
-      actions: '<a class="btn sm ghost" href="#/projects/' + encodeURIComponent(job.id) + '">' + icon('project', 13) + ' 查看任务详情</a>'
-    }) + '<div class="page-body">' +
-      '<div class="card"><div class="card-h">' +
+    return '<div class="card"><div class="card-h">' +
       '<div style="display:flex;align-items:center;gap:10px"><h3>工作流拓扑</h3>' +
       (overall === 'running' ? '<span class="status running"><span class="pulse"></span>live</span>' : '') +
       '</div>' +
@@ -734,10 +724,8 @@
       '</div></div><div class="card-b">' + bodyHtml + '</div></div>' +
       '<div class="card"><div class="card-h"><h3>运行信息</h3><span class="muted xs mono">' +
       (findingsCount != null ? findingsCount + ' 漏洞' : '0 漏洞') + (patchesCount != null ? ' · ' + patchesCount + ' 修复' : '') +
-      '</span></div><div class="card-b">' + runInfo + '</div></div>' +
-      '</div>';
+      '</span></div><div class="card-b">' + runInfo + '</div></div>';
   }
-
   // ------------------------------------------------------ projects view
   function projectRow(p) {
     var initial = String(p.name).replace(/[^\u4e00-\u9fa5A-Za-z]/g, '').slice(0, 1) || '·';
@@ -1065,6 +1053,10 @@
       out += '<div class="card"><div class="card-h"><h3>待验证候选 <span class="muted xs mono" style="margin-left:8px">' + openCands.length + ' 项</span></h3>' +
         '<button class="btn sm ghost" data-tab="pending">查看全部 ' + icon('chevron', 11) + '</button></div>' +
         '<div class="card-b stack" style="gap:10px">' + topCands.map(function (c) { return CandidateCard(c, true); }).join('') + '</div></div>';
+    }
+    var topoNodes = D.nodesByJob[project.id] || [];
+    if (topoNodes.length) {
+      out += WorkflowTopologyCards(project);
     }
     return out + '</div>';
   }
@@ -1726,7 +1718,6 @@
     var raw = String(location.hash || '').replace(/^#/, '');
     if (!raw) return { name: 'dashboard' };
     var parts = raw.split('/').filter(Boolean);
-    if (parts[0] === 'service') return { name: 'service' };
     if (parts[0] === 'projects' && parts[1]) return { name: 'project', id: decodeURIComponent(parts[1]) };
     if (parts[0] === 'projects') return { name: 'projects' };
     if (parts[0] === 'models') return { name: 'models' };
@@ -1744,8 +1735,7 @@
     if (route.name !== 'project') STATE.projectId = null;
 
     var main;
-    if (route.name === 'service') main = ServiceView();
-    else if (route.name === 'projects') main = ProjectsView();
+    if (route.name === 'projects') main = ProjectsView();
     else if (route.name === 'models') main = ModelsView();
     else if (route.name === 'project') {
       var project = D.projects.find(function (p) { return p.id === route.id; });
