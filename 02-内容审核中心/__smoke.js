@@ -69,12 +69,13 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const sidebar = captured['center-sidebar'] || '';
 
   // sidebar entry
-  check('sidebar has 模型接入 item', sidebar.includes('模型接入'));
+  check('sidebar has 模型管理 item', sidebar.includes('模型管理'));
+  check('sidebar has 系统配置 section', sidebar.includes('系统配置'));
   check('sidebar still has 审核记录 item', sidebar.includes('审核记录'));
   check('sidebar has no agent entry', !sidebar.includes('智能体'));
 
   // page head: single add button, no tabs
-  check('view heading says 模型接入', view.includes('模型接入'));
+  check('view heading says 模型管理', view.includes('模型管理'));
   check('head has 接入模型 button', view.includes('接入模型'));
   check('head has no kind tabs', !view.includes('connection-kind-tabs'));
 
