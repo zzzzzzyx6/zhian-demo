@@ -103,7 +103,7 @@ const input = (sel, v) => { const e = makeEls(captured.root, sel)[0]; if (e) { e
   const D = window.DEMO_DATA;
 
   // seeded configs are still there after modelStoreLoad()
-  check('two seeded configs survive store load', D.modelConfigs.length === 2);
+  check('three seeded configs survive store load', D.modelConfigs.length === 3);
   check('first visit seeded the localStorage store', !!store['zhian-scan-models']);
 
   const view = captured.root;
@@ -112,7 +112,7 @@ const input = (sel, v) => { const e = makeEls(captured.root, sel)[0]; if (e) { e
   check('head no longer has 新增配置', !view.includes('新增配置'));
   check('no inline form card remains', !view.includes('新增模型配置'));
   check('card has 已连通 badge', view.includes('已连通'));
-  check('card has 未连通 badge', view.includes('未连通'));
+  check('cards show the three demo models', view.includes('Qwen2.5-72B-Instruct') && view.includes('DeepSeek-V3') && view.includes('DeepSeek-V4-Flash'));
   check('bare icon actions', view.includes('class="model-action"') && view.includes('model-action danger'));
   check('no bordered test button', !view.includes('演示环境不发起连通性测试'));
   check('no delete button on the card', !view.includes('id="btn-del"'));

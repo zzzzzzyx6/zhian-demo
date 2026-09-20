@@ -7,8 +7,9 @@ const C=A.connections={
  init(){
   if(A.data.connections) return;
   A.data.connections={models:[
-   {id:'m1',kind:'model',name:'示例模型 · Qwen',vendor:'Qwen',model:'qwen-plus',endpoint:'',auth:'none',connectStatus:'ok',sample:true,desc:'内置示例连接'},
-   {id:'m2',kind:'model',name:'DeepSeek-V3',vendor:'DeepSeek',model:'deepseek-chat',endpoint:'https://api.deepseek.com',auth:'bearer',connectStatus:'pending',desc:'自有模型接入'}
+   {id:'m1',kind:'model',name:'Qwen2.5-72B-Instruct',vendor:'Qwen',model:'Qwen2.5-72B-Instruct',endpoint:'https://model.example/v1',auth:'none',connectStatus:'ok',sample:true,desc:'通用文本对话能力'},
+   {id:'m2',kind:'model',name:'DeepSeek-V3',vendor:'DeepSeek',model:'DeepSeek-V3',endpoint:'https://api.deepseek.com',auth:'none',connectStatus:'ok',desc:'攻击生成与通用推理'},
+   {id:'m3',kind:'model',name:'DeepSeek-V4-Flash',vendor:'DeepSeek',model:'deepseek-v4-flash',endpoint:'https://api.deepseek.com',auth:'none',connectStatus:'ok',desc:'推理模型，用于结果评价'}
   ]};
   A.save();
   for(const m of A.data.connections.models){

@@ -3083,30 +3083,46 @@ window.DEMO_DATA = {
   "patches": [],
   "modelConfigs": [
     {
-      "id": "mdl_20260914_163900_c66866",
-      "name": "Deepseek",
-      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
-      "model": "deepseek-v4-flash-260425",
+      "id": "mdl_qwen25_72b_instruct",
+      "name": "Qwen2.5-72B-Instruct",
+      "vendor": "Qwen",
+      "base_url": "https://model.example/v1",
+      "model": "Qwen2.5-72B-Instruct",
       "created_at": 1789375140.4256535,
       "updated_at": 1789375143.2273788,
       "last_test_status": "passed",
       "last_test_message": "OpenAI 兼容 chat/completions 测试通过",
       "last_test_at": 1789375143.2273788,
       "has_api_key": true,
-      "masked_api_key": "ark-...f030"
+      "masked_api_key": "sk-...qwen"
     },
     {
-      "id": "mdl_20260914_163830_23147e",
-      "name": "deepseek",
-      "base_url": "https://ark.cn-beijing.volces.com/api/v3/chat",
-      "model": "deepseek-v4-flash-260425",
+      "id": "mdl_deepseek_v3",
+      "name": "DeepSeek-V3",
+      "vendor": "DeepSeek",
+      "base_url": "https://api.deepseek.com",
+      "model": "DeepSeek-V3",
       "created_at": 1789375110.5384257,
       "updated_at": 1789375123.187107,
-      "last_test_status": "failed",
-      "last_test_message": "HTTP 404: {\"error\":{\"code\":\"InvalidAction\",\"message\":\"The specified action is invalid: /api/v3/chat/chat/completions Request id: 0217893751231103f04613060c95c0e1cb70b4f628471a9971626\",\"param\":\"\",\"type\":\"NotFound\"}}",
+      "last_test_status": "passed",
+      "last_test_message": "OpenAI 兼容 chat/completions 测试通过",
       "last_test_at": 1789375123.187107,
       "has_api_key": true,
-      "masked_api_key": "ark-...f030"
+      "masked_api_key": "sk-...v3"
+    },
+    {
+      "id": "mdl_deepseek_v4_flash",
+      "name": "DeepSeek-V4-Flash",
+      "vendor": "DeepSeek",
+      "base_url": "https://api.deepseek.com",
+      "model": "deepseek-v4-flash",
+      "created_at": 1789375080.1234567,
+      "updated_at": 1789375090.7654321,
+      "last_test_status": "passed",
+      "last_test_message": "OpenAI 兼容 chat/completions 测试通过",
+      "last_test_at": 1789375090.7654321,
+      "has_api_key": true,
+      "masked_api_key": "sk-...flash"
     }
   ],
   "trashItems": [

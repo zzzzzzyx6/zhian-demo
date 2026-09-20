@@ -80,34 +80,40 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check('head has no kind tabs', !view.includes('connection-kind-tabs'));
 
   // cards
-  check('card 示例模型 · Qwen renders', view.includes('示例模型 · Qwen'));
+  check('card Qwen2.5-72B-Instruct renders', view.includes('Qwen2.5-72B-Instruct'));
   check('card vendor preview Qwen', view.includes('Qwen'));
   check('card DeepSeek-V3 renders', view.includes('DeepSeek-V3'));
+  check('card DeepSeek-V4-Flash renders', view.includes('DeepSeek-V4-Flash'));
   check('card has 已连通 badge', /badge green[^"]*connection-state/.test(view) && view.includes('已连通'));
-  check('card has 未连通 badge', view.includes('未连通'));
+  check('seed cards are all 已连通 like 01', !view.includes('未连通'));
   check('card has bare icon actions', view.includes('class="model-action"') && view.includes('model-action danger'));
   check('no divider markup on card actions', !view.includes('attack-model-divider'));
 
   check('connState m1 sample -> 已连通', A.connections.connState(A.connections.db.find((m) => m.id === 'm1')).label === '已连通');
-  check('connState m2 no key -> 未连通', A.connections.connState(A.connections.db.find((m) => m.id === 'm2')).label === '未连通');
+  check('connState DeepSeek-V3 -> 已连通', A.connections.connState(A.connections.db.find((m) => m.id === 'm2')).label === '已连通');
+  check('connState DeepSeek-V4-Flash -> 已连通', A.connections.connState(A.connections.db.find((m) => m.id === 'm3')).label === '已连通');
+
+  // an un-configured user connection drives the 未连通 -> 测试中 -> 未连通 flow
+  A.connections.db.push({id:'mx',kind:'model',name:'未配置连接',vendor:'',model:'demo-72b',endpoint:'https://api.example.com',auth:'bearer',connectStatus:'pending'});
+  check('connState mx no key -> 未连通', A.connections.connState(A.connections.db.find((m) => m.id === 'mx')).label === '未连通');
 
   // card test button: only the status tag flips, no modal
   const modalBefore = captured['modal'];
-  A.connections.test('m2');
-  check('card test flips tag to 测试中', A.connections.connState(A.connections.db.find((m) => m.id === 'm2')).label === '测试中');
+  A.connections.test('mx');
+  check('card test flips tag to 测试中', A.connections.connState(A.connections.db.find((m) => m.id === 'mx')).label === '测试中');
   check('card test opens no modal', captured['modal'] === modalBefore);
   await wait(1100);
-  check('card test without key ends 未连通', A.connections.connState(A.connections.db.find((m) => m.id === 'm2')).label === '未连通');
+  check('card test without key ends 未连通', A.connections.connState(A.connections.db.find((m) => m.id === 'mx')).label === '未连通');
 
   // delete modal
-  A.connections.remove('m2');
+  A.connections.remove('mx');
   const delModal = captured['modal'] || '';
   check('delete modal is plain', /modal-panel\s+plain/.test(delModal));
   check('delete modal title 删除模型', delModal.includes('删除模型'));
-  check('delete modal body asks 确认删除模型', delModal.includes('确认删除模型') && delModal.includes('DeepSeek-V3'));
+  check('delete modal body asks 确认删除模型', delModal.includes('确认删除模型') && delModal.includes('未配置连接'));
   check('delete modal has 取消 + red 删除', delModal.includes('取消') && delModal.includes('btn danger') && delModal.includes('>删除<'));
-  A.connections.removeConfirm('m2');
-  check('removeConfirm deletes the model', !A.connections.db.some((m) => m.id === 'm2'));
+  A.connections.removeConfirm('mx');
+  check('removeConfirm deletes the model', !A.connections.db.some((m) => m.id === 'mx'));
 
   // add-connection form
   A.connections.open();
