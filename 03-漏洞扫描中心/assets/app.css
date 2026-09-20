@@ -2,17 +2,19 @@
 
 /* --- model management (mirrors the attack-center module) --- */
 .modal-back{position:fixed;top:0;right:0;bottom:0;left:0;background:#0000008c;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);z-index:60}
-.modal-card{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:480px;max-width:calc(100vw - 32px);max-height:calc(100vh - 48px);background:var(--bg-elev);border-radius:var(--r-lg);box-shadow:var(--shadow-pop);z-index:61;overflow:hidden;display:flex;flex-direction:column}
-.modal-card .modal-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px 0;flex-shrink:0}
+.modal-card{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:560px;max-width:calc(100vw - 32px);max-height:calc(100vh - 48px);background:var(--bg-elev);border-radius:var(--r-lg);box-shadow:var(--shadow-pop);z-index:61;overflow:hidden;display:flex;flex-direction:column}
+.modal-card .modal-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px 15px;border-bottom:1px solid var(--line);flex-shrink:0}
 .modal-card .modal-h h3{margin:0;font-size:15px;color:var(--text);font-weight:650}
-.modal-card .modal-b{padding:14px 22px 4px;flex:1;min-height:0;overflow-y:auto}
-.modal-card .modal-f{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px 18px;flex-shrink:0}
+.modal-card .modal-b{padding:18px 22px 8px;flex:1;min-height:0;overflow-y:auto}
+.modal-card .modal-b .field{margin-bottom:14px}
+.modal-card .modal-b .field:last-child{margin-bottom:0}
+.modal-card .modal-f{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px 18px;border-top:1px solid var(--line);flex-shrink:0}
 .modal-card .btn.sm.ghost{height:30px;padding:0 8px;border-color:transparent;background:transparent}
 .m-row{display:flex;gap:10px;align-items:stretch}
 .m-row .input{flex:1;min-width:0}
 .m-row .btn{flex-shrink:0;white-space:nowrap;align-self:stretch}
 #m-test-btn.ok{border-color:#6ee7b7;color:#047857;background:#ecfdf5}
-.m-error{margin:10px 0 0;font-size:12px;color:var(--sig-critical);min-height:0}
+.m-error{margin:0;font-size:12px;color:var(--sig-critical);min-height:0;padding-top:2px}
 .m-error:empty{display:none}
 .m-plain-text{margin:6px 0 0;font-size:13px;color:var(--text-muted);line-height:1.7}
 .b-neutral{background:var(--bg-sunken);color:var(--text-muted)}
