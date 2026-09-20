@@ -445,7 +445,7 @@
         return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + ' · ' + item.desc + '" href="#' + item.path + '">' +
           '<span class="ico">' + icon(item.icon) + '</span><span class="nav-text"><strong>' + item.label + '</strong></span>' + badge + '</a>';
       }).join('');
-      return '<div class="sidebar-section">' + sec.title + '</div><nav class="sidebar-nav">' + items + '</nav>';
+      return '<nav class="sidebar-nav">' + '<div class="sidebar-section">' + sec.title + '</div>' + items + '</nav>';
     }).join('');
     return '<aside class="sidebar">' +
       '<div class="sidebar-brand"><div><div class="name">漏洞扫描中心</div></div>' +
