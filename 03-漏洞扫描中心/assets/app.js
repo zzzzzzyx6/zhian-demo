@@ -462,17 +462,9 @@
   }
 
   function PageHead(o) {
-    var bc = '';
-    if (o.breadcrumb && o.breadcrumb.length) {
-      bc = '<div class="breadcrumb">' + o.breadcrumb.map(function (b, i) {
-        var last = i === o.breadcrumb.length - 1;
-        return (i > 0 ? icon('chevron', 10) : '') + (last ? '<b>' + b + '</b>' : '<span>' + b + '</span>');
-      }).join('') + '</div>';
-    }
-    return '<header class="page-head"><div>' + bc +
+    return '<header class="page-head">' +
       '<h1 class="title">' + esc(o.title) + '</h1>' +
-      (o.sub ? '<div class="sub">' + o.sub + '</div>' : '') +
-      '</div><div class="actions">' + (o.actions || '') + '</div></header>';
+      '<div class="actions">' + (o.actions || '') + '</div></header>';
   }
 
   function StagePipeline(stages, compact) {
@@ -576,7 +568,6 @@
 
     return PageHead({
       title: '仪表盘',
-      sub: running.length + ' 个扫描进行中 · 累计 ' + totalFindings + ' 个确认漏洞 · 最近 24 小时新增 ' + (totalCritical + totalHigh),
       actions: '<button class="btn" onclick="void 0" id="btn-refresh" title="演示数据为静态快照">' + icon('refresh', 14) + ' 刷新</button>' +
         '<a class="btn primary" href="#/projects" id="btn-newproject">' + icon('plus', 14) + ' 新建扫描任务</a>'
     }) + '<div class="page-body">' +
@@ -658,7 +649,7 @@
   function ServiceView() {
     var job = pickActiveJob();
     if (!job) {
-      return PageHead({ title: '运行', sub: '实时扫描服务 · 工作流节点拓扑' }) +
+      return PageHead({ title: '运行' }) +
         '<div class="page-body"><div class="empty"><div class="glyph">' + icon('scan') + '</div>暂无扫描任务 · 新建扫描后将在此实时呈现工作流进度</div></div>';
     }
     var artifacts = D.artifactsByJob[job.id] || {};
@@ -727,7 +718,7 @@
     }
 
     return PageHead({
-      title: '运行', sub: '实时扫描服务 · ' + esc(job.name),
+      title: '运行',
       actions: '<a class="btn sm ghost" href="#/projects/' + encodeURIComponent(job.id) + '">' + icon('project', 13) + ' 查看任务详情</a>'
     }) + '<div class="page-body">' +
       '<div class="card"><div class="card-h">' +
@@ -794,7 +785,7 @@
     var body = filtered.length ? filtered.map(projectRow).join('') :
       '<div class="empty"><div class="glyph">' + icon('project') + '</div>没有匹配的扫描任务</div>';
     return PageHead({
-      title: '任务', sub: D.projects.length + ' 个扫描任务 · 展示后端任务与历史结果',
+      title: '任务',
       actions: '<div class="field" style="margin:0;min-width:240px"><input class="input" id="proj-search" value="' + esc(STATE.query) + '" placeholder="搜索任务 / 目标 / ID"/></div>' +
         '<button class="btn primary" id="btn-newproject2">' + icon('plus', 14) + ' 新建扫描任务</button>'
     }) + '<div class="page-body"><div class="stack" style="gap:10px">' + body + '</div></div>';
@@ -1388,26 +1379,13 @@
     else if (tab === 'artifacts') body = ArtifactsList(project, artifacts);
     else body = LogView(project, logState.lines, logState.size);
 
-    return '<header class="page-head">' +
-      '<div><div class="breadcrumb">' +
-      '<a href="#/projects">任务</a>' + icon('chevron', 10) + '<b>' + esc(project.name) + '</b>' +
-      '</div>' +
-      '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
-      '<h1 class="title">' + esc(project.name) + '</h1>' +
-      '<span class="status ' + project.status + '" style="font-size:12.5px"><span class="pulse"></span>' + esc(project.status) + '</span>' +
-      '</div>' +
-      '<div class="sub" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
-      '<span class="mono">' + esc(project.id) + '</span><span>·</span><span>' + esc(project.phase_label) + '</span>' +
-      '<span>·</span><span>启动 ' + fmtAbs(project.started_at) + '</span>' +
-      (project.duration ? '<span>·</span><span>耗时 ' + fmtDuration(project.duration) + '</span>' : '') +
-      '</div></div>' +
-      '<div class="actions">' +
+    return PageHead({ title: project.name, actions:
       (project.status === 'running' && project.id.indexOf('empty_') !== 0 ? '<button class="btn danger" id="btn-stop">' + icon('stop', 11) + ' 停止</button>' : '') +
       (project.status !== 'running' ? '<button class="btn" id="btn-refresh2" title="演示数据为静态快照">' + icon('refresh', 13) + ' 刷新</button>' : '') +
       (reportPath ? '<a class="btn" href="' + reportPath + '" target="_blank" rel="noreferrer">' + icon('download', 13) + ' 导出报告</a>'
         : '<button class="btn" disabled title="该任务没有报告产物">' + icon('download', 13) + ' 导出报告</button>') +
-      '<button class="btn danger" id="btn-del" title="演示环境为静态快照，不支持删除">' + icon('x', 12) + ' 删除</button>' +
-      '</div></header>' +
+      '<button class="btn danger" id="btn-del" title="演示环境为静态快照，不支持删除">' + icon('x', 12) + ' 删除</button>'
+    }) +
       '<div class="tabs">' + tabsHtml + '</div>' +
       '<div class="page-body">' + body + '</div>';
   }
@@ -1468,7 +1446,7 @@
     }).join('') : '<div class="empty"><div class="glyph">' + icon('model') + '</div>暂无模型配置，点击右上角按钮接入</div>';
 
     return PageHead({
-      title: '模型管理', sub: 'A3S 智能体使用的大模型端点',
+      title: '模型管理',
       actions: '<button class="btn primary" id="btn-model-add">' + icon('plus', 14) + ' 新增模型</button>'
     }) + '<div class="page-body"><div class="m-grid">' + list + '</div></div>';
   }
