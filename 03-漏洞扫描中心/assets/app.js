@@ -443,7 +443,7 @@
         var on = item.path === '/' ? active === '/' : active.indexOf(item.path) === 0;
         var badge = c[item.id] != null ? '<span class="count mono">' + c[item.id] + '</span>' : '';
         return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + ' · ' + item.desc + '" href="#' + item.path + '">' +
-          '<span class="ico">' + icon(item.icon) + '</span><span class="nav-text"><strong>' + item.label + '</strong><small>' + item.desc + '</small></span>' + badge + '</a>';
+          '<span class="ico">' + icon(item.icon) + '</span><span class="nav-text"><strong>' + item.label + '</strong></span>' + badge + '</a>';
       }).join('');
       return '<div class="sidebar-section">' + sec.title + '</div><nav class="sidebar-nav">' + items + '</nav>';
     }).join('');
