@@ -2212,7 +2212,33 @@ window.DEMO_DATA = {
       "reportHref": "/api/output/src_20260914_173934_382488/SUMMARY.md"
     }
   ],
-  "findings": [],
+  "findings": [
+    {
+      "id": "VULN-DEMO-001",
+      "project_id": "src_20260914_174801_197734",
+      "title": "Dynamic code execution API is used.",
+      "severity": "critical",
+      "category": "Code Injection",
+      "cwe": "CWE-94",
+      "confidence": 0.92,
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "line": 321,
+      "status": "confirmed",
+      "description": "代码在第 321 行使用 exec() 执行由模型或用户输入构造的表达式，攻击者可借以执行任意 Python 代码，造成远程代码执行（RCE）。",
+      "impact": "未授权攻击者可在目标服务器执行任意命令，导致数据泄露、服务被控乃至内网横向移动。",
+      "recommendation": "移除 exec()/eval() 调用，改用受限的 ast.literal_eval() 或显式白名单解析；若必须执行动态逻辑，须置于沙箱并以最小权限运行。",
+      "code_snippet": [
+        { "ln": 321, "text": "exec(code, exec_globals)", "highlight": true }
+      ],
+      "patch_diff": [
+        { "type": "context", "text": "--- a/external_power_tools.py" },
+        { "type": "context", "text": "+++ b/external_power_tools.py" },
+        { "type": "context", "text": "@@ -319,7 +319,7 @@" },
+        { "type": "rem", "text": "-    exec(code, exec_globals)" },
+        { "type": "add", "text": "+    result = ast.literal_eval(code)  # restricted parse, no arbitrary exec" }
+      ]
+    }
+  ],
   "candidates": [
     {
       "id": "VULN-009",
@@ -9770,7 +9796,33 @@ window.DEMO_DATA = {
     }
   },
   "findingsByJob": {
-    "src_20260914_174801_197734": [],
+    "src_20260914_174801_197734": [
+    {
+      "id": "VULN-DEMO-001",
+      "project_id": "src_20260914_174801_197734",
+      "title": "Dynamic code execution API is used.",
+      "severity": "critical",
+      "category": "Code Injection",
+      "cwe": "CWE-94",
+      "confidence": 0.92,
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "line": 321,
+      "status": "confirmed",
+      "description": "代码在第 321 行使用 exec() 执行由模型或用户输入构造的表达式，攻击者可借以执行任意 Python 代码，造成远程代码执行（RCE）。",
+      "impact": "未授权攻击者可在目标服务器执行任意命令，导致数据泄露、服务被控乃至内网横向移动。",
+      "recommendation": "移除 exec()/eval() 调用，改用受限的 ast.literal_eval() 或显式白名单解析；若必须执行动态逻辑，须置于沙箱并以最小权限运行。",
+      "code_snippet": [
+        { "ln": 321, "text": "exec(code, exec_globals)", "highlight": true }
+      ],
+      "patch_diff": [
+        { "type": "context", "text": "--- a/external_power_tools.py" },
+        { "type": "context", "text": "+++ b/external_power_tools.py" },
+        { "type": "context", "text": "@@ -319,7 +319,7 @@" },
+        { "type": "rem", "text": "-    exec(code, exec_globals)" },
+        { "type": "add", "text": "+    result = ast.literal_eval(code)  # restricted parse, no arbitrary exec" }
+      ]
+    }
+    ],
     "src_20260914_173934_382488": []
   },
   "candidatesByJob": {
@@ -10648,7 +10700,17 @@ window.DEMO_DATA = {
     "src_20260914_173934_382488": []
   },
   "patchesByJob": {
-    "src_20260914_174801_197734": [],
+    "src_20260914_174801_197734": [
+    {
+      "id": "PATCH-DEMO-001",
+      "finding_id": "VULN-DEMO-001",
+      "type": "source",
+      "status": "passed",
+      "summary": "将 exec() 替换为受限的 ast.literal_eval() 并增加输入白名单校验",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "test_output": "3/3 单元测试通过（literal_eval 解析 / 白名单拒绝 / 异常回退）"
+    }
+    ],
     "src_20260914_173934_382488": []
   }
 };

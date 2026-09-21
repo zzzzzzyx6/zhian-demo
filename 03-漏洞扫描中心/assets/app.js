@@ -53,7 +53,8 @@
     home: '<path d="M8 2L2.5 6.5V13.5H13.5V6.5L8 2z"/><path d="M6.6 13.5V10.2h2.8v3.3"/>',
     edit: '<path d="M8 13.3h6"/><path d="M11 2.3a1.4 1.4 0 0 1 2 2L4.7 12.7l-2.7.6.6-2.7Z"/>',
     zap: '<path d="M8.7 1.3L2.7 9.3h4L6 14.6l6-8h-4l.7-5.3Z"/>',
-    box: '<path d="M8 1.2 1.8 4.3v7.4L8 14.8l6.2-3.1V4.3L8 1.2ZM1.8 4.3 8 7.4l6.2-3.1M8 7.4v7.4"/>'
+    box: '<path d="M8 1.2 1.8 4.3v7.4L8 14.8l6.2-3.1V4.3L8 1.2ZM1.8 4.3 8 7.4l6.2-3.1M8 7.4v7.4"/>',
+    wrench: '<path d="M11.9 1.3a3.7 3.7 0 0 0-2.8 5.5L2 13.9l1.1 1.1 1-1 .9.9 1.1-1.1-1-1 4.8-4.8a3.7 3.7 0 0 0 4.6-4.9l-2 2-1.7-.5-.5-1.7 2-2a3.7 3.7 0 0 0-1.4-.6z"/>'
   };
 
   function icon(name, size, cls) {
@@ -645,6 +646,133 @@
       edgesSvg + '</svg>' + boxes + '</div>';
   }
 
+    // 一张完整的工作流图：阶段骨架（状态+summary）+ 自动展开（运行/失败/Agent在跑的阶段挂 Agent 明细）
+    // + 当前指针（运行信息并入：正在执行的节点 message 显示在展开区顶部）。
+    var WF_EXPAND_KEY = 'wfExpand';
+    function WorkflowMap(job) {
+      var artifacts = D.artifactsByJob[job.id] || {};
+      var nodes = D.nodesByJob[job.id] || [];
+      var overall = job.status;
+      var doneCount = nodes.filter(function (n) { return n.status === 'done'; }).length;
+      var totalCount = nodes.length;
+      var currentNode = nodes.find(function (n) { return n.status === 'running'; });
+      var currentLabel = currentNode ? (LABEL_BY_ID[currentNode.id] || currentNode.id) : null;
+      var currentMessage = currentNode ? String(currentNode.message || '').trim() : '';
+      var OVERALL_LABEL = { running: '运行中', succeeded: '已完成', failed: '已失败' };
+
+      // agent per kind（静态快照，已完成 stage 的残留 running agent 归位为 done）
+      var topology = deriveAgentTopology(artifacts);
+      var acc = {};
+      topology.groups.forEach(function (g) {
+        var bucket = {};
+        (acc[g.kind] || []).forEach(function (a) { bucket[a.label] = a; });
+        g.agents.forEach(function (a) {
+          bucket[a.label] = {
+            label: a.label, status: a.status,
+            elapsedSeconds: a.elapsedSeconds != null ? a.elapsedSeconds : (bucket[a.label] ? bucket[a.label].elapsedSeconds : null),
+            startedAt: a.startedAt != null ? a.startedAt : (bucket[a.label] ? bucket[a.label].startedAt : null)
+          };
+        });
+        acc[g.kind] = Object.values(bucket);
+      });
+      var stageStatus = {};
+      nodes.forEach(function (n) { stageStatus[n.id] = n.status; });
+      var agentsByStage = {};
+      Object.keys(acc).forEach(function (kind) {
+        var st = stageStatus[kind] || 'idle';
+        var list = acc[kind].map(function (a) {
+          if (st === 'done') { if (a.status === 'running' || a.status === 'idle') return Object.assign({}, a, { status: 'done' }); }
+          else if (st === 'failed') { if (a.status === 'running') return Object.assign({}, a, { status: 'failed' }); }
+          return a;
+        });
+        list.sort(function (a, b) { return (STATUS_RANK[a.status] != null ? STATUS_RANK[a.status] : 9) - (STATUS_RANK[b.status] != null ? STATUS_RANK[b.status] : 9); });
+        agentsByStage[kind] = list;
+      });
+
+      var glyph = { done: '✓', running: '●', failed: '✕', skipped: '–', idle: '·' };
+      var agGlyph = { done: '✓', running: '●', failed: '✕', stale: '!', idle: '·' };
+
+      // 主从布局：仅"有二级记录（Agent）"的步骤可点开；默认选中运行中节点，否则首个有二级记录的节点
+      var hasDetail = {};
+      nodes.forEach(function (n) { hasDetail[n.id] = (agentsByStage[n.id] || []).length > 0; });
+      var selId = (STATE.wfSelected && hasDetail[STATE.wfSelected])
+        ? STATE.wfSelected
+        : (currentNode && hasDetail[currentNode.id] ? currentNode.id : (function () {
+            var f = nodes.find(function (n) { return hasDetail[n.id]; });
+            return f ? f.id : null;
+          })());
+
+      function buildWfDetail(node) {
+        var st = node.status;
+        var label = LABEL_BY_ID[node.id] || node.id;
+        var agents = agentsByStage[node.id] || [];
+        var isCurrent = node.id === (currentNode && currentNode.id);
+        var msg = '';
+        if (isCurrent && currentMessage) {
+          msg = '<div class="wf-msg"><span class="activity-dot"></span><span class="badge b-info">' + esc(currentLabel) + '</span>' +
+            '<span class="wf-msg-text">' + esc(currentMessage) + '</span></div>';
+        } else if (st === 'failed') {
+          msg = '<div class="wf-msg fail">' + icon('alert', 12) + '<span class="wf-msg-text">节点执行失败</span></div>';
+        }
+        var chips = agents.map(function (a) {
+          return '<span class="agent-chip ' + esc(a.kind || 'other') + '" data-agst="' + esc(a.status) + '">' +
+            '<i class="ag-dot">' + (agGlyph[a.status] || '·') + '</i>' + esc(a.label) +
+            (a.elapsedSeconds != null ? '<b class="mono">' + fmtDuration(a.elapsedSeconds) + '</b>' : '') + '</span>';
+        }).join('');
+        var runCount = agents.filter(function (a) { return a.status === 'running' || a.status === 'stale'; }).length;
+        var failCount = agents.filter(function (a) { return a.status === 'failed'; }).length;
+        return '<div class="wf-detail" data-state="' + esc(st) + '">' +
+          '<div class="wf-detail-head"><span class="wf-dot">' + (glyph[st] || '·') + '</span>' +
+          '<span class="wf-label">' + esc(label) + '</span>' + (isCurrent ? '<span class="status running"><span class="pulse"></span>进行中</span>' : '') + '</div>' +
+          msg +
+          (agents.length ? '<div class="wf-chips">' + chips + '</div>' : '<div class="muted xs" style="padding:4px 2px">本阶段暂无 Agent 二级记录</div>') +
+          (runCount || failCount ? '<div class="muted xs mono" style="padding:2px 0 0">' + runCount + ' 在跑' + (failCount ? ' · ' + failCount + ' 失败' : '') + '</div>' : '') +
+          '</div>';
+      }
+
+      var railHtml = '';
+      nodes.forEach(function (node) {
+        var label = LABEL_BY_ID[node.id] || node.id;
+        var st = node.status;
+        var agents = agentsByStage[node.id] || [];
+        var isCurrent = node.id === (currentNode && currentNode.id);
+        var sel = node.id === selId;
+        var inner = '<span class="wf-dot">' + (glyph[st] || '·') + '</span>' +
+          '<span class="wf-copy"><span class="wf-label">' + esc(label) + '</span>' +
+          '<span class="wf-summary">' + esc(summaryText(node.summary) || (st === 'idle' ? '待运行' : '')) + '</span></span>' +
+          (agents.length ? '<span class="wf-badge">' + agents.length + '</span>' : '');
+        if (agents.length) {
+          railHtml += '<button type="button" class="wf-step' + (isCurrent ? ' current' : '') + (sel ? ' selected' : '') + '" data-state="' + esc(st) + '" data-wf-step="' + esc(node.id) + '" title="' + esc(label) + '（查看二级记录）">' + inner + '</button>';
+        } else {
+          railHtml += '<div class="wf-step disabled" data-state="' + esc(st) + '" title="' + esc(label) + '（暂无二级记录）">' + inner + '</div>';
+        }
+      });
+
+      var selNode = nodes.find(function (n) { return n.id === selId; });
+      var detailHtml = selNode ? buildWfDetail(selNode) : '<div class="muted xs" style="padding:12px;border:1px dashed var(--line);border-radius:var(--r)">暂无二级记录</div>';
+
+      var validationNode = nodes.find(function (n) { return n.id === 'validation'; });
+      var remediationNode = nodes.find(function (n) { return n.id === 'remediation'; });
+      var findingsCount = validationNode && validationNode.summary ? validationNode.summary.findings : null;
+      var patchesCount = remediationNode && remediationNode.summary ? (remediationNode.summary.patched != null ? remediationNode.summary.patched : remediationNode.summary.total) : null;
+
+      return '<div class="card"><div class="card-h">' +
+        '<div style="display:flex;align-items:center;gap:10px"><h3>工作流</h3>' +
+        (overall === 'running' ? '<span class="status running"><span class="pulse"></span>live</span>' : '') +
+        '</div>' +
+        '<span class="muted xs mono">' + esc(OVERALL_LABEL[overall] || overall) + ' · ' + doneCount + '/' + totalCount + ' 节点完成' +
+        (findingsCount != null ? ' · ' + findingsCount + ' 漏洞' : '') +
+        (patchesCount != null ? ' · ' + patchesCount + ' 修复' : '') +
+        '</span></div>' +
+        '<div class="card-b">' +
+        '<div class="bar-track" style="margin-bottom:14px"><div class="bar-fill" style="width:' + Math.round(job.progress || 0) + '%"></div></div>' +
+        '<div class="wf-split">' +
+        '<div class="wf-rail">' + railHtml + '</div>' +
+        '<div class="wf-detail-pane">' + detailHtml + '</div>' +
+        '</div>' +
+        '</div></div>';
+    }
+
     function WorkflowTopologyCards(job) {
     var artifacts = D.artifactsByJob[job.id] || {};
     var nodes = D.nodesByJob[job.id] || [];
@@ -807,6 +935,23 @@
       '</span></div></div>';
   }
 
+  // 概览「待验证候选」精简行：单行 + 严重度点 + 标题/元信息（点击打开详情）+ 裁决快捷操作（确认/重验/误报）
+  function CandidateRow(c) {
+    var statusLabel = CAND_STATUS_LABEL[c.status] || c.status || '未知';
+    var probing = c.status === 'probing';
+    return '<div class="cand-row sev-' + esc(c.suspected_severity) + (c.status === 'rejected' ? ' is-rejected' : '') + '">' +
+      '<span class="cand-row-dot" title="' + esc(c.suspected_severity) + '"></span>' +
+      '<div class="cand-row-main" data-cand="' + esc(c.id) + '" title="查看详情">' +
+      '<div class="cand-row-title">' + esc(c.title) + '</div>' +
+      '<div class="cand-row-meta">' + esc(c.id) + ' · 疑似 ' + esc(c.suspected_severity) + ' · ' + statusLabel + (probing ? ' <span class="activity-dot"></span>' : '') + '</div>' +
+      '</div>' +
+      '<div class="cand-row-act">' +
+      '<button class="btn sm ghost cand-act cand-act-confirm" data-cand-confirm="' + esc(c.id) + '" title="人工确认：是漏洞，进入已确认漏洞">' + icon('check', 11) + ' 确认</button>' +
+      '<button class="btn sm ghost cand-act cand-act-retry" data-cand-retry="' + esc(c.id) + '" title="重新核对：再次发起验证">' + icon('refresh', 11) + ' 重验</button>' +
+      '<button class="btn sm ghost cand-act cand-act-reject" data-cand-reject="' + esc(c.id) + '" title="判定为误报：忽略此候选">' + icon('x', 11) + ' 误报</button>' +
+      '</div></div>';
+  }
+
   function FindingCard(f, compact) {
     var desc = compact
       ? '<p style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + esc(f.description) + '</p>'
@@ -827,6 +972,53 @@
 
   function Empty(iconName, label) {
     return '<div class="empty" style="padding:80px"><div class="glyph">' + icon(iconName) + '</div>' + esc(label) + '</div>';
+  }
+
+  // CWE 编号 -> 中文名（展示用；未收录的显示原编号）。
+  var CWE_NAMES = {
+    'CWE-94': '代码注入', 'CWE-95': '动态代码评估', 'CWE-78': '操作系统命令注入',
+    'CWE-79': '跨站脚本(XSS)', 'CWE-89': 'SQL注入', 'CWE-22': '路径穿越',
+    'CWE-327': '使用有缺陷的加密算法', 'CWE-326': '加密强度不足',
+    'CWE-798': '硬编码凭证', 'CWE-502': '不可信反序列化', 'CWE-200': '信息泄露',
+    'CWE-611': 'XXE注入', 'CWE-434': '任意文件上传', 'CWE-862': '缺失授权', 'CWE-863': '错误授权',
+    'CWE-287': '身份认证缺陷', 'CWE-352': 'CSRF', 'CWE-125': '越界读取', 'CWE-787': '越界写入',
+    'CWE-416': 'USE AFTER FREE', 'CWE-20': '输入校验不当', 'CWE-400': '资源耗尽', 'CWE-000': '未分类'
+  };
+  function cweTag(cwe) {
+    if (!cwe) return '';
+    var name = CWE_NAMES[cwe] || '';
+    return '<span class="badge b-info"><span class="mono">' + esc(cwe) + '</span>' + (name ? ' ' + esc(name) : '') + '</span>';
+  }
+
+  // 报告仪表盘用：简化三行布局（扫视层），完整内容在点击后的详情抽屉里。
+  // 漏洞：行1 严重度+类型(左) / 置信度+ID(右)；行2 标题；行3 描述。
+  // 修复：行1 扳手+「修复建议」(左) / 状态+建议ID(右)；行2 摘要；行3 测试结果。
+  function FindingWithPatchCard(f, patch) {
+    var vuln =
+      '<div class="find sev-' + esc(f.severity) + '" data-find="' + esc(f.id) + '">' +
+      '<div class="head">' +
+      '<span class="badge ' + sevColor(f.severity) + '">' + esc(f.severity) + '</span>' +
+      cweTag(f.cwe) +
+      '<span class="spacer"></span>' +
+      '<span class="muted xs">置信度 <span class="b mono brand-text">' + (f.confidence * 100).toFixed(0) + '%</span></span>' +
+      '<span class="muted xs mono">' + esc(f.id) + '</span>' +
+      '</div>' +
+      '<h4>' + esc(f.title) + '</h4>' +
+      '<p class="fwp-desc">' + esc(f.description) + '</p>' +
+      '</div>';
+    var patchHtml = '';
+    if (patch) {
+      patchHtml = '<div class="patch-inline">' +
+        '<div class="patch-inline-h">' + icon('wrench', 12) +
+        '<span class="patch-label">修复建议</span>' +
+        '<span class="spacer"></span>' +
+        '<span class="badge b-ok">' + esc(patch.status) + '</span>' +
+        '<span class="muted xs mono">' + esc(patch.id) + '</span></div>' +
+        '<div class="patch-inline-b">' + esc(patch.summary) + '</div>' +
+        (patch.test_output ? '<div class="patch-inline-t mono xs">' + icon('check', 11) + ' ' + esc(patch.test_output) + '</div>' : '') +
+        '</div>';
+    }
+    return '<div class="find-wrap">' + vuln + patchHtml + '</div>';
   }
 
   function CandidatesList(candidates, fixedStatus) {
@@ -962,12 +1154,18 @@
         '</div></div>';
     }).join('') : '<div class="empty" style="padding:36px"><div class="glyph">' + icon('log') + '</div>暂无实时活动</div>';
 
+    // 完整日志入口收进卡头：元信息一行 + 右侧下载按钮（卡内只留汇总+抽象后的实时内容）。
+    var logSize = (logLines || []).reduce(function (acc, l) { return acc + String((ensureObj(l) || {}).msg || '').length + 24; }, 0);
+
     return '<div class="card"><div class="card-h">' +
-      '<div style="display:flex;align-items:center;gap:10px"><h3>实时 Agent 活动</h3>' +
+      '<div style="display:flex;align-items:center;gap:10px"><h3>实时活动</h3>' +
       (project.status === 'running' ? '<span class="status running"><span class="pulse"></span>live</span>' : '') +
       (failures.length ? '<span class="badge b-critical">' + failures.length + ' 异常</span>' : '') +
-      '</div><span class="muted xs mono">' + num(activity.running_total) + ' RUNNING · ' + failures.length + ' FAILED · ' + items.length + ' EVENTS</span>' +
-      '</div><div class="card-b agent-activity">' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;min-width:0">' +
+      '<span class="muted xs mono" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + num(activity.running_total) + ' RUNNING · ' + failures.length + ' FAILED · ' + items.length + ' EVENTS · ' + (logLines || []).length + ' LOG · ' + fmtBytes(logSize) + '</span>' +
+      '<button class="btn sm ghost" id="btn-log-download" title="下载完整运行日志（' + (logLines || []).length + ' 行）">' + icon('download', 12) + ' 完整日志</button>' +
+      '</div></div><div class="card-b agent-activity">' +
       '<div class="agent-load"><div class="agent-load-grid">' + cardsHtml + '</div>' + failuresHtml + activeHtml + '</div>' +
       itemsHtml + '</div></div>';
   }
@@ -999,9 +1197,10 @@
 
   // ------------------------------------------------------------ overview
   function ConfigRow(label, value, mono) {
-    return '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">' +
+    var v = value || '—';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0">' +
       '<span class="muted xs" style="flex-shrink:0;font-family:IBM Plex Mono,monospace;letter-spacing:.06em;text-transform:uppercase">' + esc(label) + '</span>' +
-      '<span class="b xs ' + (mono ? 'mono' : '') + '" style="text-align:right;color:var(--text);overflow-wrap:anywhere;max-width:70%">' + esc(value || '—') + '</span></div>';
+      '<span class="b xs ' + (mono ? 'mono' : '') + ' config-val" title="' + esc(v) + '" style="text-align:right;color:var(--text);flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">' + esc(v) + '</span></div>';
   }
 
   function Overview(project, findings, candidates, artifacts, logLines) {
@@ -1011,54 +1210,88 @@
     var topCands = openCands.slice().sort(function (a, b) {
       var o = { critical: 0, high: 1, medium: 2, low: 3 };
       return o[a.suspected_severity] - o[b.suspected_severity];
-    }).slice(0, 3);
-    var badgeMap = { critical: 'b-critical', high: 'b-high', medium: 'b-medium', low: 'b-low' };
-    var barMap = { critical: 'var(--sig-critical)', high: 'var(--sig-high)', medium: 'var(--sig-medium)', low: 'var(--sig-low)' };
-    var sevRows = ['critical', 'high', 'medium', 'low'].map(function (k) {
-      var count = sev[k] || 0;
-      return '<div style="display:grid;grid-template-columns:60px 1fr 40px;gap:12px;align-items:center">' +
-        '<span class="badge ' + badgeMap[k] + '">' + ({ critical: '严重', high: '高危', medium: '中等', low: '低危' })[k] + '</span>' +
-        '<div style="height:6px;border-radius:3px;background:var(--bg-sunken);overflow:hidden;border:1px solid var(--line)">' +
-        '<div style="width:' + (count / (findings.length || 1) * 100) + '%;height:100%;background:' + barMap[k] + '"></div></div>' +
-        '<span class="mono b" style="text-align:right;color:var(--text)">' + count + '</span></div>';
-    }).join('');
+    }).slice(0, 5);
 
-    var out = '<div class="stack" style="gap:18px">' +
-      '<div class="card"><div class="card-h"><h3>阶段流水线</h3>' +
-      '<span class="muted xs">总进度 <span class="brand-text b mono">' + Math.round(project.progress) + '%</span></span></div>' +
-      '<div class="card-b">' + StagePipeline(project.stages) +
-      '<div class="bar-track" style="margin-top:16px"><div class="bar-fill" style="width:' + project.progress + '%"></div></div>' +
-      '</div></div>' +
-      AgentActivityPanel(project, artifacts, logLines) +
-      '<div class="grid grid-4">' +
-      StatTile('候选', project.metrics.candidates) + StatTile('验证记录', project.metrics.probes) +
-      StatTile('已确认漏洞', project.metrics.findings, project.metrics.findings ? 'crit' : '') +
-      StatTile('修复建议', project.metrics.patches) + '</div>' +
-      '<div class="grid" style="grid-template-columns:1fr 1fr;gap:18px">' +
-      '<div class="card"><div class="card-h"><h3>严重度分布</h3><span class="muted xs mono">' + findings.length + ' TOTAL</span></div>' +
-      '<div class="card-b stack-sm">' + sevRows + '</div></div>' +
-      '<div class="card"><div class="card-h"><h3>扫描配置</h3></div><div class="card-b stack-sm">' +
-      ConfigRow('模式', project.phase_label) + ConfigRow('类型', project.target_type || '目标文件') +
-      ConfigRow('目标', project.target, true) + ConfigRow('模型', project.model_config || '默认（环境变量）') +
+    var scanConfigCard =
+      '<div class="card scan-config-card"><div class="card-h"><h3>任务信息</h3></div><div class="card-b stack-sm">' +
+      ConfigRow('模式', project.phase_label) +
+      ConfigRow('路径', project.target, true) +
       ConfigRow('开始', fmtAbs(project.started_at), true) +
       (project.duration ? ConfigRow('耗时', fmtDuration(project.duration), true) : '') +
-      '</div></div></div>';
+      '</div></div>';
 
-    if (findings.length) {
-      out += '<div class="card"><div class="card-h"><h3>最严重的发现</h3>' +
-        '<button class="btn sm ghost" data-tab="confirmed">查看全部 ' + icon('chevron', 11) + '</button></div>' +
-        '<div class="card-b stack" style="gap:10px">' + findings.slice(0, 3).map(function (f) { return FindingCard(f, true); }).join('') + '</div></div>';
-    }
-    if (topCands.length) {
-      out += '<div class="card"><div class="card-h"><h3>待验证候选 <span class="muted xs mono" style="margin-left:8px">' + openCands.length + ' 项</span></h3>' +
-        '<button class="btn sm ghost" data-tab="pending">查看全部 ' + icon('chevron', 11) + '</button></div>' +
-        '<div class="card-b stack" style="gap:10px">' + topCands.map(function (c) { return CandidateCard(c, true); }).join('') + '</div></div>';
-    }
-    var topoNodes = D.nodesByJob[project.id] || [];
-    if (topoNodes.length) {
-      out += WorkflowTopologyCards(project);
-    }
-    return out + '</div>';
+    var sevCard = (function () {
+      // 与原始流水线一致的四级严重度（无 info 档）
+      var order = ['critical', 'high', 'medium', 'low'];
+      var zh = { critical: '严重', high: '高危', medium: '中等', low: '低危' };
+      var colors = { critical: 'var(--sig-critical)', high: 'var(--sig-high)', medium: 'var(--sig-medium)', low: 'var(--sig-low)' };
+      var rows = order.map(function (k) { return { k: k, label: zh[k], count: sev[k] || 0, color: colors[k] }; });
+      var total = rows.reduce(function (s, r) { return s + r.count; }, 0);
+      // 环状图参数：viewBox 120，圆心(60,60)，内半径 38、外半径 54，上方开口起画
+      var CX = 60, CY = 60, R_OUT = 54, R_IN = 38, TAU = Math.PI * 2;
+      var startAngle = -Math.PI / 2;
+      var segs = '';
+      if (total > 0) {
+        rows.forEach(function (r) {
+          if (!r.count) return;
+          var frac = r.count / total;
+          var a0 = startAngle, a1 = startAngle + frac * TAU;
+          // SVG 弧段（外弧→外边→内弧→内边），覆盖 >99% 时画整环避免端点重合
+          if (frac > 0.99) {
+            segs += '<circle cx="' + CX + '" cy="' + CY + '" r="' + (R_OUT + R_IN) / 2 + '" fill="none" stroke="' + r.color + '" stroke-width="' + (R_OUT - R_IN) + '"></circle>';
+          } else {
+            var large = (a1 - a0) > Math.PI ? 1 : 0;
+            var x0o = CX + R_OUT * Math.cos(a0), y0o = CY + R_OUT * Math.sin(a0);
+            var x1o = CX + R_OUT * Math.cos(a1), y1o = CY + R_OUT * Math.sin(a1);
+            var x1i = CX + R_IN * Math.cos(a1), y1i = CY + R_IN * Math.sin(a1);
+            var x0i = CX + R_IN * Math.cos(a0), y0i = CY + R_IN * Math.sin(a0);
+            segs += '<path class="sev-arc" d="M ' + x0o.toFixed(2) + ' ' + y0o.toFixed(2) + ' ' +
+              'A ' + R_OUT + ' ' + R_OUT + ' 0 ' + large + ' 1 ' + x1o.toFixed(2) + ' ' + y1o.toFixed(2) + ' ' +
+              'L ' + x1i.toFixed(2) + ' ' + y1i.toFixed(2) + ' ' +
+              'A ' + R_IN + ' ' + R_IN + ' 0 ' + large + ' 0 ' + x0i.toFixed(2) + ' ' + y0i.toFixed(2) + ' Z" ' +
+              'fill="' + r.color + '"><title>' + esc(r.label) + '：' + r.count + ' 个（' + Math.round(frac * 100) + '%）</title></path>';
+          }
+          startAngle = a1;
+        });
+      }
+      var donutHtml =
+        '<div class="sev-donut">' +
+        '<svg viewBox="0 0 120 120" role="img" aria-label="严重度分布环状图">' + (total > 0 ? segs : '<circle cx="60" cy="60" r="46" fill="none" stroke="var(--line)" stroke-width="16"></circle>') +
+        '<text x="60" y="57" text-anchor="middle" class="sev-total">' + total + '</text>' +
+        '<text x="60" y="72" text-anchor="middle" class="sev-total-label">个漏洞</text></svg>' +
+        '<div class="sev-legend">' + rows.map(function (r) {
+          return '<div class="sev-legend-row' + (r.count ? '' : ' is-zero') + '">' +
+            '<span class="sev-legend-dot" style="background:' + r.color + '"></span>' +
+            '<span class="sev-legend-label">' + esc(r.label) + '</span>' +
+            '<span class="mono b sev-legend-count">' + r.count + '</span></div>';
+        }).join('') +
+        '<div class="sev-legend-row sev-legend-extra"><span class="sev-legend-dot" style="background:var(--sig-ok)"></span>' +
+        '<span class="sev-legend-label">修复建议</span>' +
+        '<span class="mono b sev-legend-count">' + (project.metrics.patches || 0) + '</span></div>' +
+        '</div></div>';
+      return '<div class="card"><div class="card-h"><h3>漏洞发现</h3><span class="muted xs mono">' + total + ' TOTAL</span></div>' +
+        '<div class="card-b">' + donutHtml + '</div></div>';
+    })();
+
+    var candCard = topCands.length ?
+      '<div class="card"><div class="card-h"><h3>待验证候选 <span class="muted xs mono" style="margin-left:8px">' + openCands.length + ' 项</span></h3>' +
+      '<button class="btn sm ghost" data-tab="status" data-cs="pending">查看全部 ' + icon('chevron', 11) + '</button></div>' +
+      '<div class="card-b stack-sm">' + topCands.map(function (c) { return CandidateRow(c); }).join('') + '</div></div>' :
+      '';
+
+    // 概览两行对齐布局：第一行 工作流 ↔ (任务信息+漏洞发现)，第二行 实时活动 ↔ 待验证候选
+    // 「候选/验证记录」与待验证候选卡重复、「已确认漏洞」与环图总数重复，信息卡组已整体移除
+    var out = '<div class="ov-rows">' +
+      '<div class="ov-row">' +
+      WorkflowMap(project) +
+      '<div class="ov-cell">' + scanConfigCard + sevCard + '</div>' +
+      '</div>' +
+      '<div class="ov-row">' +
+      AgentActivityPanel(project, artifacts, logLines) +
+      candCard +
+      '</div>' +
+      '</div>';
+    return out;
   }
 
   // ------------------------------------------------------------- report
@@ -1083,26 +1316,47 @@
       '</section>';
   }
 
+  // 屏幕版：仪表盘式（扫视感知 + 可交互）；打印版：完整文档（ReportDoc，仅打印时显示）。
   function ReportView(project, findings, probes, patches) {
+    var sev = project.severity || {};
+    var order = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
+    var sorted = findings.slice().sort(function (a, b) { return order[a.severity] - order[b.severity]; });
+    var critical = findings.filter(function (f) { return f.severity === 'critical'; });
+    var high = findings.filter(function (f) { return f.severity === 'high'; });
+    var dashboard =
+      '<div class="stack report-dashboard" style="gap:18px">' +
+      ((critical.length || high.length) ?
+        '<div class="cand-banner" style="border-color:var(--sig-critical);background:rgba(229,57,53,.06)">' + icon('alert', 15) +
+        '<div><b>需要立即关注：' + critical.length + ' 个严重漏洞 + ' + high.length + ' 个高危漏洞。</b>' +
+        '<span class="muted sm"> 最严重的是 ' + esc(critical[0] ? critical[0].id : high[0].id) + ' — ' + esc((critical[0] || high[0]).title) + '</span></div></div>' : '') +
+      '<div class="card"><div class="card-h"><h3>确认漏洞与修复建议 <span class="muted xs mono" style="margin-left:8px">' + sorted.length + ' 项</span></h3></div>' +
+      '<div class="card-b stack" style="gap:10px">' +
+      (sorted.length ? sorted.map(function (f) {
+        var p = patches.find(function (x) { return x.finding_id === f.id; });
+        return FindingWithPatchCard(f, p);
+      }).join('') : Empty('bug', '本次扫描未发现确认的漏洞')) +
+      '</div></div>' +
+      '</div>';
+
+    return dashboard + ReportDoc(project, findings, probes, patches, sorted);
+  }
+
+  // 打印专用完整文档（屏幕上隐藏，@media print 时显示）。
+  function ReportDoc(project, findings, probes, patches, sorted) {
     var sev = project.severity || {};
     var critical = findings.filter(function (f) { return f.severity === 'critical'; });
     var high = findings.filter(function (f) { return f.severity === 'high'; });
-    var order = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
-    var sorted = findings.slice().sort(function (a, b) { return order[a.severity] - order[b.severity]; });
     var blockquote = (critical.length || high.length) ?
       '<blockquote><b>需要立即关注：</b>' + critical.length + ' 个严重漏洞 + ' + high.length + ' 个高危漏洞。' +
       (critical[0] ? ' 最严重的是 <span class="mono">' + esc(critical[0].id) + '</span> — ' + esc(critical[0].title) + '。' : '') +
       '</blockquote>' : '';
     var total = findings.length;
-    return '<div class="report">' +
+    return '<div class="report report-print">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:10px">' +
       '<div><div class="muted xs mono" style="letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px">书安 安全扫描报告</div>' +
       '<h1>' + esc(project.name) + '</h1>' +
       '<p class="muted" style="margin:6px 0 0;font-size:14px">' + esc(project.description) + '</p></div>' +
-      '<div class="report-actions" style="display:flex;gap:6px;flex-shrink:0">' +
-      '<button class="btn sm" id="btn-report-pdf" title="打开浏览器打印对话框，可选择“另存为 PDF”">' + icon('download', 12) + ' PDF</button>' +
-      '<button class="btn sm" id="btn-report-md" title="下载 Markdown 报告">' + icon('copy', 12) + ' Markdown</button>' +
-      '</div></div>' +
+      '</div>' +
       '<div class="report-meta">' +
       '<div><div class="m-label">扫描 ID</div><div class="m-value">' + esc(project.id) + '</div></div>' +
       '<div><div class="m-label">模式</div><div class="m-value">' + esc(project.phase) + '</div></div>' +
@@ -1122,7 +1376,7 @@
       '</ul>' +
       '<h2>2. 漏洞详情</h2>' +
       (sorted.length ? sorted.map(function (f, i) { return ReportFinding(f, i + 1); }).join('') : '<p>本次扫描未发现确认的漏洞。</p>') +
-      '<h2>3. 修复建议汇总</h2>' +
+      '<h2>3. 修复建议</h2>' +
       (patches.length ? '<ul>' + patches.map(function (p) {
         return '<li><span class="mono brand-text">' + esc(p.id) + '</span> — ' + esc(p.summary) + '<br/>' +
           '<span class="muted xs mono">关联 ' + esc(p.finding_id) + ' · ' + esc(p.file) + ' · ' + esc(p.test_output) + '</span></li>';
@@ -1279,24 +1533,38 @@
           .sort(function (a, b) { return (a.info.priority - b.info.priority) || a.name.localeCompare(b.name); })
       };
     }).filter(function (g) { return g.items.length; });
+    // 折叠状态：默认首组展开、其余折叠；切换项目时重置，用户点击后记忆在 STATE.artCollapsed
+    if (!STATE.artCollapsed || STATE.artCollapsedFor !== project.id) {
+      STATE.artCollapsed = {};
+      grouped.forEach(function (g, i) { STATE.artCollapsed[g.id] = i > 0; });
+      STATE.artCollapsedFor = project.id;
+    }
     var out = '<div class="artifact-catalog">' +
       '<div class="artifact-summary"><div><h3>结果文件归类</h3>' +
       '<p>按流水线阶段、日志类型和调试用途整理。正式结论优先看“报告与总览”“验证、裁决与恢复”，排查过程看“运行日志”和“A3S 调试材料”。</p></div>' +
       '<span class="muted xs mono">' + names.length + ' FILES · ' + grouped.length + ' GROUPS</span></div>';
     grouped.forEach(function (group) {
-      out += '<section class="artifact-group"><div class="artifact-group-head"><div><h3>' + esc(group.title) + '</h3><p>' + esc(group.hint) + '</p></div>' +
-        '<span class="badge b-info">' + group.items.length + '</span></div><div class="artifact-list">';
-      group.items.forEach(function (item) {
-        var iconName = (group.id === 'logs' || group.id === 'a3s') ? 'log' : 'file';
-        out += '<a class="artifact-row" href="' + artifactHref(project.id, (item.file && item.file.path) || item.name) + '" target="_blank" rel="noreferrer">' +
-          '<div class="artifact-icon">' + icon(iconName, 15) + '</div>' +
-          '<div class="artifact-main"><div class="artifact-title"><span>' + esc(item.info.role) + '</span>' +
-          '<span class="badge b-low">' + esc(item.info.kind) + '</span></div>' +
-          '<div class="artifact-path mono">' + esc(item.name) + '</div>' +
-          '<div class="artifact-desc">' + esc(item.info.audience) + '</div></div>' +
-          '<div class="artifact-size mono">' + fmtBytes((item.file && item.file.size) || 0) + '</div></a>';
-      });
-      out += '</div></section>';
+      var collapsed = !!STATE.artCollapsed[group.id];
+      out += '<section class="artifact-group' + (collapsed ? ' collapsed' : '') + '">' +
+        '<button type="button" class="artifact-group-head" data-art-toggle="' + esc(group.id) + '" title="' + esc(group.title) + (collapsed ? '（展开）' : '（收起）') + '">' +
+        '<div><h3>' + esc(group.title) + '</h3><p>' + esc(group.hint) + '</p></div>' +
+        '<span class="badge b-info">' + group.items.length + '</span>' +
+        '<span class="artifact-caret">▾</span></button>';
+      if (!collapsed) {
+        out += '<div class="artifact-list">';
+        group.items.forEach(function (item) {
+          var iconName = (group.id === 'logs' || group.id === 'a3s') ? 'log' : 'file';
+          out += '<a class="artifact-row" href="' + artifactHref(project.id, (item.file && item.file.path) || item.name) + '" target="_blank" rel="noreferrer">' +
+            '<div class="artifact-icon">' + icon(iconName, 15) + '</div>' +
+            '<div class="artifact-main"><div class="artifact-title"><span>' + esc(item.info.role) + '</span>' +
+            '<span class="badge b-low">' + esc(item.info.kind) + '</span></div>' +
+            '<div class="artifact-path mono">' + esc(item.name) + '</div>' +
+            '<div class="artifact-desc">' + esc(item.info.audience) + '</div></div>' +
+            '<div class="artifact-size mono">' + fmtBytes((item.file && item.file.size) || 0) + '</div></a>';
+        });
+        out += '</div>';
+      }
+      out += '</section>';
     });
     return out + '</div>';
   }
@@ -1319,10 +1587,34 @@
   }
 
   // --------------------------------------------------- project detail
-  function projectReportPath(project) {
-    var files = project.files || {};
-    var key = files['SUMMARY.md'] ? 'SUMMARY.md' : files['report.md'] ? 'report.md' : files['06_report/report.md'] ? '06_report/report.md' : '';
-    return key ? artifactHref(project.id, key) : '';
+  // --------------------------------------------------- status filter view
+  function StatusSegBar(candidates) {
+    var counts = {
+      pending: candidates.filter(function (c) { return c.status === 'pending'; }).length,
+      probing: candidates.filter(function (c) { return c.status === 'probing'; }).length,
+      promoted: candidates.filter(function (c) { return c.status === 'promoted'; }).length,
+      rejected: candidates.filter(function (c) { return c.status === 'rejected'; }).length,
+      all: candidates.length
+    };
+    var opts = [['pending', '待验证 ' + counts.pending], ['probing', '验证中 ' + counts.probing], ['promoted', '已确认漏洞 ' + counts.promoted], ['rejected', '已排除漏洞 ' + counts.rejected], ['all', '全部 ' + counts.all]];
+    return '<div class="cand-banner">' + icon('info', 15) +
+      '<div><b>候选 ≠ 确认漏洞。</b><span class="muted sm"> 候选按验证状态归类：待验证、验证中、已确认漏洞、已排除漏洞。</span></div>' +
+      '<span class="spacer"></span>' +
+      '<span class="muted xs mono">待验证 ' + counts.pending + ' · 验证中 ' + counts.probing + ' · 已确认漏洞 ' + counts.promoted + ' · 已排除漏洞 ' + counts.rejected + '</span></div>' +
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px">' +
+      '<span class="muted xs mono" style="letter-spacing:.1em;text-transform:uppercase">STATUS</span><div class="seg">' +
+      opts.map(function (o) { return '<button class="' + (STATE.candStatus === o[0] ? 'on' : '') + '" data-cs="' + o[0] + '">' + o[1] + '</button>'; }).join('') +
+      '</div></div>';
+  }
+
+  function StatusView(project, candidates, findings, promoted) {
+    var seg = StatusSegBar(candidates);
+    var status = STATE.candStatus;
+    var body;
+    if (!candidates.length) body = Empty('bug', '本任务还没有生成候选');
+    else if (status === 'promoted') body = ConfirmedVulnerabilitiesView(findings, promoted);
+    else body = CandidatesList(candidates, status);
+    return '<div class="stack" style="gap:14px">' + seg + body + '</div>';
   }
 
   function ProjectDetailView(project) {
@@ -1340,18 +1632,12 @@
     findings.forEach(function (f) { confirmedIds[f.id] = true; });
     promoted.forEach(function (c) { confirmedIds[c.id] = true; });
     var confirmedCount = Object.keys(confirmedIds).length;
-    var reportPath = projectReportPath(project);
 
     var tabs = [
       { id: 'overview', label: '概览' },
-      { id: 'pending', label: '待验证', n: pending.length, sev: 'b-medium' },
-      { id: 'probing', label: '验证中', n: probing.length, sev: 'b-brand' },
-      { id: 'confirmed', label: '已确认漏洞', n: confirmedCount, sev: findings.some(function (f) { return f.severity === 'critical'; }) ? 'b-critical' : confirmedCount ? 'b-high' : '' },
-      { id: 'rejected', label: '已排除漏洞', n: rejected.length, sev: 'b-medium' },
-      { id: 'patches', label: '修复建议', n: patches.length },
-      { id: 'report', label: '漏洞报告' },
-      { id: 'artifacts', label: '结果文件', n: Object.keys(artifacts.files || {}).length },
-      { id: 'log', label: '实时日志' }
+      { id: 'status', label: '状态', n: candidates.length },
+      { id: 'report', label: '扫描报告' },
+      { id: 'artifacts', label: '结果文件', n: Object.keys(artifacts.files || {}).length }
     ];
     var tab = STATE.tab;
     var tabsHtml = tabs.map(function (t) {
@@ -1362,20 +1648,23 @@
 
     var body;
     if (tab === 'overview') body = Overview(project, findings, candidates, artifacts, logState.lines);
-    else if (tab === 'pending') body = CandidatesList(candidates, 'pending');
-    else if (tab === 'probing') body = CandidatesList(candidates, 'probing');
-    else if (tab === 'confirmed') body = ConfirmedVulnerabilitiesView(findings, promoted);
-    else if (tab === 'rejected') body = CandidatesList(candidates, 'rejected');
-    else if (tab === 'patches') body = PatchesList(patches, findings);
+    else if (tab === 'status') body = StatusView(project, candidates, findings, promoted);
     else if (tab === 'report') body = ReportView(project, findings, probes, patches);
-    else if (tab === 'artifacts') body = ArtifactsList(project, artifacts);
-    else body = LogView(project, logState.lines, logState.size);
+    else body = ArtifactsList(project, artifacts);
 
+    // 导出报告：全 tab 常驻下拉按钮（PDF 打印 / Markdown 下载）
+    var reportActions = '<div class="export-dd' + (STATE.reportExportOpen ? ' open' : '') + '">' +
+      '<button class="btn" id="btn-export-toggle" title="导出报告">' + icon('download', 13) + ' 导出报告 ' + icon('chevron', 11) + '</button>' +
+        (STATE.reportExportOpen
+          ? '<div class="export-dd-menu">' +
+            '<button class="btn sm ghost" id="btn-report-pdf" title="打开浏览器打印对话框，可选择“另存为 PDF”">导出 PDF</button>' +
+            '<button class="btn sm ghost" id="btn-report-md" title="下载 Markdown 报告">导出 Markdown</button>' +
+            '</div>'
+          : '') +
+      '</div>';
     return PageHead({ title: project.name, actions:
+      reportActions +
       (project.status === 'running' && project.id.indexOf('empty_') !== 0 ? '<button class="btn danger" id="btn-stop">' + icon('stop', 11) + ' 停止</button>' : '') +
-      (project.status !== 'running' ? '<button class="btn" id="btn-refresh2" title="演示数据为静态快照">' + icon('refresh', 13) + ' 刷新</button>' : '') +
-      (reportPath ? '<a class="btn" href="' + reportPath + '" target="_blank" rel="noreferrer">' + icon('download', 13) + ' 导出报告</a>'
-        : '<button class="btn" disabled title="该任务没有报告产物">' + icon('download', 13) + ' 导出报告</button>') +
       '<button class="btn danger" id="btn-del" title="演示环境为静态快照，不支持删除">' + icon('x', 12) + ' 删除</button>'
     }) +
       '<div class="tabs">' + tabsHtml + '</div>' +
@@ -1698,7 +1987,7 @@
     tab: 'overview',
     serviceView: 'agent',
     query: '',
-    candStatus: 'pending',
+    candStatus: 'all',
     candSev: 'all',
     findSev: 'all',
     logAutoscroll: true,
@@ -1729,7 +2018,7 @@
     if (route.name === 'project' && route.id !== STATE.projectId) {
       STATE.projectId = route.id;
       STATE.tab = 'overview';
-      STATE.candStatus = 'pending'; STATE.candSev = 'all'; STATE.findSev = 'all';
+      STATE.candStatus = 'all'; STATE.candSev = 'all'; STATE.findSev = 'all';
       STATE.drawerFinding = null; STATE.drawerCandidate = null;
     }
     if (route.name !== 'project') STATE.projectId = null;
@@ -1768,6 +2057,20 @@
     // tabs / segs
     onClick(root, '[data-tab]', function (e) {
       STATE.tab = e.currentTarget.getAttribute('data-tab');
+      var cs = e.currentTarget.getAttribute('data-cs');
+      if (cs) STATE.candStatus = cs;
+      render();
+    });
+    onClick(root, '[data-wf-step]', function (e) {
+      var id = e.currentTarget.getAttribute('data-wf-step');
+      STATE.wfSelected = id;
+      render();
+    });
+    onClick(root, '[data-art-toggle]', function (e) {
+      var id = e.currentTarget.getAttribute('data-art-toggle');
+      if (!STATE.artCollapsed) STATE.artCollapsed = {};
+      // 首次点击即覆盖默认（首组展开、其余折叠），再点切换
+      STATE.artCollapsed[id] = !STATE.artCollapsed[id];
       render();
     });
     onClick(root, '[data-sv]', function (e) {
@@ -1784,6 +2087,20 @@
       var c = D.candidates.find(function (x) { return x.id === id; });
       if (c) { STATE.drawerCandidate = c; render(); }
     });
+    // 概览待验证候选快捷裁决：确认（promoted）/ 重验（probing）/ 误报（rejected）
+    // 注意：渲染读 D.candidatesByJob，必须改同一对象才能触发列表/徽标更新
+    function candDecide(attr, nextStatus, toastMsg) {
+      onClick(root, '[' + attr + ']', function (e) {
+        var id = e.currentTarget.getAttribute(attr);
+        var pid = STATE.projectId;
+        var list = D.candidatesByJob[pid] || [];
+        var c = list.find(function (x) { return x.id === id; }) || D.candidates.find(function (x) { return x.id === id; });
+        if (c) { c.status = nextStatus; render(); demoToast(toastMsg + '：' + c.id); }
+      });
+    }
+    candDecide('data-cand-confirm', 'promoted', '已确认为漏洞');
+    candDecide('data-cand-retry', 'probing', '已发起重新验证');
+    candDecide('data-cand-reject', 'rejected', '已判定为误报并忽略');
     onClick(root, '[data-find]', function (e) {
       var id = e.currentTarget.getAttribute('data-find');
       var f = D.findings.find(function (x) { return x.id === id; });
@@ -1981,12 +2298,28 @@
     onClick(root, '[data-del]', function () { demoToast('演示环境为静态快照，删除操作不会生效。'); });
     onClick(root, '#btn-del', function () { demoToast('演示环境为静态快照，删除操作不会生效。'); });
     onClick(root, '#btn-refresh', function () { demoToast('演示数据为静态快照，无需刷新。'); });
-    onClick(root, '#btn-refresh2', function () { demoToast('演示数据为静态快照，无需刷新。'); });
     onClick(root, '#btn-stop', function () { demoToast('演示环境没有运行中的任务可停止。'); });
 
     // report actions
-    onClick(root, '#btn-report-pdf', function () { printReport(); });
+    onClick(root, '#btn-export-toggle', function () {
+      STATE.reportExportOpen = !STATE.reportExportOpen;
+      render();
+    });
+    onClick(root, '#btn-report-pdf', function () { STATE.reportExportOpen = false; render(); printReport(); });
+    onClick(root, '#btn-log-download', function () {
+      var p = D.projects.find(function (x) { return x.id === STATE.projectId; });
+      if (!p) return;
+      var lines = (D.logsByJob[p.id] || { lines: [] }).lines || [];
+      var txt = lines.map(function (l) {
+        var row = ensureObj(l) || {};
+        return '[' + String(row.t || '') + '] [' + String(row.lvl || '').toUpperCase() + '] ' + String(row.msg || '');
+      }).join('\n');
+      downloadFile(slug(p.name) + '_运行日志.log', txt, 'text/plain;charset=utf-8');
+    });
+
     onClick(root, '#btn-report-md', function () {
+      STATE.reportExportOpen = false;
+      render();
       var project = D.projects.find(function (p) { return p.id === STATE.projectId; });
       if (!project) return;
       var md = reportToMarkdown(project, D.findingsByJob[project.id] || [], D.probesByJob[project.id] || [], D.patchesByJob[project.id] || []);
