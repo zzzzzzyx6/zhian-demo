@@ -47,7 +47,7 @@ const C=A.connections={
   const noun=m.kind==='agent'?'智能体':'模型';
   A.modal('删除'+noun,`<p>确认删除${noun}「${E(m.name)}」吗？</p>`,`<button class="btn" onclick="App.closeModal()">取消</button><button class="btn danger" onclick="App.connections.removeConfirm('${m.id}')">删除</button>`,{plain:true});},
  removeConfirm(id){const at=C.db.findIndex(x=>x.id===id);if(at<0){A.closeModal();return;}const m=C.db[at];C.db.splice(at,1);C.secrets.delete(id);for(const r of ['attacker','judge','process'])if(X.db.defaults?.[r]===id)X.db.defaults[r]='';A.save();A.closeModal();A.render();A.toast(`已删除「${m.name}」`);},
- eligible(role){return C.db.filter(m=>role==='target'||(m.kind==='model'&&m.accessType!=='weights'));},
+ eligible(){return C.db.filter(m=>(m.kind||'model')==='model'&&m.accessType!=='weights');},
  options(role,value){return '<option value="">请选择连接</option>'+C.eligible(role).map(m=>`<option value="${m.id}" ${value===m.id?'selected':''}>${E(m.name)}${m.accessType==='weights'?' · 模型权重':''}</option>`).join('');},
  roleSelect(role,value,id,onchange){return `<select id="${id}" onchange="${onchange}">${C.options(role,value)}</select>`;},
  open(id='',role='target',preset='',returnTo=null){

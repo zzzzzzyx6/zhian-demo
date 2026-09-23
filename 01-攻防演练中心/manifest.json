@@ -6,7 +6,11 @@
     "console-theme.css",
     "attack-arena.css",
     "product-refinement.css",
-    "shared-sidebar.css"
+    "shared-sidebar.css",
+    "experience-refinement.css",
+    "task-design-refinement.css",
+    "workflow-coordination.css",
+    "model-series.css"
   ],
   "js": [
     "core.js",
@@ -20,9 +24,14 @@
     "attack-arena.js",
     "product-refinement.js",
     "blue-strategy.js",
+    "attack-ia.js",
     "bank-builder.js",
     "agent-presets.js",
     "center-shell.js",
+    "experience-refinement.js",
+    "task-design-refinement.js",
+    "workflow-coordination.js",
+    "model-series.js",
     "finish.js",
     "standalone.js"
   ]
