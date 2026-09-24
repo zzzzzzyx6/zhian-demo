@@ -457,6 +457,7 @@
       '<div class="user-menu' + (STATE.userMenu ? ' open' : '') + '" id="user-menu">' +
       '<a class="user-menu-item" href="#" data-um="home">' + icon('home', 14) + '<span>回到首页</span></a>' +
       '<button class="user-menu-item" data-um="logout">' + icon('logout', 14) + '<span>退出登录</span></button>' +
+      '<button class="user-menu-item" data-um="intro">' + icon('info', 14) + '<span>介绍页</span></button>' +
       '</div></div>' +
       '</aside>';
   }
@@ -2000,7 +2001,8 @@
     modelForm: { name: '', base_url: '', api_key: '', model: '' },
     np: { name: '', description: '', phase: 'agent-full', source: 'path', target_path: '', website_url: '', model_config_id: '', candidate_categories: '', discovery_slice_size: '8', validation_batch_size: '1', agent_pool_size: '4', agent_pool_min: '2' },
     npError: '',
-    userMenu: false
+    userMenu: false,
+    introOpen: false
   };
 
   function parseHash() {
@@ -2011,6 +2013,12 @@
     if (parts[0] === 'projects') return { name: 'projects' };
     if (parts[0] === 'models') return { name: 'models' };
     return { name: 'dashboard' };
+  }
+
+  function introOverlay() {
+    return '<div class="intro-modal" role="dialog" aria-modal="true" aria-label="产品介绍">' +
+        '<iframe class="intro-frame" src="assets/intro.html" title="产品介绍页"></iframe>' +
+      '</div>';
   }
 
   function render() {
@@ -2040,6 +2048,7 @@
       (STATE.creating ? newProjectModal() : '') +
       (STATE.modelDraft ? modelModal() : '') +
       (STATE.modelDeleting ? modelDeleteModal() : '') +
+      (STATE.introOpen ? introOverlay() : '') +
       '</div>' +
       '<div id="toast"></div>';
 
@@ -2115,9 +2124,10 @@
 
     // drawer close
     onClick(root, '[data-close]', function () { STATE.drawerFinding = null; STATE.drawerCandidate = null; render(); });
+    onClick(root, '[data-intro-close]', function () { STATE.introOpen = false; render(); });
     document.onkeydown = function (e) {
-      if (e.key === 'Escape' && (STATE.drawerFinding || STATE.drawerCandidate || STATE.creating)) {
-        STATE.drawerFinding = null; STATE.drawerCandidate = null; STATE.creating = false; render();
+      if (e.key === 'Escape' && (STATE.drawerFinding || STATE.drawerCandidate || STATE.creating || STATE.introOpen)) {
+        STATE.drawerFinding = null; STATE.drawerCandidate = null; STATE.creating = false; STATE.introOpen = false; render();
       }
     };
     onClick(root, '[data-copy]', function (e) { copyText(e.currentTarget.getAttribute('data-copy')); });
@@ -2276,6 +2286,8 @@
         window.zhianHome();
       } else if (act === 'logout') {
         window.zhianLogout();
+      } else if (act === 'intro') {
+        STATE.introOpen = true;
       }
       render();
     });
@@ -2346,6 +2358,12 @@
   }
 
   window.addEventListener('hashchange', render);
+  // 介绍页 iframe 内的“进入控制台”按钮通过 postMessage 请求关闭，回到工作台
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'zhian-close-intro') {
+      STATE.introOpen = false; render();
+    }
+  });
   modelStoreLoad();
   render();
 })();

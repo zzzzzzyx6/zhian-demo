@@ -161,3 +161,6 @@
 .model-action{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:7px;background:transparent;color:var(--text-muted);cursor:pointer;transition:color .15s,background .15s}
 .model-action:hover{color:var(--text);background:var(--bg-sunken)}
 .model-action.danger:hover{color:var(--sig-critical);background:var(--sig-critical-softer)}
+/* 介绍页 overlay：账户菜单“介绍页”打开的产品介绍（全屏） */
+.intro-modal{position:fixed;inset:0;width:100vw;height:100vh;background:#fff;border:0;border-radius:0;box-shadow:none;z-index:62;display:flex;flex-direction:column;overflow:hidden}
+.intro-frame{width:100%;height:100%;border:0;display:block;background:#fff}
