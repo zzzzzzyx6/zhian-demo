@@ -1,5 +1,6 @@
 /* One navigation specification used by all three centers. */
 body #app.has-center-nav{--nav-width:208px}body #app.has-center-nav.nav-collapsed{--nav-width:72px}
+body #app.has-center-nav:not(.scan-integrated){--center-nav-size:208px;--nav-width:var(--center-nav-size)!important}
 body #app.has-center-nav .top-actions>.workspace-return{display:none!important}
 body #app .center-sidebar,.sidebar{background:#fff!important;color:#172338;border-right:1px solid #e1e7f0!important;font-family:Inter,'Microsoft YaHei','PingFang SC',sans-serif;font-size:14px;display:flex;flex-direction:column;height:100dvh;box-sizing:border-box}
 body #app .center-brand,.sidebar-brand{height:80px;min-height:80px;padding:18px 12px!important;border-bottom:1px solid #e1e7f0;display:flex;align-items:center;box-sizing:border-box}
@@ -7,8 +8,11 @@ body #app .center-brand strong,.sidebar-brand .name{font-size:17px!important;fon
 body #app .center-mobile-mark{display:none!important}
 body #app .center-toggle,body #app .center-home,.zhian-collapse,.zhian-home{display:flex;align-items:center;gap:10px;margin:6px 14px!important;padding:10px 12px!important;min-height:40px;width:auto;border:0;background:transparent;color:#52647e;border-radius:6px;font:400 13px/20px Inter,'Microsoft YaHei',sans-serif;cursor:pointer;text-decoration:none;box-sizing:border-box;justify-content:flex-start}
 body #app .center-toggle:hover,body #app .center-home:hover,.zhian-collapse:hover,.zhian-home:hover{background:#edf3ff;color:#2563eb}
-body #app .center-section,.sidebar-section{margin:0;padding:18px 14px 8px;color:#94a3b8;font:400 12px/18px Inter,'Microsoft YaHei',sans-serif;letter-spacing:0;text-align:left}
-body #app .center-sidebar nav,.sidebar-nav{padding:8px 10px!important;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+body #app .center-section,.sidebar-section{margin:0;padding:0 4px 8px;color:#8a99ad;font:600 12px/18px Inter,'Microsoft YaHei',sans-serif;letter-spacing:.04em;text-align:left}
+body #app .center-sidebar nav,.sidebar-nav{padding:16px 10px!important;display:flex;flex-direction:column;gap:22px;overflow-y:auto}
+body #app .center-nav-group{display:flex;flex-direction:column;gap:0;min-width:0}
+body #app .center-nav-group+.center-nav-group{padding-top:18px;border-top:1px solid #edf1f6}
+body #app .center-nav-group-items{display:flex;flex-direction:column;gap:4px}
 body #app .center-nav-item,.sidebar .nav-item{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;height:auto;margin:0!important;padding:9px 12px!important;border:0;border-radius:6px!important;background:transparent;color:#46566e;box-sizing:border-box;text-decoration:none;box-shadow:none;font:400 14px/22px Inter,'PingFang SC','Microsoft YaHei',sans-serif}
 body #app .center-nav-item:hover,.sidebar .nav-item:hover{background:#f1f5fd}
 body #app .center-nav-item.active,.sidebar .nav-item.active{background:#e8efff!important;color:#245de8!important;box-shadow:none!important}
@@ -28,7 +32,7 @@ body #app.nav-collapsed .center-section,body #app.nav-collapsed .center-nav-text
 body #app.nav-collapsed .center-sidebar nav,.zhian-collapsed .sidebar-nav{padding:8px!important}body #app.nav-collapsed .center-nav-item,.zhian-collapsed .nav-item{justify-content:center;padding:14px 6px!important}body #app.nav-collapsed .center-sidebar-bottom,.zhian-collapsed .sidebar-foot{padding:8px!important}body #app.nav-collapsed .center-user-menu{width:170px}body #app.nav-collapsed .center-home,body #app.nav-collapsed .center-toggle{margin:6px 8px!important;justify-content:center}
 body #app:not(.has-center-nav) .center-sidebar{display:none!important}
 
-body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-sidebar{width:208px!important}body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .main-shell{margin-left:208px!important;width:calc(100% - 208px)!important}body #app.has-center-nav.nav-collapsed:not(.scan-integrated) .center-sidebar{width:72px!important}body #app.has-center-nav.nav-collapsed:not(.scan-integrated) .main-shell{margin-left:72px!important;width:calc(100% - 72px)!important}body #app .center-nav-item .icon{display:block!important}body #app .center-sidebar-bottom{flex-shrink:0}body #app .center-sidebar nav{flex:1;min-height:0}.sidebar-nav{flex:1;min-height:0}
+body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-sidebar{width:var(--center-nav-size)!important}body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .main-shell{margin-left:var(--center-nav-size)!important;width:calc(100% - var(--center-nav-size))!important}body #app.has-center-nav.nav-collapsed:not(.scan-integrated) .center-sidebar{width:72px!important}body #app.has-center-nav.nav-collapsed:not(.scan-integrated) .main-shell{margin-left:72px!important;width:calc(100% - 72px)!important}body #app .center-nav-item .icon{display:block!important}body #app .center-sidebar-bottom{flex-shrink:0}body #app .center-sidebar nav{flex:1;min-height:0}.sidebar-nav{flex:1;min-height:0}
 
 
 body #app .center-toggle,.zhian-collapse{width:40px!important;justify-content:center!important;padding:10px!important}
@@ -99,3 +103,20 @@ body .activity-title,body .artifact-title,body .artifact-desc,
 body .cand h4,body .cand-why-list,body .why-list li,body .counter-list li{
   font-size:14px!important;
 }
+
+/* Match the 280px scanning-center navigation on roomy desktops without taking
+   that space away from the narrow preview. Width and content offset share one token. */
+@media(min-width:1200px){
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed){--center-nav-size:240px}
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-brand{padding:20px 18px!important;gap:10px}
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-brand strong{font-size:19px!important}
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-sidebar nav{padding:16px 12px!important;gap:8px!important}
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-nav-item{height:48px!important;min-height:48px!important;padding:12px 14px!important}
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-sidebar-bottom{padding:12px 16px!important}
+}
+@media(min-width:1600px){
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed){--center-nav-size:280px}
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-brand{padding:24px 20px!important;gap:12px}
+  body #app.has-center-nav:not(.scan-integrated):not(.nav-collapsed) .center-brand strong{font-size:21px!important}
+}
+body #app.has-center-nav.nav-collapsed:not(.scan-integrated){--center-nav-size:0px;--nav-width:0px!important}

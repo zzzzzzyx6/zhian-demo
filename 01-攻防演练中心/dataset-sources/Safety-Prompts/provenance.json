@@ -1,0 +1,10 @@
+{
+  "dataset": "thu-coai/Safety-Prompts",
+  "revision": "bbfd3ce47a32b998e4b94225a375b41e44070ae5",
+  "url": "https://raw.githubusercontent.com/thu-coai/Safety-Prompts/bbfd3ce47a32b998e4b94225a375b41e44070ae5/typical_safety_scenarios.json",
+  "license": "Apache-2.0",
+  "selection": "100 per source category, sorted by SHA-256(prompt), ties by source row index; original prompts unchanged; instruction-attack set excluded.",
+  "sha256": "541a40f4666a750b702747fd866a9fd2653d838078e2c8362d6a72c8a88a2576",
+  "importedAt": "2026-09-28",
+  "evaluation": "平台通用回答安全测试；非官方基准复现"
+}

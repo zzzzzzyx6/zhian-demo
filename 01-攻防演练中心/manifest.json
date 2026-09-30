@@ -10,7 +10,11 @@
     "experience-refinement.css",
     "task-design-refinement.css",
     "workflow-coordination.css",
-    "model-series.css"
+    "model-results.css",
+    "report-insights.css",
+    "attack-snapshots.css",
+    "scene-tags.css",
+    "comment-refinement.css"
   ],
   "js": [
     "core.js",
@@ -19,6 +23,7 @@
     "demo-content.js",
     "bank-data.js",
     "salad-bank-data.js",
+    "public-bank-data.js",
     "banks.js",
     "connections-extraction.js",
     "attack-arena.js",
@@ -31,7 +36,11 @@
     "experience-refinement.js",
     "task-design-refinement.js",
     "workflow-coordination.js",
-    "model-series.js",
+    "result-presets.js",
+    "scene-tags.js",
+    "model-results.js",
+    "report-insights.js",
+    "attack-snapshots.js",
     "finish.js",
     "standalone.js"
   ]

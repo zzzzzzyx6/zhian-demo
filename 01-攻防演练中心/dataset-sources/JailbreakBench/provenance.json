@@ -1,0 +1,10 @@
+{
+  "dataset": "JailbreakBench/JBB-Behaviors",
+  "revision": "886acc352a31533ffbcf4ef22c744658688086fc",
+  "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/data/harmful-behaviors.csv",
+  "license": "MIT",
+  "selection": "All 100 harmful rows; Goal unchanged; benign and judge_comparison not imported.",
+  "sha256": "4a8ec6832056b631eb092dccc60d37a61c3d441268268888b3d006288afeffa1",
+  "importedAt": "2026-09-28",
+  "evaluation": "平台通用回答安全测试；非官方基准复现"
+}

@@ -1,0 +1,10 @@
+{
+  "dataset": "centerforaisafety/HarmBench",
+  "revision": "8e1604d1171fe8a48d8febecd22f600e462bdcdd",
+  "url": "https://raw.githubusercontent.com/centerforaisafety/HarmBench/8e1604d1171fe8a48d8febecd22f600e462bdcdd/data/behavior_datasets/harmbench_behaviors_text_all.csv",
+  "license": "MIT",
+  "selection": "standard rows only; exclude contextual, copyright, nonempty ContextString and hash_check; Behavior unchanged.",
+  "sha256": "8d81accedd38eaaf8b760618622bb888417d1fd0c86eba65c427a16f1cbb4afc",
+  "importedAt": "2026-09-28",
+  "evaluation": "平台通用回答安全测试；非官方基准复现"
+}
