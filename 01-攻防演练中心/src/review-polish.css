@@ -1,0 +1,11 @@
+.prr-report-table th.ds-number,.prr-report-table td.ds-number,.review-config-table th,.review-config-table td{text-align:left!important}
+.prr-report-table .ds-date small{font-size:inherit!important;line-height:inherit;color:inherit}
+.review-delete{color:#b3454d;white-space:nowrap}
+.review-config-table .ds-number{text-align:left!important}
+.pmr-resources .pmr-resource-table th:nth-child(3){width:auto}
+.pmr-resources .pmr-resource-table .empty{padding:34px}
+.pd-guide-technical-open{padding-top:16px;border-top:1px solid #e3e9f2;margin-top:16px}
+.pd-guide-technical-open>h3{font-size:14px;color:#405774;margin:0 0 16px}
+.pd-guide-technical-open .pm-guide{border:0;box-shadow:none;padding:0}
+.pd-guide-technical-open .code-block{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+.pd-guide-technical-open .pm-steps{display:none}

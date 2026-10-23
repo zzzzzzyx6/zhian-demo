@@ -8,6 +8,18 @@ Desktop.ini
 # agent-internal workspace state
 .workbuddy/
 
+# Local-only caches, credentials and debugging artifacts
+__pycache__/
+*.pyc
+.env
+.env.*
+node_modules/
+__fixtures/
+__*test*
+__smoke.js
+*-debug.png
+/01-攻防演练中心/产品介绍/
+
 # scratch / temp outputs
 __smoke_out.txt
 __out.txt

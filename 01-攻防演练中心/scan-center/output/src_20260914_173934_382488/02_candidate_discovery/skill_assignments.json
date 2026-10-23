@@ -1,0 +1,266 @@
+[
+  {
+    "task_id": "discover-01-memory-shard-01",
+    "agent_name": "内存安全候选发现智能体",
+    "specialty": "memory_safety",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  },
+  {
+    "task_id": "discover-02-authz-shard-01",
+    "agent_name": "权限认证候选发现智能体",
+    "specialty": "authorization",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  },
+  {
+    "task_id": "discover-03-parser-shard-01",
+    "agent_name": "解析器序列化候选发现智能体",
+    "specialty": "parser",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  },
+  {
+    "task_id": "discover-04-injection-shard-01",
+    "agent_name": "动态输入候选发现智能体",
+    "specialty": "injection",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  },
+  {
+    "task_id": "discover-05-config-shard-01",
+    "agent_name": "配置密钥候选发现智能体",
+    "specialty": "configuration",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  },
+  {
+    "task_id": "discover-06-resource-shard-01",
+    "agent_name": "并发资源候选发现智能体",
+    "specialty": "resource",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  },
+  {
+    "task_id": "discover-07-underexplored-shard-01",
+    "agent_name": "低关注面候选发现智能体",
+    "specialty": "underexplored",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  },
+  {
+    "task_id": "discover-08-general-shard-01",
+    "agent_name": "通用候选发现智能体",
+    "specialty": "general",
+    "selected_skill_names": [
+      "triaging-dependency-vulnerabilities"
+    ],
+    "available_skills": {
+      "count": 1,
+      "sample": [
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  }
+]

@@ -1,0 +1,215 @@
+{
+  "batch": 4,
+  "metadata": {
+    "batch_id": "stream-static-004",
+    "candidate_ids": [
+      "VULN-004"
+    ],
+    "focus": "流式候选快速筛选验证",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "streaming": true,
+    "wave": "static",
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-004",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "line": 224,
+      "location": "def validate_tool_function(self) -> dict",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "exec(self.tool_code, exec_globals, exec_locals)",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-004",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+        "line": 224,
+        "location": "def validate_tool_function(self) -> dict",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "exec(self.tool_code, exec_globals, exec_locals)",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+        "line": 224,
+        "start_line": 154,
+        "end_line": 269,
+        "source": "154:                 code_lines = self.tool_code.split('\\n')\n155:                 context_lines = 3\n156:                 start_line = max(1, error_line - context_lines)\n157:                 end_line = min(len(code_lines), error_line + context_lines)\n158:                 \n159:                 context_result = []\n160:                 for i in range(start_line, end_line + 1):\n161:                     line_content = code_lines[i - 1]\n162:                     prefix = f\"{i:3d}: \"\n163:                     if i == error_line:\n164:                         # Highlight error line\n165:                         context_result.append(f\"{prefix}>>> {line_content} <<< ERROR\")\n166:                     else:\n167:                         context_result.append(f\"{prefix}    {line_content}\")\n168:                 \n169:                 code_context = '\\n'.join(context_result)\n170:             else:\n171:                 # Show entire code with line numbers if no specific line found\n172:                 result = []\n173:                 for i, line in enumerate(self.tool_code.split('\\n'), 1):\n174:                     result.append(f\"{i:3d}: {line}\")\n175:                 code_context = '\\n'.join(result)\n176:             \n177:             error_info = {\n178:                 \"timestamp\": datetime.now().isoformat(),\n179:                 \"error_type\": type(e).__name__,\n180:                 \"error_message\": str(e),\n181:                 \"traceback\": traceback.format_exc(),\n182:                 \"error_line\": error_line,\n183:                 \"code_context\": code_context\n184:             }\n185:             self.performance.error_history.append(error_info)\n186:             \n187:             if len(self.performance.error_history) > 10:\n188:                 self.performance.error_history = self.performance.error_history[-10:]\n189:             \n190:             # Create enhanced error message with code context\n191:             enhanced_error = f\"{str(e)}\\n\\nError occurred in tool: {self.tool_name}\\n\"\n192:             if error_line:\n193:                 enhanced_error += f\"Error line: {error_line}\\n\"\n194:             enhanced_error += f\"Code context:\\n{code_context}\"\n195:             return enhanced_error\n196:             # Raise the original error, but the enhanced context is stored in error_history\n197:     \n198:     def validate_tool_function(self) -> dict:\n199:         \"\"\"Validate that the tool has a proper callable function\"\"\"\n200:         try:\n201:             # Test code execution\n202:             import sys\n203:             import os\n204:             \n205:             # Add exec_env directory to Python path for ai_response module access\n206:             exec_env_path = os.path.join(os.path.dirname(__file__), \"..\", \"exec_env\")\n207:             if exec_env_path not in sys.path:\n208:                 sys.path.append(exec_env_path)\n209:             \n210:             exec_globals = {\n211:                 \"__builtins__\": __builtins__,\n212:                 \"str\": str,\n213:                 \"int\": int,\n214:                 \"float\": float,\n215:                 \"list\": list,\n216:                 \"dict\": dict,\n217:                 \"bool\": bool,\n218:                 \"sys\": sys,\n219:                 \"os\": os\n220:             }\n221:             exec_locals = {}\n222:             \n223:             # Execute the code\n224:             exec(self.tool_code, exec_globals, exec_locals)\n225:             \n226:             # Find valid functions (callable and not starting with _)\n227:             valid_functions = []\n228:             for name, obj in exec_locals.items():\n229:                 if callable(obj) and not name.startswith('_'):\n230:                     valid_functions.append((name, obj))\n231:             \n232:             if len(valid_functions) > 0:\n233:                 return {\n234:                     \"success\": True,\n235:                     \"valid_functions\": valid_functions,\n236:                     \"function_count\": len(valid_functions)\n237:                 }\n238:             else:\n239:                 return {\n240:                     \"success\": False,\n241:                     \"error\": \"No callable functions found (functions must not start with '_')\",\n242:                     \"valid_functions\": [],\n243:                     \"function_count\": 0\n244:                 }\n245:             \n246:         except Exception as e:\n247:             return {\n248:                 \"success\": False,\n249:                 \"error\": str(e),\n250:                 \"error_type\": type(e).__name__,\n251:                 \"valid_functions\": [],\n252:                 \"function_count\": 0\n253:             }\n254:     \n255:     def add_attack_result(self, result: dict):\n256:         \"\"\"Add attack result for analysis\"\"\"\n257:         self.performance.attack_results.append(result)\n258:         if len(self.performance.attack_results) > 50:\n259:             self.performance.attack_results = self.performance.attack_results[-50:]\n260:     \n261:     def add_multi_turn_conversation(self, conversation: dict, final_score: float):\n262:         \"\"\"Add multi-turn conversation result and update best multi-turn score\"\"\"\n263:         if final_score >= self.performance.best_multi_turn_score:\n264:             self.performance.best_multi_turn_score = final_score\n265:             self.performance.multi_turn_conversation_history.append(conversation)\n266:             if len(self.performance.multi_turn_conversation_history) > 20:\n267:                 self.performance.multi_turn_conversation_history = self.performance.multi_turn_conversation_history[-20:]\n268:         \n269:         # Update best multi-turn score",
+        "nearby_symbols": [
+          "111: raise RuntimeError(f\"No executable function found in tool {self.tool_name}\")",
+          "113: result = main_func(*args, **kwargs)",
+          "115: execution_time = (datetime.now() - start_time).total_seconds()",
+          "117: (self.performance.average_execution_time * (self.performance.execution_count - 1) + execution_time)",
+          "119: )",
+          "120: self.performance.last_execution_time = datetime.now()",
+          "140: tb_lines = traceback.format_exc().split('\\n')",
+          "145: line_match = re.search(r'line (\\d+)', line)",
+          "147: error_line = int(line_match.group(1))",
+          "154: code_lines = self.tool_code.split('\\n')",
+          "156: start_line = max(1, error_line - context_lines)",
+          "157: end_line = min(len(code_lines), error_line + context_lines)",
+          "165: context_result.append(f\"{prefix}>>> {line_content} <<< ERROR\")",
+          "167: context_result.append(f\"{prefix}    {line_content}\")",
+          "169: code_context = '\\n'.join(context_result)",
+          "174: result.append(f\"{i:3d}: {line}\")",
+          "175: code_context = '\\n'.join(result)",
+          "185: self.performance.error_history.append(error_info)",
+          "198: def validate_tool_function(self) -> dict:",
+          "199: \"\"\"Validate that the tool has a proper callable function\"\"\""
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+        "language": "python",
+        "lines": 848,
+        "risk_score": 1.0,
+        "underexplored_score": 0.26,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "large_file",
+          "memory_safety",
+          "no_obvious_tests",
+          "parser",
+          "resource"
+        ],
+        "category_hits": {
+          "memory_safety": 1,
+          "authorization": 2,
+          "parser": 2,
+          "injection": 5,
+          "configuration": 2,
+          "resource": 1
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "解析器序列化候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "并发资源候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src"
+      },
+      "ranking_hint": {
+        "id": "VULN-004",
+        "priority": 1.07,
+        "reason": "候选合并排序智能体失败，使用本地严重性和置信度排序。",
+        "validation_focus": [
+          "源码证据",
+          "可达性",
+          "运行证据"
+        ]
+      },
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "task_id": "src_20260914_173934_382488",
+  "started_at": "2026-09-14T09:39:37.331215+00:00",
+  "phases": {
+    "profile": "完成",
+    "intel": "完成",
+    "environment": "完成",
+    "candidate_ranking": "进入验证队列 16 个候选，流式已验证 4 个",
+    "validation": "已确认 0 个漏洞",
+    "analysis": "已确认 0 个漏洞"
+  }
+}

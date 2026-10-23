@@ -1,0 +1,12 @@
+[
+  {
+    "wave": "static",
+    "reason": "本地静态候选已产生，先对高优先级候选进行流式筛选验证。",
+    "candidate_ids": [
+      "VULN-001",
+      "VULN-002",
+      "VULN-003",
+      "VULN-004"
+    ]
+  }
+]

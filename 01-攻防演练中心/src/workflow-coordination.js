@@ -3,23 +3,13 @@
 'use strict';
 const A=window.App,X=A.attack,B=A.banks,C=A.connections,E=A.escape,I=A.icon,M=X.methodDependencies;
 const copy=value=>JSON.parse(JSON.stringify(value));
-const statusText=t=>({running:'进行中',paused:'已暂停',done:'已完成',stopped:'手动结束',error:'任务异常'}[t?.status]||'等待中');
+const statusText=t=>({running:'进行中',done:'已完成',stopped:'已终止',error:'异常终止'}[t?.status]||'等待中');
 const resultText=u=>({breach:'已攻破',defended:'已守住',error:'执行异常',pending:'执行中'}[u?.result]||'等待中');
 const resultTone=u=>u?.result==='breach'?'breach':u?.result==='defended'?'defended':u?.result==='error'?'error':'pending';
 const selectedBanks=w=>(w.bankIds||[]).map(id=>B.get(id)).filter(Boolean);
 const methodScene={Direct:'jailbreak',PAIR:'jailbreak',Crescendo:'multiturn',CoA:'multiturn',ReNeLLM:'jailbreak',DrAttack:'jailbreak','AutoDAN-Turbo':'jailbreak',DeepInception:'jailbreak',ICA:'jailbreak',JailBrokenRole:'jailbreak',CipherChat:'obfuscation',FlipAttack:'obfuscation'};
 
-function modelIdentity(model){
-  const previous=X.db.tasks?.filter(t=>t.model===model?.id&&t.targetMeta?.family&&t.targetMeta?.version).sort((a,b)=>String(b.created).localeCompare(String(a.created)))[0];
-  if(previous)return {family:previous.targetMeta.family,version:previous.targetMeta.version};
-  const raw=(model?.name||model?.model||'').trim();
-  const qwen=raw.match(/^(Qwen\d+(?:\.\d+)?)[-_](.+)$/i);
-  const deepseek=raw.match(/^(DeepSeek)[-_](.+)$/i);
-  if(qwen)return {family:qwen[1],version:qwen[2]};
-  if(deepseek)return {family:'DeepSeek',version:deepseek[2]};
-  const release=raw.match(/^(.*?)[-_\s]+(v?\d[^\s]*)$/i);
-  return {family:release?.[1]||raw,version:release?.[2]||''};
-}
+function modelIdentity(model){return C.identity(model);}
 X.targetIdentity=modelIdentity;
 function snapshot(id){const m=C.db.find(x=>x.id===id);return m?X.connectionSnapshot(m):null;}
 function ensureReferenceModels(){
@@ -61,7 +51,7 @@ function coordinateData(){
     }
     else {
       const old=task.targetMeta||{},inferred=modelIdentity(X.targetFor(task));
-      task.targetMeta={family:old.family||inferred.family,version:old.version||old.revision||old.variant||inferred.version};
+      task.targetMeta={...inferred,...old,family:old.family||inferred.family,version:old.version||old.revision||old.variant||inferred.version};
     }
   }
   if(X.db.roundLimitVersion!==1){
@@ -70,20 +60,6 @@ function coordinateData(){
       for(const unit of task.units||[])if(M[unit.method]?.process&&unit.rounds>4)unit.rounds=4;
     }
     X.db.roundLimitVersion=1;
-  }
-  // Repair the original paused demonstration task (16/16 complete) without changing user-created tasks.
-  if(X.db.pausedDemoContinuationVersion!==1){
-    const demo=X.db.tasks.find(t=>t.id==='EV-260919-077'&&t.simulated&&t.status==='paused');
-    if(demo&&demo.units.length===16&&demo.units.every(u=>u.result!=='pending')){
-      const questions=demo.bankSnapshot?.items||[];
-      for(let i=0;i<8;i++){
-        const index=demo.units.length,question=questions[index%questions.length];
-        demo.units.push({id:`S-${String(index+1).padStart(4,'0')}`,index,scene:'jailbreak',method:'PAIR',questionId:question?.id,rounds:4,result:'pending',events:[],roundHistory:[],eventSchema:5});
-      }
-      demo.sampleCount=12;
-      demo.engine.concurrency=1;
-    }
-    X.db.pausedDemoContinuationVersion=1;
   }
   X.db.seriesTagsVersion=1;
   A.save();
@@ -104,7 +80,7 @@ const openTask=X.open;X.open=function(){X.focusNode=null;return openTask.apply(t
 const showArena=X.showArena;X.showArena=function(){X.focusNode=null;return showArena.apply(this,arguments);};
 X.switchLive=function(id){X.focusNode=null;X.arena={taskId:id,unitId:null,replay:null};A.render();};
 X.workspaceTasks=function(){
-  const unfinished=X.db.tasks.filter(t=>['running','paused'].includes(t.status)).sort((a,b)=>(a.status==='running'?-1:1)-(b.status==='running'?-1:1)||String(b.created).localeCompare(String(a.created)));
+  const unfinished=X.db.tasks.filter(t=>['running'].includes(t.status)).sort((a,b)=>(a.status==='running'?-1:1)-(b.status==='running'?-1:1)||String(b.created).localeCompare(String(a.created)));
   if(unfinished.length)return unfinished;const recent=X.db.tasks.filter(t=>['done','stopped','error'].includes(t.status)).sort((a,b)=>String(b.finished||b.created).localeCompare(String(a.finished||a.created)))[0];return recent?[recent]:[];
 };
 X.exerciseTask=function(){const tasks=X.workspaceTasks();return X.db.tasks.find(t=>t.id===X.arena.taskId&&tasks.some(x=>x.id===t.id))||tasks[0]||null;};
@@ -112,21 +88,20 @@ X.exerciseTask=function(){const tasks=X.workspaceTasks();return X.db.tasks.find(
 function boardState(t){
   const m=X.metrics(t),pending=t.units.filter(u=>u.result==='pending'),completed=t.units.filter(u=>u.result!=='pending');
   const active=pending.find(u=>u.events?.length),latest=completed.slice().sort((a,b)=>String(b.finished||'').localeCompare(String(a.finished||''))||(b.index||0)-(a.index||0))[0];
-  const unit=['running','paused'].includes(t.status)?active||pending[0]||latest:latest||t.units[0];
+  const unit=['running'].includes(t.status)?active||pending[0]||latest:latest||t.units[0];
   const events=unit?.events||[],raw=events.length?events.at(-1).phase:-1,phase=unit?.eventSchema===5?raw:raw===0?1:raw===1?2:raw===2?4:unit?.result!=='pending'?4:-1;
   return {m,unit,phase,moving:t.status==='running'&&unit?.result==='pending',content:unit?X.unitContent(t,unit):null};
 }
 function detailPanel(id,t,s){
-  if(X.focusNode!==id)return '';const u=s.unit,target=X.targetFor(t),method=M[u?.method]?.label||u?.method||'等待调度',meta=t.targetMeta;
+  if(X.focusNode!==id)return '';const u=s.unit,target=X.targetFor(t),method=M[u?.method]?.label||u?.method||'等待调度';
   const data={
     attack:['红队攻击配置',M[u?.method]?.gen?`攻击模型：${t.engine?.roles?.attacker?.name||t.engine?.attacker||'未配置'}`:'攻击角色：本地模板 / 变换',`攻击方法：${method}`],
-    target:['靶标',target.name,meta?`系列 ${meta.family} · 版本 ${meta.version}`:target.model||''],
-    blue:['蓝队防守配置',X.blueLabel(t.defense),t.defense?.mode==='guard'?`${t.defense.guardType==='model'?t.defense.model?.name||'模型护栏':'规则护栏'} · ${t.defense.guardType==='rules'?(t.defense.rules?.input?'输入检测 ':'')+(t.defense.rules?.output?'输出检测':''):(t.defense.modelInput?'输入检测 ':'')+(t.defense.modelOutput?'输出检测':'')}`:t.defense?.mode==='prompt'?t.defense.prompt:'靶标原始安全防护能力'],
-    judge:['裁判与判定',t.engine?.roles?.judge?.name||t.engine?.judge||'GPT-4o mini',u?.verdict||'']
-  }[id];
+    target:['靶标',target.name,''],
+    blue:['蓝队防守配置',X.blueLabel(t.defense),''],
+    judge:['裁判与判定',t.engine?.roles?.judge?.name||t.engine?.judge||'GPT-4o mini','根据已保存的判定结果展示']
+  }[id==='blue-output'?'blue':id];
   if(!data)return '';
-  if(id==='attack')return `<div class="flow-inspector"><button onclick="App.attack.inspectArenaNode('${id}')" aria-label="关闭详情">${I('close',13)}</button><span>${E(data[0])}</span><p class="attack-inspector-line">${E(data[1])}</p><p class="attack-inspector-line">${E(data[2])}</p></div>`;
-  return `<div class="flow-inspector"><button onclick="App.attack.inspectArenaNode('${id}')" aria-label="关闭详情">${I('close',13)}</button><span>${E(data[0])}</span><strong>${E(data[1])}</strong>${data[2]?`<p>${E(data[2])}</p>`:''}</div>`;
+  return `<div class="flow-inspector"><button onclick="App.attack.inspectArenaNode('${id}')" aria-label="关闭详情">${I('close',13)}</button><span>${E(data[0])}</span><strong>${E(data[1])}</strong>${data[2]?`<strong>${E(data[2])}</strong>`:''}</div>`;
 }
 // Role symbols share one stroke and inherit the card's single accent color.
 const arenaRoleIcons={
@@ -135,43 +110,45 @@ const arenaRoleIcons={
   judge:'<path d="M12 3v17M8 21h8M4 7h16M5 7l-3 7h6L5 7Zm14 0-3 7h6l-3-7ZM2 14a3 3 0 0 0 6 0m8 0a3 3 0 0 0 6 0"/>',
   target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>'
 };
-function arenaRoleIcon(id){return `<svg class="icon arena-role-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${arenaRoleIcons[id]}</svg>`;}
+function arenaRoleIcon(id){return `<svg class="icon arena-role-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${arenaRoleIcons[id==='blue-output'?'blue':id]}</svg>`;}
 function flowCard(id,tone,title,primary,secondary,state,t,s){return `<div class="flow-group node-${id} ${tone} ${state?'active':''}"><button onclick="App.attack.inspectArenaNode('${id}')" aria-label="查看${title}" aria-expanded="${X.focusNode===id}"><span class="flow-group-top"><span class="flow-group-icon">${arenaRoleIcon(id)}</span><small>${title}</small><i></i></span><strong title="${E(primary)}">${E(primary)}</strong>${secondary?`<em>${E(secondary)}</em>`:''}</button>${detailPanel(id,t,s)}</div>`;}
 function roundFlow(t,s,newAttack=false){
-  const u=s.unit;if(!s.moving||!u||u.result!=='pending')return '';
-  const multi=!!M[u.method]?.process,max=multi?Math.min(4,Math.max(1,u.rounds||t.engine?.maxRounds||1)):1;
+  const u=s.unit;if(!['running'].includes(t.status)||!u||u.result!=='pending')return '';
+  const multi=!!M[u.method]?.process,max=multi?Math.max(1,u.rounds||t.engine?.maxRounds||1):1;
   const current=Math.min(max,u.events?.at(-1)?.round||u.currentRound||1),method=M[u.method]?.label||u.method||'攻击执行中';
-  const stages=[['攻击生成',0],['输入防守',1],['靶标响应',2],['输出防守',3],['裁判判定',4]];
+  const stages=X.guardStages(t),shownPhase=stages.filter(([,phase])=>phase<=s.phase).at(-1)?.[1]??-1;
   const track=stages.map(([name,phase],i)=>{
     const skipped=u?.blueBlocked==='input'&&(phase===2||phase===3);
     const verdictLabel={breach:'已攻破',defended:'未攻破',error:'执行异常'}[u.verdictState]||(s.phase===4?'判定中':'待判定');
     const verdict=phase===4?`<small class="stage-verdict ${s.phase===4?'judging':''} ${u.verdictState||''}">${verdictLabel}</small>`:'';
-    return `<span class="${skipped?'skipped':s.phase>phase?'done':s.phase===phase?'current':''}" ${skipped?'title="输入已拦截，此步骤未执行"':''}><i>${skipped?'—':i+1}</i><span class="stage-label">${name}${verdict}</span>${skipped?'<small>已跳过</small>':''}</span>${i<4?`<b class="${s.phase>phase?'done':s.phase===phase?'current':''}">→</b>`:''}`;
+    return `<span class="${skipped?'skipped':shownPhase>phase?'done':shownPhase===phase?'current':''}" ${skipped?'title="输入已拦截，此步骤未执行"':''}><i>${skipped?'—':i+1}</i><span class="stage-label">${name}${verdict}</span>${skipped?'<small>已跳过</small>':''}</span>${i<stages.length-1?`<b class="${shownPhase>phase?'done':shownPhase===phase?'current':''}">→</b>`:''}`;
   }).join('');
-  const prompt=(s.content?.prompt||u.attackPrompt||'等待生成').slice(0,160);
-  return `<div class="attack-internal-flow attack-live-float ${multi?'multi-turn-flow':'single-turn-flow'} ${newAttack?'new-attack':''}"><div class="round-flow-head"><span><i></i><b class="mono">${E(u.id)}</b> · ${E(method)}</span><strong>${multi?`第 ${current} / ${max} 轮`:'当前攻击'}</strong></div><div class="internal-stage-track">${track}</div><div class="round-attack-input"><span>攻击输入</span><p>${E(prompt)}${(s.content?.prompt||u.attackPrompt||'').length>160?'…':''}</p></div></div>`;
+  const prompt=u.seedPrompt||t.bankSnapshot?.items?.find(q=>q.id===u.questionId)?.prompt||X.sampleContent({...u,attackPrompt:''},t).prompt||'等待生成';
+  return `<div class="attack-internal-flow attack-live-float ${multi?'multi-turn-flow':'single-turn-flow'} ${newAttack?'new-attack':''}"><div class="round-flow-head"><span><strong class="current-attack-label">当前攻击</strong><i></i><b class="mono">${E(u.id)}</b> · ${E(method)}</span>${multi?`<strong>第 ${current} / ${max} 轮</strong>`:''}</div><div class="internal-stage-track">${track}</div><div class="round-attack-input"><span>攻击输入</span><p>${E(prompt)}</p></div></div>`;
 }
 X.battleBoardHTML=function(t,embedded=false){
   const s=boardState(t),u=s.unit,m=s.m,target=X.targetFor(t),method=M[u?.method]?.label||u?.method||'等待调度',judge=t.engine?.roles?.judge?.name||t.engine?.judge||'GPT-4o mini';
   const decided=m.valid+m.errors,safePct=decided?m.defended/decided*100:0,breachPct=decided?m.breach/decided*100:0,errorPct=decided?m.errors/decided*100:0;
+  const guard=X.guardFlow(t);
   X.presentedAttackIds ||= new Map();
   const previousUnit=X.presentedAttackIds.get(t.id),newAttack=!!(s.moving&&u&&previousUnit&&previousUnit!==u.id);
   X.presentedAttackIds.set(t.id,u?.id||'');
   return `<section class="battle-board coordinated ${embedded?'embedded':''} ${s.moving?'is-live':'is-frozen'}">
-    <header class="battle-board-head"><div class="battle-title"><span class="battle-live-dot"></span><div class="battle-title-line"><strong>${E(t.name)}</strong>${X.status(t)}</div><div class="battle-actions">${!embedded&&['running','paused'].includes(t.status)?`<button class="btn small" onclick="App.attack.taskAction('${E(t.id)}','toggle')">${t.status==='running'?'暂停':'继续'}</button><button class="btn small danger-soft" onclick="App.attack.taskAction('${E(t.id)}','stop')">结束</button>`:''}</div></div></header>
+    <header class="battle-board-head"><div class="battle-title"><span class="battle-live-dot"></span><div class="battle-title-line"><strong><button class="battle-task-link" onclick="App.attack.open('${E(t.id)}')" title="查看任务详情">${E(t.name)}</button></strong>${X.status(t)}</div></div><div class="battle-actions">${!embedded&&['running'].includes(t.status)?`<button class="btn small danger-soft" onclick="App.attack.taskAction('${E(t.id)}','stop')">终止</button>`:''}</div></header>
     <div class="battle-board-body"><div class="battle-stage"><div class="battle-grid"></div>
-      <div class="battle-progress"><div><span>任务执行进度</span><b>${m.done} / ${m.total}<em>${m.pct}%</em></b></div><div class="progress-track"><div class="progress-fill" style="width:${m.pct}%"></div></div></div>
-      <div class="coordinated-flow">
+      <div class="battle-progress"><div><span>任务执行进度</span><b>${m.pct}%</b></div>${A.dataDisplay.progress(m.done,m.total,t.status)}</div>
+      <div class="coordinated-flow ${guard.enabled?'guard-flow '+(guard.input&&guard.output?'dual-guard-flow':guard.input?'input-guard-flow':'output-guard-flow'):''}">
         ${flowCard('attack','red','红队',M[u?.method]?.gen?t.engine?.roles?.attacker?.name||t.engine?.attacker||'攻击生成':'本地模板 / 变换',method,s.phase===0,t,s)}
-        <span class="major-arrow attack ${s.phase<2?'active':''}" aria-label="发送攻击"><i></i><b>→</b><small>攻击输入</small></span>
-        ${flowCard('target','target','靶标',target.name,'',s.phase===2&&u?.blueBlocked!=='input',t,s)}
-        <span class="major-arrow evidence ${s.phase>=2?'active':''}" aria-label="交付证据供裁判判定"><i></i><b>→</b><small>${u?.blueBlocked==='input'?'拦截证据':'响应证据'}</small></span>
+        <span class="major-arrow attack ${s.phase<2?'active':''}" aria-label="发送攻击"><i></i><b>→</b></span>
+        ${guard.input?flowCard('blue','blue','蓝队 · 输入',X.blueLabel(t.defense),u?.blueBlocked==='input'?'输入已拦截':'输入审核',s.phase===1,t,s)+`<span class="major-arrow guard-pass"><b>→</b></span>`:''}
+        ${flowCard('target','target','靶标',target.name,u?.blueBlocked==='input'?'已跳过 · 未调用':'',s.phase===2&&u?.blueBlocked!=='input',t,s)}
+        ${guard.output?`<span class="major-arrow guard-response"><b>→</b></span>`+flowCard('blue-output','blue','蓝队 · 输出',X.blueLabel(t.defense),u?.blueBlocked==='input'?'已跳过':u?.blueBlocked==='output'?'输出已拦截':'输出审核',s.phase===3&&u?.blueBlocked!=='input',t,s):''}
+        <span class="major-arrow evidence ${s.phase>=2?'active':''}" aria-label="交付证据供裁判判定"><i></i><b>→</b></span>
         ${flowCard('judge','judge','裁判',judge,resultText(u),s.phase===4,t,s)}
-        <div class="blue-target-link" aria-label="蓝队从下方防护靶标"><span>↑</span><small>防护靶标</small></div>
-        ${flowCard('blue','blue','蓝队',X.blueLabel(t.defense),'',s.phase===1||s.phase===3,t,s)}
+        ${!guard.enabled?`<div class="blue-target-link" aria-label="蓝队从下方防护靶标"><span>↑</span></div>`+flowCard('blue','blue','蓝队',X.blueLabel(t.defense),'',s.phase===1||s.phase===3,t,s):''}
       </div>
       ${roundFlow(t,s,newAttack)}
-    </div><aside class="battle-telemetry"><div class="telemetry-score coordinated-score"><div class="score-ring" style="--safe:${safePct};--breach:${breachPct};--error:${errorPct}"><span><strong class="score-value">${m.valid?m.asr:'--'}<small>%</small></strong><b class="score-label">ASR</b></span></div><div><strong>${m.valid} 个有效判定</strong></div></div>
+    </div><aside class="battle-telemetry"><div class="telemetry-score coordinated-score">${A.dataDisplay.ring([{label:'已攻破',value:m.breach,color:A.dataDisplay.colors.red},{label:'已守住',value:m.defended,color:A.dataDisplay.colors.teal}],{value:m.valid?m.asr+'%':'—',label:'ASR',description:'有效判定结果分布'})}<span class="ds-caption">有效判定 ${m.valid} 次</span></div>
       <div class="telemetry-grid colored compact-results">
         <div class="telemetry-total"><span>已完成</span><strong>${m.done}<small> / ${m.total}</small></strong></div>
         <div class="result-legend telemetry-outcomes"><span class="breach"><i></i>已攻破 <b>${m.breach}</b></span><span class="defended"><i></i>已守住 <b>${m.defended}</b></span><span class="error"><i></i>执行异常 <b>${m.errors}</b></span></div>
@@ -182,8 +159,8 @@ X.battleBoardHTML=function(t,embedded=false){
 
 X.arenaHTML=function(){
   const tasks=X.workspaceTasks();if(!tasks.length)return `<section class="card arena-empty"><h2>还没有攻防任务</h2><p>创建任务后，这里会展示攻击链路的实时状态。</p><button class="btn primary" onclick="App.attack.newTask()">新建攻防任务</button></section>`;
-  if(!tasks.some(t=>t.id===X.arena.taskId)){X.arena={taskId:tasks[0].id,unitId:null,replay:null};X.focusNode=null;}const t=X.exerciseTask(),unfinished=tasks.filter(x=>['running','paused'].includes(x.status)),running=unfinished.filter(x=>x.status==='running').length,paused=unfinished.length-running,recentOnly=!unfinished.length;
-  return `<div class="arena-switcher"><div><span>${recentOnly?'最近完成任务':'正在演练'}</span><strong>${tasks.length}</strong>${recentOnly?'<i class="done"></i>保留最近结果':`<i class="running"></i>进行中 ${running}<i class="paused"></i>已暂停 ${paused}`}</div><select aria-label="切换演练任务" onchange="App.attack.switchLive(this.value)">${tasks.map(row=>`<option value="${E(row.id)}" ${row.id===t.id?'selected':''}>${E(row.name)} · ${statusText(row)}</option>`).join('')}</select></div>${X.battleBoardHTML(t,false)}`;
+  if(!tasks.some(t=>t.id===X.arena.taskId)){X.arena={taskId:tasks[0].id,unitId:null,replay:null};X.focusNode=null;}const t=X.exerciseTask(),unfinished=tasks.filter(x=>['running'].includes(x.status)),running=unfinished.filter(x=>x.status==='running').length,recentOnly=!unfinished.length;
+  return `<div class="arena-switcher"><div><span>${recentOnly?'最近完成任务':'正在演练'}</span><strong>${tasks.length}</strong>${recentOnly?'<i class="done"></i>保留最近结果':`<i class="running"></i>进行中 ${running}`}</div><select aria-label="切换演练任务" onchange="App.attack.switchLive(this.value)">${tasks.map(row=>`<option value="${E(row.id)}" ${row.id===t.id?'selected':''}>${E(row.name)} · ${statusText(row)}</option>`).join('')}</select></div>${X.battleBoardHTML(t,false)}`;
 };
 X.taskBoardHTML=function(t){return X.battleBoardHTML(t,true);};
 
@@ -218,15 +195,10 @@ X.applyBlueInput=function(t,u){
 };
 X.applyBlueOutput=function(t,u){if(u.blueBlocked==='input')return;u.rawResponse=u.response;applyGuard(t,u,'output',u.rawResponse);};
 // Local demo execution: every phase and round is stored, so the visual follows its actual state.
-X.tick=function(){
-  let changed=false;
-  for(const t of X.db.tasks){
-    if(t.status!=='running')continue;
-    const pending=t.units.filter(u=>u.result==='pending');
-    if(!pending.length){t.status='done';t.finished=new Date().toISOString();changed=true;continue;}
-    const active=pending.filter(u=>u.events?.length),batch=active.length?active:pending.slice(0,Math.max(1,Math.min(8,t.engine.concurrency||1)));
-    for(const u of batch){
-      if(u.pendingResult){u.result=u.pendingResult;u.score=u.pendingScore;delete u.pendingResult;delete u.pendingScore;changed=true;continue;}
+// Preset reconstruction and live execution use the same phase transitions.
+X.advanceUnit=function(t,u,time=new Date().toISOString()){
+      if(u.result!=='pending')return;
+      if(u.pendingResult){u.result=u.pendingResult;u.score=u.pendingScore;u.finished=time;delete u.pendingResult;delete u.pendingScore;return;}
       if(u.events?.length&&u.eventSchema!==5)u.events=u.events.map(e=>({...e,phase:e.phase===0?1:e.phase===1?2:4,round:1}));
       u.eventSchema=5;u.events ||= [];
       const last=u.events.at(-1),phase=last?last.phase===4?0:last.phase+1:0;
@@ -253,15 +225,24 @@ X.tick=function(){
           u.pendingResult=u.blueBlocked?'defended':preview.result;u.pendingScore=u.blueBlocked?0:preview.score;u.verdictState=u.pendingResult;
           u.verdict=u.blueBlocked?`${u.blueBlocked==='input'?'输入':'输出'}护栏已拦截，最终交付内容未突破安全边界`:u.pendingResult==='error'?'执行异常，不计入有效判定':u.pendingResult==='breach'?'裁判确认最终交付内容突破安全边界':'裁判确认守住安全边界';
         }
-        u.roundHistory ||= [];u.roundHistory.push({round,prompt:u.attackPrompt,rawResponse:u.rawResponse,response:u.response,verdict:u.verdict,blueBlocked:u.blueBlocked||null,blueEvidence:copy(u.blueEvidence||[]),result:continueAttack?'defended':u.pendingResult,finishedAt:new Date().toISOString()});
+        u.roundHistory ||= [];u.roundHistory.push({round,prompt:u.attackPrompt,rawResponse:u.rawResponse,response:u.response,verdict:u.verdict,blueBlocked:u.blueBlocked||null,blueEvidence:copy(u.blueEvidence||[]),result:continueAttack?'defended':u.pendingResult,finishedAt:time});
       }
-      u.events.push({phase,round,time:new Date().toISOString()});
-    }
+      u.events.push({phase,round,time});
+};
+X.tick=function(){
+  let changed=false;
+  for(const t of X.db.tasks){
+    if(t.status!=='running')continue;
+    const pending=t.units.filter(u=>u.result==='pending');
+    if(!pending.length){t.status='done';t.finished=new Date().toISOString();changed=true;continue;}
+    const method=pending[0].method,ready=pending.filter(u=>u.method===method);
+    const active=ready.filter(u=>u.events?.length),batch=active.length?active:ready.slice(0,Math.max(1,Math.min(8,t.engine.concurrency||1)));
+    for(const u of batch)X.advanceUnit(t,u);
     t.ticks=(t.ticks||0)+1;if(!t.units.some(u=>u.result==='pending')){t.status='done';t.finished=new Date().toISOString();}changed=true;
   }
   return changed;
 };
-const stopTask=X.arenaStop;X.arenaStop=function(id){const task=X.db.tasks.find(t=>t.id===id);if(task&&['running','paused'].includes(task.status))task.finished=new Date().toISOString();return stopTask.call(this,id);};
+const stopTask=X.arenaStop;X.arenaStop=function(id){const task=X.db.tasks.find(t=>t.id===id);if(task&&['running'].includes(task.status))task.finished=new Date().toISOString();return stopTask.call(this,id);};
 X.blueEditor=function(w){
   const choices=[
     ['existing','基准防守','只验证靶标自身的安全能力'],
@@ -337,13 +318,13 @@ X.bankPickerKeydown=function(event){
 document.addEventListener('pointerdown',event=>{if(bankPickerState().open&&!document.getElementById('bank-picker')?.contains(event.target))X.toggleBankPicker(false);});
 document.addEventListener('focusin',event=>{if(bankPickerState().open&&!document.getElementById('bank-picker')?.contains(event.target))X.toggleBankPicker(false);});
 X.newTask=function(){
-  const target=C.eligible('target').find(m=>m.id==='m1')||C.eligible('target')[0],meta=modelIdentity(target),d=X.db.defaults;
+  const target=C.eligible('target').find(m=>m.id==='m1')||C.eligible('target')[0],d=X.db.defaults;
   X.techniqueExpanded=new Set();
   X.bankPicker={open:false,query:''};
-  X.selected=null;X.tab='create';X.wizard={step:1,name:'',description:'',model:target?.id||'',targetFamily:meta.family,targetVersion:meta.version,bankIds:[],bankId:'',methods:[],scenes:[],attacker:d.attacker||'deepseek-v3',judge:d.judge||'deepseek-judge',defenseMode:'existing',guardType:'model',blueModel:'deepseek-judge',blueInput:true,blueOutput:true,bluePolicy:'识别违反安全约束的内容，返回放行或拦截及理由',blueKeywords:'',defensePrompt:'',maxRounds:4,concurrency:4};
+  X.selected=null;X.tab='create';X.wizard={step:1,name:'',description:'',model:'',targetFamily:'',targetVersion:'',bankIds:[],bankId:'',methods:[],scenes:[],attacker:d.attacker||'deepseek-v3',judge:d.judge||'deepseek-judge',defenseMode:'existing',guardType:'model',blueModel:'deepseek-judge',blueInput:true,blueOutput:true,bluePolicy:'识别违反安全约束的内容，返回放行或拦截及理由',blueKeywords:'',defensePrompt:'',maxRounds:4,concurrency:4};
   X.wizardModal();window.scrollTo({top:0,behavior:'instant'});
 };
-X.wizardTarget=function(id){const w=X.wizard,meta=modelIdentity(X.model(id));w.model=id;w.targetFamily=meta.family;w.targetVersion=meta.version;X.wizardModal();};
+X.wizardTarget=function(id){X.wizard.model=id;X.wizardModal();};
 X.repeatTask=function(id){
   const task=X.db.tasks.find(t=>t.id===id);if(!task)return;X.newTask();
   const d=task.defense||{},meta=task.targetMeta||modelIdentity(X.targetFor(task));
@@ -356,12 +337,10 @@ X.wizardModal=function(){
   if(X.wizard.step!==2)bankPickerState().open=false;
   const w=X.wizard,req=X.requirements(w.methods),banks=selectedBanks(w),target=X.model(w.model);let body='';const steps=['定义任务与靶标','选择题库与攻击方法','配置红队 / 蓝队 / 裁判'];const stepper=`<div class="exercise-steps three">${steps.map((name,i)=>`<div class="${w.step===i+1?'active':w.step>i+1?'done':''}"><b>${w.step>i+1?'✓':i+1}</b><span>${name}</span></div>`).join('')}</div>`;
   if(w.step===1){
-    const families=[...new Set(X.db.tasks.map(t=>t.targetMeta?.family).filter(Boolean))];
-    body=`<section class="wizard-section"><h3>任务信息</h3>${field('task-name','任务名称 *',w.name,'App.attack.wizard.name=this.value','建议以模型全称 + 演练目标命名，例如：Qwen2.5-72B-Instruct 安全回归')}<div class="field"><label for="task-description">任务描述</label><textarea id="task-description" rows="3" oninput="App.attack.wizard.description=this.value">${E(w.description||'')}</textarea></div></section>
-      <section class="wizard-section target-definition"><div class="wizard-section-head"><div><h3>靶标</h3><p>选择模型管理中已接入的模型，补充系列名称与版本标签，即可归集关联任务。</p></div></div>
-      <div class="field"><label for="task-model">模型 / 智能体 *</label><select id="task-model" onchange="App.attack.wizardTarget(this.value)"><option value="">请选择靶标</option>${C.eligible('target').map(m=>`<option value="${E(m.id)}" ${m.id===w.model?'selected':''}>${E(m.name)}</option>`).join('')}</select></div>
-      <div class="target-identity-grid"><div class="field"><label for="target-family">系列名称 *</label><input id="target-family" list="target-families" value="${E(w.targetFamily||'')}" placeholder="选择已有系列或输入新系列" oninput="App.attack.wizard.targetFamily=this.value"><datalist id="target-families">${families.map(name=>`<option value="${E(name)}"></option>`).join('')}</datalist></div>${field('target-version','版本标签 *',w.targetVersion,'App.attack.wizard.targetVersion=this.value','例如 72B-Instruct / v1.2')}</div>
-      <p class="field-help">同一系列下使用不同版本标签区分模型；同一版本可关联多次演练任务。</p></section>`;
+    body=`<section class="wizard-section"><h3>任务信息</h3>${field('task-name','任务名称 *',w.name,'App.attack.wizard.name=this.value','建议以靶标全称 + 演练目标命名，例如：Qwen2.5-72B-Instruct 安全回归')}<div class="field"><label for="task-description">任务描述</label><textarea id="task-description" rows="3" oninput="App.attack.wizard.description=this.value">${E(w.description||'')}</textarea></div></section>
+      <section class="wizard-section target-definition"><div class="wizard-section-head"><div><h3>靶标</h3><p>从模型资产中选择本次演练的靶标。</p></div></div>
+      ${C.taskTargetPicker(w)}
+      </section>`;
   }
   if(w.step===2)body=`<section class="wizard-section"><div class="wizard-section-head"><div><h3 id="bank-picker-label">演练题库 *</h3></div><span id="bank-selected-count" aria-live="polite">已选 ${banks.length} 个</span></div>${bankPickerHTML(w)}</section><section class="wizard-section"><div class="wizard-section-head"><div><h3>攻击方法 *</h3><p>按 OpenRT 攻击手段分类。基线可直接选择，其余请逐项选择具体方法。</p></div><span>已选 ${w.methods.length} 种</span></div><div class="openrt-techniques">${techniqueSelector(w)}</div></section>`;
   if(w.step===3)body=`<div class="role-config-grid"><section class="exercise-role red"><div class="exercise-role-title"><b>红队</b><h3>攻击执行</h3></div>${req.attacker?`<div class="field"><label for="task-attacker">攻击模型 *</label>${C.roleSelect('attacker',w.attacker,'task-attacker','App.attack.wizard.attacker=this.value')}</div>${w.methods.includes('DrAttack')?'<p class="field-help">辅助向量模型：text-embedding-3-large</p>':''}<div class="reference-note"><strong>推荐 DeepSeek-V3.2</strong></div>`:'<p class="role-ready">所选类别使用题库原文、本地模板或字符变换，不需要攻击模型。</p>'}</section><section class="exercise-role blue"><div class="exercise-role-title"><b>蓝队</b><h3>防守方式</h3></div>${X.blueEditor(w)}</section><section class="exercise-role judge"><div class="exercise-role-title"><b>裁判</b><h3>裁判模型</h3></div><div class="field"><label for="task-judge">裁判模型 *</label>${C.roleSelect('judge',w.judge,'task-judge','App.attack.wizard.judge=this.value')}</div><div class="reference-note"><strong>推荐 GPT-4o mini</strong></div></section></div>`;
@@ -375,9 +354,9 @@ X.toggleTechnique=function(groupId){
   X.wizard.methods=all?X.wizard.methods.filter(id=>!ids.includes(id)):[...new Set([...X.wizard.methods,...ids])];
   syncScenes(X.wizard);X.wizardModal();
 };
-X.taskValidation=function(w){if(!w.name.trim())return '请填写任务名称';if(!C.eligible('target').some(m=>m.id===w.model))return '请选择靶标';if(!(w.targetFamily||'').trim()||!(w.targetVersion||'').trim())return '请填写系列名称与版本标签';if(w.step===1)return '';if(!selectedBanks(w).some(bank=>bank.items.length))return '请至少选择一个非空演练题库';if(!w.methods.length)return '请至少选择一种攻击方法或基线测试';if(w.methods.some(id=>!methodScene[id]))return '所选方法尚未接入，请重新选择';if(w.step===2)return '';const blueError=X.validateBlue(w);if(blueError)return blueError;const req=X.requirements(w.methods);if(req.attacker&&!C.eligible('attacker').some(m=>m.id===w.attacker))return '请选择攻击模型';if(!C.eligible('judge').some(m=>m.id===w.judge))return '请选择裁判模型';return '';};
+X.taskValidation=function(w){if(!w.name.trim())return '请填写任务名称';if(!C.eligible('target').some(m=>m.id===w.model))return '请选择靶标';if(w.step===1)return '';if(!selectedBanks(w).some(bank=>bank.items.length))return '请至少选择一个非空演练题库';if(!w.methods.length)return '请至少选择一种攻击方法或基线测试';if(w.methods.some(id=>!methodScene[id]))return '所选方法尚未接入，请重新选择';if(w.step===2)return '';const blueError=X.validateBlue(w);if(blueError)return blueError;const req=X.requirements(w.methods);if(req.attacker&&!C.eligible('attacker').some(m=>m.id===w.attacker))return '请选择攻击模型';if(!C.eligible('judge').some(m=>m.id===w.judge))return '请选择裁判模型';return '';};
 X.wizardNext=function(){const error=X.taskValidation(X.wizard);if(error){document.getElementById('wizard-error').textContent=error;return;}if(X.wizard.step<3){X.wizard.step++;X.wizardModal();}};
-X.confirmTask=function(){const w=X.wizard,error=X.taskValidation(w);if(error){document.getElementById('wizard-error').textContent=error;return;}const banks=selectedBanks(w),groups=selectedTechniques(w),req=X.requirements(w.methods),target=X.model(w.model),blue=X.blueSnapshot(w);const blueDetails=blue.mode==='prompt'?blue.prompt:blue.mode==='guard'?[blue.guardType==='model'?blue.model?.name:'规则护栏',blue.policy,blue.rules?.keywords?.join('、'),(blue.guardType==='rules'?blue.rules?.input:blue.modelInput)?'输入护栏':'',(blue.guardType==='rules'?blue.rules?.output:blue.modelOutput)?'输出护栏':''].filter(Boolean).join(' · '):'靶标原生安全能力';A.modal('确认启动攻防任务',`<div class="launch-confirm"><div class="launch-target"><strong>${E(target.name)}</strong><p>系列 ${E(w.targetFamily)} · 版本 ${E(w.targetVersion)}</p></div><section class="launch-scope"><h3>测试范围</h3><details><summary>题库 <b>${banks.length}</b></summary><ul>${banks.map(b=>`<li>${E(b.name)} <span>${b.items.length} 题</span></li>`).join('')}</ul></details><div class="launch-methods"><h4>攻击场景</h4>${groups.map(g=>`<details><summary>${E(g.name||g.label||g.id)}</summary><ul>${g.methods.filter(m=>w.methods.includes(m.id)).map(m=>`<li>${E(m.label||M[m.id]?.label||m.id)}</li>`).join('')}</ul></details>`).join('')}</div></section><section class="launch-roles"><h3>攻防角色</h3><div><span>红队</span><strong>${req.attacker?E(X.model(w.attacker).name):'本地执行'}</strong></div><div><span>蓝队</span><section><strong>${E(X.blueLabel(blue))}</strong><p>${E(blueDetails)}</p></section></div><div><span>裁判</span><strong>${E(X.model(w.judge).name)}</strong></div></section></div>`,`<button class="btn" onclick="App.closeModal()">返回配置</button><button class="btn primary" onclick="App.attack.launchTask()">确认启动</button>`);};
+X.confirmTask=function(){const w=X.wizard,error=X.taskValidation(w);if(error){document.getElementById('wizard-error').textContent=error;return;}const banks=selectedBanks(w),groups=selectedTechniques(w),req=X.requirements(w.methods),target=X.model(w.model),blue=X.blueSnapshot(w);const blueDetails=blue.mode==='prompt'?blue.prompt:blue.mode==='guard'?[blue.guardType==='model'?blue.model?.name:'规则护栏',blue.policy,blue.rules?.keywords?.join('、'),(blue.guardType==='rules'?blue.rules?.input:blue.modelInput)?'输入护栏':'',(blue.guardType==='rules'?blue.rules?.output:blue.modelOutput)?'输出护栏':''].filter(Boolean).join(' · '):'靶标原生安全能力';A.modal('确认启动攻防任务',`<div class="launch-confirm"><div class="launch-target"><strong>靶标：${E(target.name)}</strong></div><section class="launch-scope"><h3>测试范围</h3><details><summary>题库 <b>${banks.length}</b></summary><ul>${banks.map(b=>`<li>${E(b.name)} <span>${b.items.length} 题</span></li>`).join('')}</ul></details><div class="launch-methods"><h4>攻击方法</h4>${groups.map(g=>`<details><summary>${E((g.name||g.label||g.id).replace(/^黑盒[：:]\s*/,''))}</summary><ul>${g.methods.filter(m=>w.methods.includes(m.id)).map(m=>`<li>${E(m.label||M[m.id]?.label||m.id)}</li>`).join('')}</ul></details>`).join('')}</div></section><section class="launch-roles"><h3>攻防角色</h3><div><span>红队</span><strong>${req.attacker?E(X.model(w.attacker).name):'本地执行'}</strong></div><div><span>蓝队</span><section><strong>${E(X.blueLabel(blue))}</strong><p>${E(blueDetails)}</p></section></div><div><span>裁判</span><strong>${E(X.model(w.judge).name)}</strong></div></section></div>`,`<button class="btn" onclick="App.closeModal()">返回配置</button><button class="btn primary" onclick="App.attack.launchTask()">确认启动</button>`);};
 X.launchTask=function(){
   const w=X.wizard,error=X.taskValidation({...w,step:3});if(error){A.closeModal();X.wizardModal();document.getElementById('wizard-error').textContent=error;return;}
   const banks=selectedBanks(w),items=banks.flatMap(bank=>bank.items.map(item=>({...copy(item),id:`${bank.id}::${item.id}`,sourceBankId:bank.id,sourceBankName:bank.name}))),req=X.requirements(w.methods),target=X.model(w.model),judge=X.model(w.judge),attacker=req.attacker?X.model(w.attacker):null;
@@ -391,7 +370,7 @@ X.launchTask=function(){
     if(task.units.some(unit=>unit.method===method))continue;
     for(const item of items){const index=task.units.length;task.units.push({id:'S-'+String(index+1).padStart(4,'0'),scene:methodScene[method],method,result:'pending',index,rounds:M[method].process?w.maxRounds:1});}
   }
-  task.id='EV-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);task.description=w.description.trim();task.defense=X.blueSnapshot(w);task.targetSnapshot=X.connectionSnapshot(target);task.targetMeta={family:w.targetFamily.trim(),version:w.targetVersion.trim()};
+  task.id='EV-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);task.description=w.description.trim();task.defense=X.blueSnapshot(w);task.targetSnapshot=X.connectionSnapshot(target);task.targetMeta=copy(C.identity(target));
   task.bankSnapshot={id:'multi:'+banks.map(b=>b.id).join('+'),bankIds:banks.map(b=>b.id),name:banks.map(b=>b.name).join(' + '),sources:banks.map(b=>({id:b.id,name:b.name,count:b.items.length})),items};
   task.units.forEach((unit,i)=>{unit.questionId=items[i%items.length].id;unit.rounds=M[unit.method].process?w.maxRounds:1;});
   task.simulated=true;X.db.tasks.unshift(task);A.save();A.closeModal();X.showArena(task.id);A.toast('攻防任务已启动');

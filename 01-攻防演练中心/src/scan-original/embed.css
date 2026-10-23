@@ -1,0 +1,38 @@
+/* Platform presentation adapter. Original scan content, hierarchy and interactions remain intact. */
+:root{--bg:#f5f7fa;--bg-elev:#fff;--bg-elev-2:#f4f7fb;--bg-sunken:#f7f9fc;--bg-tint:#edf3f9;--line:#e4eaf1;--line-strong:#d5dfea;--text:#2c425b;--text-muted:#64778e;--text-faint:#73869a;--brand:#386eaa;--brand-soft:#dce8f5;--brand-softer:#edf3f9;--brand-dim:#2d5b8e;--brand-ink:#315f94;--brand-bright:#4779b5;--r:7px;--r-lg:10px;--shadow-card:none}
+html,body{height:auto!important;min-height:0!important;overflow:visible!important;background:transparent!important}
+body{font-family:Inter,'Microsoft YaHei','PingFang SC',sans-serif;color:var(--text);font-variant-numeric:tabular-nums}
+#root{display:flow-root;min-width:0}
+.app{height:auto!important;min-height:0!important;display:block!important;overflow:visible!important;background:transparent!important;border:0;border-radius:0;box-shadow:none}
+.app>.main{height:auto!important;min-height:0!important;margin:0!important;width:100%!important;overflow:visible!important;padding:0;background:transparent!important;border:0;border-radius:0;box-shadow:none}
+.page-head{padding:0 0 20px!important;background:transparent!important;position:static!important;border-bottom:0!important;flex-wrap:wrap;gap:12px}
+.page-body{padding:0!important;overflow:visible!important;height:auto!important}
+.page-head .title{font-size:25px;font-weight:620;line-height:1.35;letter-spacing:0;color:#283c54}
+.page-head .sub{font-size:14px;line-height:1.8;color:var(--text-muted)}
+.page-head .actions{width:auto;margin-left:auto;gap:8px}
+.btn{height:35px;min-height:35px;padding:7px 13px;border-radius:7px;font-size:13px;line-height:1.5;box-shadow:none}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-dim);border-color:var(--brand-dim)}
+.input,.select,.textarea{font-size:14px;border-color:var(--line-strong);background:#fbfcfe}
+.card,.task-list{border-color:var(--line);border-radius:10px;box-shadow:none}
+.main>.tabs{padding:0 0 14px;margin:0 0 18px;background:transparent;border-bottom:1px solid var(--line);gap:6px;flex-wrap:wrap}
+body .main>.tabs .tab{height:34px;padding:0 13px;border-radius:6px;font-size:14px;background:transparent;color:var(--text-muted);box-shadow:none}
+body .main>.tabs .tab.on{background:var(--brand-softer);color:var(--brand-ink);box-shadow:none}
+body .main>.tabs .tab:hover{background:var(--bg-elev);color:var(--brand-ink)}
+/* Remove standalone viewport sizing: the host page owns scrolling and available height. */
+.cat-body{min-height:0;gap:0}
+.cat-body .task-list{flex:none;display:block;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
+.cat-body .task-list .empty{flex:none;min-height:180px;padding:32px 18px}
+/* Breakpoints in the original page included its sidebar. Keep all columns in this content viewport. */
+.cat-body .task-head,.cat-body .task-row{display:grid;grid-template-columns:minmax(180px,1.2fr) 80px minmax(180px,1fr) 120px 96px 136px 152px;gap:12px;min-width:1052px;align-items:center;box-sizing:border-box}
+.cat-body .task-head{padding:11px 18px;font-size:13px;letter-spacing:0;color:#5b6f86;background:#f4f7fb}
+.cat-body .task-row{padding:13px 18px;font-size:14px}
+.cat-body :is(.cell-task,.cell-phase,.cell-target,.cell-findings,.task-status,.task-time,.task-actions){grid-column:auto;grid-row:auto}
+.cat-body :is(.cell-task,.cell-phase,.cell-target){display:block}
+.cat-body :is(.task-status,.task-time){align-items:flex-start;text-align:left}
+.cat-body .task-actions{justify-content:flex-start;gap:12px}
+.cat-body .cell-task .b{font-size:14px;font-weight:550}
+.cat-body .task-row:hover{background:#f8fafd}
+@media(max-width:640px){.page-head .actions{width:100%;margin-left:0}.page-head .title{font-size:23px}}
+.page-head .actions{flex-wrap:wrap}.report-print{display:none}
+@media print{.report-print{display:block}.main>.page-head,.main>.tabs,.main>.page-body{display:none!important}}

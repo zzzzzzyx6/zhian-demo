@@ -1,0 +1,26 @@
+.ps-picker{border:1px solid #dfe7f1;border-radius:8px;background:#fff;margin-bottom:12px;overflow:hidden}
+.ps-picker>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;list-style:none;padding:12px 14px;font-size:14px;color:#526d8c}
+.ps-picker>summary::-webkit-details-marker{display:none}.ps-picker[open]>summary{background:#f5f8fc;border-bottom:1px solid #e2eaf3}.ps-picker[open] .ps-picker-arrow{transform:rotate(180deg)}
+.ps-picker-body{display:grid;grid-template-columns:140px minmax(0,1fr);min-height:170px;max-height:300px}
+.ps-picker-groups{overflow:auto;background:#f7f9fc;border-right:1px solid #e5ebf3;padding:7px}
+.ps-picker-groups>button{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;border:0;border-radius:5px;background:none;text-align:left;padding:10px 8px;font-size:13px;color:#74879e}
+.ps-picker-groups>button.active{background:#eaf2fd;color:#316bb0}.ps-picker-groups small{font-size:11px;color:#91a1b5}
+.ps-picker-options{min-width:0;overflow:auto;padding:12px}.ps-picker-scopes{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.ps-picker-scopes>button{border:0;background:#f2f5f9;border-radius:4px;padding:5px 8px;font-size:12px;color:#7c8fa6}.ps-picker-scopes>button.active{background:#e9f2ff;color:#326cae}
+.ps-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:start}
+.ps-choice{min-width:0;display:flex;align-items:flex-start;gap:7px;flex-wrap:wrap;position:relative;border:1px solid #e2eaf2;border-radius:6px;padding:10px 8px;color:#506983;font-size:13px;cursor:pointer;line-height:1.5;background:#fff}
+.ps-choice>input{width:14px;height:14px;margin:2px 0 0;flex:none}.ps-choice>span{min-width:0;flex:1;overflow-wrap:anywhere}.ps-choice>small{font-size:11px;color:#91a0b2;width:100%;padding-left:21px}.ps-choice>small:empty{display:none}
+.ps-choice.selected{border-color:#9bbde7;background:#f4f8ff}.ps-choice.unavailable{color:#96a2b2;background:#fafbfd}
+.ps-selected-method{border:1px solid #e1e9f3;border-radius:7px;margin-top:10px;overflow:hidden}.ps-selected-method>header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f4f8fd;font-size:13px;color:#42668f}
+.ps-selected-method .pu-method-parameters{background:#fff}.ps-selected-method .policy-param-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ps-selected-banks{display:flex;gap:7px;flex-wrap:wrap}.ps-bank-chip{display:flex;align-items:center;gap:10px;background:#f4f7fb;border:1px solid #e2eaf3;border-radius:5px;padding:6px 9px;font-size:12px;color:#6c829d;text-align:left}.ps-bank-chip>span{color:#95a5ba}
+.ps-empty{grid-column:1/-1;margin:18px 0;color:#8a9bb0;font-size:13px}
+.om-catalogue .toolbar.lp-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.om-catalogue .toolbar.lp-toolbar>select{flex:0 1 170px;min-width:140px}
+.om-catalogue .toolbar.lp-toolbar>.la-search{display:flex;flex:1 1 220px;width:auto;min-width:180px;max-width:320px;height:38px;padding:0 10px;gap:8px;position:relative;box-sizing:border-box}
+.om-catalogue .toolbar.lp-toolbar>.la-search>.icon{position:static;flex:none;transform:none;pointer-events:none}
+.om-catalogue .toolbar.lp-toolbar>.la-search>input{flex:1 1 0;min-width:0;width:0;height:34px;min-height:0;line-height:normal;border:0!important;border-radius:0;background:transparent!important;box-shadow:none!important;outline:none;padding:0!important;margin:0;box-sizing:border-box}
+.oj-template-heading:first-child{margin-top:0}.oj-editor .pu-judge-scale{margin-top:14px}
+.oj-preview-dialog{border:1px solid #dce6f0;padding:0;border-radius:12px;background:#fff;color:#304861;width:min(760px,calc(100vw - 40px));max-height:85vh;box-shadow:0 28px 100px #172b4d40}
+.oj-preview-dialog[open]{display:flex;flex-direction:column}.oj-preview-dialog::backdrop{background:#172b4d66;backdrop-filter:blur(2px)}.oj-preview-dialog .modal-body{overflow:auto;min-height:0}.oj-preview-dialog .modal-header,.oj-preview-dialog .modal-footer{flex:none}.oj-preview-dialog h2{margin:0}
+@media(max-width:640px){.ps-picker-body{grid-template-columns:110px minmax(0,1fr)}.ps-picker-options{padding:9px}.ps-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ps-selected-method .policy-param-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:440px){.ps-choice-grid,.ps-selected-method .policy-param-grid{grid-template-columns:1fr}}

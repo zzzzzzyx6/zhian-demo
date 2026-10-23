@@ -1,0 +1,184 @@
+{
+  "raw_items": [
+    {
+      "title": "CVE-1999-0490",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-1999-0490",
+      "summary": "MSHTML.DLL in Internet Explorer 5.0 allows a remote attacker to learn information about a local user's files via an IMG SRC tag. 发布日期：1999-04-21T04:00:00.000",
+      "category": "CVE HIGH",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2001-0807",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2001-0807",
+      "summary": "Internet Explorer 5.0, and possibly other versions, may allow remote attackers (malicious web pages) to read known text files from a client's hard drive via a SCRIPT tag with a SRC value that points to the text file. 发布日期：2001-12-06T05:00:00.000",
+      "category": "CVE LOW",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-0591",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0591",
+      "summary": "Directory traversal vulnerability in AOL Instant Messenger (AIM) 4.8 beta and earlier allows remote attackers to create arbitrary files and execute commands via a Direct Connection with an IMG tag with a SRC attribute that specifies the target filename. 发布日期：2002-06-18T04:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-0317",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0317",
+      "summary": "Gator ActiveX component (IEGator.dll) 3.0.6.1 allows remote web sites to install arbitrary software by specifying a Trojan Gator installation file (setup.ex_) in the src parameter. 发布日期：2002-06-25T04:00:00.000",
+      "category": "CVE HIGH",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-0738",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0738",
+      "summary": "MHonArc 2.5.2 and earlier does not properly filter Javascript from archived e-mail messages, which could allow remote attackers to execute script in web clients by (1) splitting the SCRIPT tag into smaller pieces, (2) including the script in a SRC argument to an IMG tag, or (3) using \"&={script}\" syntax. 发布日期：2002-08-12T04:00:00.000",
+      "category": "CVE HIGH",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-0902",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0902",
+      "summary": "Cross-site scripting vulnerability in phpBB 2.0.0 (phpBB2) allows remote attackers to execute Javascript as other phpBB users by including a http:// and a double-quote (\") in the [IMG] tag, which bypasses phpBB's security check, terminates the src parameter of the resulting HTML IMG tag, and injects the script. 发布日期：2002-10-04T04:00:00.000",
+      "category": "CVE HIGH",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-1965",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-1965",
+      "summary": "Cross-site scripting (XSS) vulnerability in Errors.gsl in Imatix Xitami 2.5b4 and 2.5b5 allows remote attackers to inject arbitrary web script or HTML via the (1) Javascript events, as demonstrated via an onerror event in an IMG SRC tag or (2) User-Agent field in an HTTP GET request. 发布日期：2002-12-31T05:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-2031",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-2031",
+      "summary": "Internet Explorer 5.0, 5.0.1 and 5.5 with JavaScript execution enabled allows remote attackers to determine the existence of arbitrary files via a script tag with a src parameter that references a non-JavaScript file, then using the onError event handler to monitor the results. 发布日期：2002-12-31T05:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-2086",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-2086",
+      "summary": "Multiple cross-site scripting (XSS) vulnerabilities in magicHTML of SquirrelMail before 1.2.6 allow remote attackers to inject arbitrary web script or HTML via (1) \"<<script\" in unspecified input fields or (2) a javascript: URL in the src attribute of an IMG tag. 发布日期：2002-12-31T05:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-2386",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-2386",
+      "summary": "Cross-site scripting (XSS) vulnerability in the Quizz module for XOOPS 1.0, when allowing on-line question development, allows remote attackers to inject arbitrary web script or HTML via a javascript: URL in the SRC attribute of an IMG tag. 发布日期：2002-12-31T05:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2002-1493",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-1493",
+      "summary": "Cross-site scripting (XSS) vulnerability in Lycos HTMLGear guestbook allows remote attackers to inject arbitrary script via (1) STYLE attributes or (2) SRC attributes in an IMG tag. 发布日期：2003-04-02T05:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2003-1305",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2003-1305",
+      "summary": "Microsoft Internet Explorer allows remote attackers to cause a denial of service (resource consumption) via a Javascript src attribute that recursively loads the current web page. 发布日期：2003-12-31T05:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2004-0501",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2004-0501",
+      "summary": "Outlook 2003 allows remote attackers to bypass intended access restrictions and cause Outlook to request a URL from a remote site via an HTML e-mail message containing a Vector Markup Language (VML) entity whose src parameter points to the remote site, which could allow remote attackers to know when a message has been read, verify valid e-mail addresses, and possibly leak other information. 发布日期：2004-08-18T04:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2004-1594",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2004-1594",
+      "summary": "Cross-site scripting (XSS) vulnerability in FuseTalk 4.0 allows remote attackers to execute arbitrary web script via an img src tag. 发布日期：2004-10-13T04:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2004-1050",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2004-1050",
+      "summary": "Heap-based buffer overflow in Internet Explorer 6 allows remote attackers to execute arbitrary code via long (1) SRC or (2) NAME attributes in IFRAME, FRAME, and EMBED elements, as originally discovered using the mangleme utility, aka \"the IFRAME vulnerability\" or the \"HTML Elements Vulnerability.\" 发布日期：2004-12-31T05:00:00.000",
+      "category": "CVE HIGH",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2005-0719",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-0719",
+      "summary": "Unknown vulnerability in the systems message queue in HP Tru64 Unix 4.0F PK8 through 5.1B-2/PK4 allows local users to cause a denial of service (process crash) for processes such as nfsstat, pfstat, arp, ogated, rarpd, route, sendmail, srconfig, strsetup, trpt, netstat, and xntpd. 发布日期：2005-03-09T05:00:00.000",
+      "category": "CVE LOW",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2005-1282",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-1282",
+      "summary": "Multiple cross-site scripting (XSS) vulnerabilities in Argosoft Mail Server Pro 1.8.7.6 allow remote attackers to inject arbitrary web script or HTML via (1) the src parameter in an IMG tag, (2) User settings, or (3) Address book input boxes in the webmail interface. 发布日期：2005-05-02T04:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2005-0918",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-0918",
+      "summary": "The NPSVG3.dll ActiveX control for Adobe SVG Viewer 3.02 and earlier, when running on Internet Explorer, allows remote attackers to determine the existence of arbitrary files by setting the src property to the target filename and using Javascript to determine if the web page immediately stops loading, which indicates whether the file exists or not. 发布日期：2005-05-05T04:00:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2005-2127",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-2127",
+      "summary": "Microsoft Internet Explorer 5.01, 5.5, and 6 allows remote attackers to cause a denial of service (application crash) and possibly execute arbitrary code via a web page with embedded CLSIDs that reference certain COM objects that are not intended for use within Internet Explorer, as originally demonstrated using the (1) DDS Library Shape Control (Msdds.dll) COM object, and other objects including (2) Blnmgrps.dll, (3) Ciodm.dll, (4) Comsvcs.dll, (5) Danim.dll, (6) Htmlmarq.ocx, (7) Mdt2dd.dll (as demonstrated using a heap corruption attack with uninitialized memory), (8) Mdt2qd.dll, (9) Mpg4ds32.ax, (10) Msadds32.ax, (11) Msb1esen.dll, (12) Msb1fren.dll, (13) Msb1geen.dll, (14) Msdtctm.dll, (15) Mshtml.dll, (16) Msoeacct.dll, (17) Msosvfbr.dll, (18) Mswcrun.dll, (19) Netshell.dll, (20) Ole2disp.dll, (21) Outllib.dll, (22) Psisdecd.dll, (23) Qdvd.dll, (24) Repodbc.dll, (25) Shdocvw.dll, ( 发布日期：2005-08-19T04:00:00.000",
+      "category": "CVE HIGH",
+      "confidence": 0.65,
+      "query": "src"
+    },
+    {
+      "title": "CVE-2005-3015",
+      "source": "nvd.nist.gov",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-3015",
+      "summary": "Cross-site scripting (XSS) vulnerability in IBM Lotus Domino 6.5.2 allows remote attackers to inject arbitrary web script or HTML via the (1) BaseTarget or (2) Src parameters. 发布日期：2005-09-21T21:03:00.000",
+      "category": "CVE MEDIUM",
+      "confidence": 0.65,
+      "query": "src"
+    }
+  ]
+}

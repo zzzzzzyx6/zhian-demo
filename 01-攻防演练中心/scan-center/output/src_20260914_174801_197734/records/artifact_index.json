@@ -1,0 +1,1042 @@
+[
+  {
+    "path": "00_profile_intel/agent_tool_capabilities.json",
+    "size": 8768
+  },
+  {
+    "path": "00_profile_intel/attention_map.json",
+    "size": 182572
+  },
+  {
+    "path": "00_profile_intel/intel_cache/20260914_174732_2c360f__online_v2_vuln_intel.json",
+    "size": 2
+  },
+  {
+    "path": "00_profile_intel/intel_cache/src__online_v2_vuln_intel.json",
+    "size": 10590
+  },
+  {
+    "path": "00_profile_intel/profile_summary.json",
+    "size": 1639
+  },
+  {
+    "path": "00_profile_intel/project_profile.json",
+    "size": 39111
+  },
+  {
+    "path": "00_profile_intel/raw_intel.json",
+    "size": 11010
+  },
+  {
+    "path": "00_profile_intel/raw_intel_queries.json",
+    "size": 42
+  },
+  {
+    "path": "00_profile_intel/raw_intel_query_plan.json",
+    "size": 343
+  },
+  {
+    "path": "00_profile_intel/top_attention_items.json",
+    "size": 155612
+  },
+  {
+    "path": "00_profile_intel/vulnerability_intel.json",
+    "size": 11393
+  },
+  {
+    "path": "01_environment/artifacts/container/build.log",
+    "size": 757
+  },
+  {
+    "path": "01_environment/artifacts/container/Dockerfile",
+    "size": 1021
+  },
+  {
+    "path": "01_environment/artifacts/container/scripts/check_container.sh",
+    "size": 526
+  },
+  {
+    "path": "01_environment/artifacts/container/scripts/entrypoint.sh",
+    "size": 312
+  },
+  {
+    "path": "01_environment/artifacts/container/scripts/provision_runtime.sh",
+    "size": 534
+  },
+  {
+    "path": "01_environment/artifacts/scripts/check_container.sh",
+    "size": 526
+  },
+  {
+    "path": "01_environment/artifacts/scripts/entrypoint.sh",
+    "size": 312
+  },
+  {
+    "path": "01_environment/artifacts/scripts/provision_runtime.sh",
+    "size": 534
+  },
+  {
+    "path": "01_environment/container_artifacts.json",
+    "size": 2690
+  },
+  {
+    "path": "01_environment/directory_snapshot.json",
+    "size": 6125
+  },
+  {
+    "path": "01_environment/environment.json",
+    "size": 20790
+  },
+  {
+    "path": "01_environment/environment_plan.json",
+    "size": 20790
+  },
+  {
+    "path": "01_environment/local_environment_probe.json",
+    "size": 11329
+  },
+  {
+    "path": "02_candidate_discovery/agent_candidates.json",
+    "size": 2
+  },
+  {
+    "path": "02_candidate_discovery/discovery_plan.json",
+    "size": 838
+  },
+  {
+    "path": "02_candidate_discovery/discovery_tasks.json",
+    "size": 20750
+  },
+  {
+    "path": "02_candidate_discovery/merged_candidates.json",
+    "size": 10726
+  },
+  {
+    "path": "02_candidate_discovery/skill_assignments.json",
+    "size": 9785
+  },
+  {
+    "path": "02_candidate_discovery/static_candidates.json",
+    "size": 10726
+  },
+  {
+    "path": "02_candidate_discovery/static_candidates_filtered.json",
+    "size": 10726
+  },
+  {
+    "path": "02_candidate_discovery/tasks.json",
+    "size": 20750
+  },
+  {
+    "path": "03_candidate_ranking/candidate_ranking.json",
+    "size": 2
+  },
+  {
+    "path": "03_candidate_ranking/remaining_validation_queue.json",
+    "size": 7995
+  },
+  {
+    "path": "03_candidate_ranking/selected_validation_queue.json",
+    "size": 10726
+  },
+  {
+    "path": "04_validation/batches/batch_001_input.json",
+    "size": 13098
+  },
+  {
+    "path": "04_validation/batches/batch_002_input.json",
+    "size": 14461
+  },
+  {
+    "path": "04_validation/batches/batch_003_input.json",
+    "size": 13864
+  },
+  {
+    "path": "04_validation/batches/batch_004_input.json",
+    "size": 14354
+  },
+  {
+    "path": "04_validation/batches/batch_005_input.json",
+    "size": 11627
+  },
+  {
+    "path": "04_validation/batches/batch_006_input.json",
+    "size": 13690
+  },
+  {
+    "path": "04_validation/batches/batch_007_input.json",
+    "size": 11502
+  },
+  {
+    "path": "04_validation/batches/batch_008_input.json",
+    "size": 11930
+  },
+  {
+    "path": "04_validation/batches/batch_009_input.json",
+    "size": 10414
+  },
+  {
+    "path": "04_validation/batches/batch_010_input.json",
+    "size": 12873
+  },
+  {
+    "path": "04_validation/batches/batch_011_input.json",
+    "size": 14548
+  },
+  {
+    "path": "04_validation/batches/batch_012_input.json",
+    "size": 14345
+  },
+  {
+    "path": "04_validation/batches/batch_013_input.json",
+    "size": 12752
+  },
+  {
+    "path": "04_validation/batches/batch_014_input.json",
+    "size": 12427
+  },
+  {
+    "path": "04_validation/batches/batch_015_input.json",
+    "size": 13422
+  },
+  {
+    "path": "04_validation/batches/batch_016_input.json",
+    "size": 14072
+  },
+  {
+    "path": "04_validation/candidate_context_bundles.json",
+    "size": 111502
+  },
+  {
+    "path": "04_validation/candidate_context_bundles_selected.json",
+    "size": 111502
+  },
+  {
+    "path": "04_validation/environment_restore_plan.json",
+    "size": 2
+  },
+  {
+    "path": "04_validation/findings.json",
+    "size": 2
+  },
+  {
+    "path": "04_validation/skill_assignments/batch_001.json",
+    "size": 2033
+  },
+  {
+    "path": "04_validation/skill_assignments/batch_002.json",
+    "size": 2033
+  },
+  {
+    "path": "04_validation/skill_assignments/batch_003.json",
+    "size": 2033
+  },
+  {
+    "path": "04_validation/skill_assignments/batch_004.json",
+    "size": 2033
+  },
+  {
+    "path": "04_validation/skill_assignments.json",
+    "size": 25566
+  },
+  {
+    "path": "04_validation/streaming/static_queue.json",
+    "size": 45499
+  },
+  {
+    "path": "04_validation/streaming_validation_records.json",
+    "size": 243
+  },
+  {
+    "path": "04_validation/validation_adjudication.json",
+    "size": 273
+  },
+  {
+    "path": "04_validation/validation_plan.json",
+    "size": 7981
+  },
+  {
+    "path": "04_validation/validation_results.json",
+    "size": 2
+  },
+  {
+    "path": "05_remediation/patches.json",
+    "size": 2
+  },
+  {
+    "path": "05_remediation/remediation_plan.json",
+    "size": 241
+  },
+  {
+    "path": "05_remediation/remediation_review.json",
+    "size": 218
+  },
+  {
+    "path": "06_report/report.md",
+    "size": 478
+  },
+  {
+    "path": "06_report/summary.json",
+    "size": 41979
+  },
+  {
+    "path": "debug/a3s/08_a3s_candidate_ranking_parsed_1789379384306.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-01-memory-shard-01_parsed_1789379365418.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-02-authz-shard-01_parsed_1789379366265.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-03-parser-shard-01_parsed_1789379369675.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-04-injection-shard-01_parsed_1789379370414.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-05-config-shard-01_parsed_1789379373677.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-06-resource-shard-01_parsed_1789379374848.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-07-underexplored-shard-01_parsed_1789379377308.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discover_discover-08-general-shard-01_parsed_1789379379379.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_discovery_plan_parsed_1789379359734.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_environment_parsed_1789379303109.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_intel_parsed_1789379296433.json",
+    "size": 11393
+  },
+  {
+    "path": "debug/a3s/08_a3s_profile_parsed_1789379287867.json",
+    "size": 1639
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379322799.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379339562.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379347825.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379352478.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379396437.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379397276.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379398113.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379398933.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379401742.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379402733.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379403705.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379404724.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379406683.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379407477.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379408812.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validate_parsed_1789379410006.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_validation_plan_parsed_1789379389471.json",
+    "size": 2
+  },
+  {
+    "path": "debug/a3s/08_a3s_低关注面候选发现智能体_events_1789379373786.jsonl",
+    "size": 80900
+  },
+  {
+    "path": "debug/a3s/08_a3s_低关注面候选发现智能体_meta_1789379373786.json",
+    "size": 983
+  },
+  {
+    "path": "debug/a3s/08_a3s_低关注面候选发现智能体_prompt_1789379373786.txt",
+    "size": 73507
+  },
+  {
+    "path": "debug/a3s/08_a3s_低关注面候选发现智能体_response_1789379373786.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_低关注面候选发现智能体_snapshot_1789379373786.json",
+    "size": 236322
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选发现规划智能体_events_1789379352647.jsonl",
+    "size": 92932
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选发现规划智能体_meta_1789379352647.json",
+    "size": 944
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选发现规划智能体_prompt_1789379352647.txt",
+    "size": 84496
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选发现规划智能体_response_1789379352647.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选发现规划智能体_snapshot_1789379352647.json",
+    "size": 272418
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选合并排序智能体_events_1789379379925.jsonl",
+    "size": 192190
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选合并排序智能体_meta_1789379379925.json",
+    "size": 944
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选合并排序智能体_prompt_1789379379925.txt",
+    "size": 177790
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选合并排序智能体_response_1789379379925.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_候选合并排序智能体_snapshot_1789379379925.json",
+    "size": 570192
+  },
+  {
+    "path": "debug/a3s/08_a3s_内存安全候选发现智能体_events_1789379360512.jsonl",
+    "size": 81407
+  },
+  {
+    "path": "debug/a3s/08_a3s_内存安全候选发现智能体_meta_1789379360512.json",
+    "size": 983
+  },
+  {
+    "path": "debug/a3s/08_a3s_内存安全候选发现智能体_prompt_1789379360512.txt",
+    "size": 73984
+  },
+  {
+    "path": "debug/a3s/08_a3s_内存安全候选发现智能体_response_1789379360512.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_内存安全候选发现智能体_snapshot_1789379360512.json",
+    "size": 237843
+  },
+  {
+    "path": "debug/a3s/08_a3s_动态输入候选发现智能体_events_1789379366386.jsonl",
+    "size": 81405
+  },
+  {
+    "path": "debug/a3s/08_a3s_动态输入候选发现智能体_meta_1789379366386.json",
+    "size": 983
+  },
+  {
+    "path": "debug/a3s/08_a3s_动态输入候选发现智能体_prompt_1789379366386.txt",
+    "size": 73982
+  },
+  {
+    "path": "debug/a3s/08_a3s_动态输入候选发现智能体_response_1789379366386.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_动态输入候选发现智能体_snapshot_1789379366386.json",
+    "size": 237837
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全情报智能体_events_1789379293241.jsonl",
+    "size": 16516
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全情报智能体_meta_1789379293241.json",
+    "size": 905
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全情报智能体_prompt_1789379293241.txt",
+    "size": 12854
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全情报智能体_response_1789379293241.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全情报智能体_snapshot_1789379293241.json",
+    "size": 43170
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379309565.jsonl",
+    "size": 76940
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379323159.jsonl",
+    "size": 77006
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379340111.jsonl",
+    "size": 76887
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379348188.jsonl",
+    "size": 76902
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379390139.jsonl",
+    "size": 76468
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379390575.jsonl",
+    "size": 76545
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379391214.jsonl",
+    "size": 76531
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379391811.jsonl",
+    "size": 76532
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379396608.jsonl",
+    "size": 76532
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379397691.jsonl",
+    "size": 76539
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379398489.jsonl",
+    "size": 76580
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379399389.jsonl",
+    "size": 76458
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379401871.jsonl",
+    "size": 76543
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379402856.jsonl",
+    "size": 76532
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379403924.jsonl",
+    "size": 76434
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_events_1789379405084.jsonl",
+    "size": 76678
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379309565.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379323159.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379340111.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379348188.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379390139.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379390575.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379391214.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379391811.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379396608.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379397691.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379398489.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379399389.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379401871.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379402856.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379403924.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_meta_1789379405084.json",
+    "size": 909
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379309565.txt",
+    "size": 69763
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379323159.txt",
+    "size": 69807
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379340111.txt",
+    "size": 69720
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379348188.txt",
+    "size": 69744
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379390139.txt",
+    "size": 69332
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379390575.txt",
+    "size": 69407
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379391214.txt",
+    "size": 69357
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379391811.txt",
+    "size": 69343
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379396608.txt",
+    "size": 69341
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379397691.txt",
+    "size": 69371
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379398489.txt",
+    "size": 69455
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379399389.txt",
+    "size": 69340
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379401871.txt",
+    "size": 69413
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379402856.txt",
+    "size": 69386
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379403924.txt",
+    "size": 69297
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_prompt_1789379405084.txt",
+    "size": 69511
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379309565.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379323159.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379340111.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379348188.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379390139.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379390575.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379391214.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379391811.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379396608.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379397691.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379398489.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379399389.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379401871.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379402856.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379403924.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_response_1789379405084.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379309565.json",
+    "size": 224442
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379323159.json",
+    "size": 224640
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379340111.json",
+    "size": 224283
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379348188.json",
+    "size": 224328
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379390139.json",
+    "size": 223026
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379390575.json",
+    "size": 223257
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379391214.json",
+    "size": 223215
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379391811.json",
+    "size": 223218
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379396608.json",
+    "size": 223218
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379397691.json",
+    "size": 223239
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379398489.json",
+    "size": 223362
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379399389.json",
+    "size": 222996
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379401871.json",
+    "size": 223251
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379402856.json",
+    "size": 223218
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379403924.json",
+    "size": 222924
+  },
+  {
+    "path": "debug/a3s/08_a3s_安全确认智能体_snapshot_1789379405084.json",
+    "size": 223656
+  },
+  {
+    "path": "debug/a3s/08_a3s_并发资源候选发现智能体_events_1789379370513.jsonl",
+    "size": 81402
+  },
+  {
+    "path": "debug/a3s/08_a3s_并发资源候选发现智能体_meta_1789379370513.json",
+    "size": 983
+  },
+  {
+    "path": "debug/a3s/08_a3s_并发资源候选发现智能体_prompt_1789379370513.txt",
+    "size": 73979
+  },
+  {
+    "path": "debug/a3s/08_a3s_并发资源候选发现智能体_response_1789379370513.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_并发资源候选发现智能体_snapshot_1789379370513.json",
+    "size": 237828
+  },
+  {
+    "path": "debug/a3s/08_a3s_权限认证候选发现智能体_events_1789379360617.jsonl",
+    "size": 81394
+  },
+  {
+    "path": "debug/a3s/08_a3s_权限认证候选发现智能体_meta_1789379360617.json",
+    "size": 983
+  },
+  {
+    "path": "debug/a3s/08_a3s_权限认证候选发现智能体_prompt_1789379360617.txt",
+    "size": 73971
+  },
+  {
+    "path": "debug/a3s/08_a3s_权限认证候选发现智能体_response_1789379360617.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_权限认证候选发现智能体_snapshot_1789379360617.json",
+    "size": 237804
+  },
+  {
+    "path": "debug/a3s/08_a3s_环境建立智能体_events_1789379299729.jsonl",
+    "size": 34007
+  },
+  {
+    "path": "debug/a3s/08_a3s_环境建立智能体_meta_1789379299729.json",
+    "size": 908
+  },
+  {
+    "path": "debug/a3s/08_a3s_环境建立智能体_prompt_1789379299729.txt",
+    "size": 29683
+  },
+  {
+    "path": "debug/a3s/08_a3s_环境建立智能体_response_1789379299729.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_环境建立智能体_snapshot_1789379299729.json",
+    "size": 95643
+  },
+  {
+    "path": "debug/a3s/08_a3s_目标画像智能体_events_1789379284979.jsonl",
+    "size": 18128
+  },
+  {
+    "path": "debug/a3s/08_a3s_目标画像智能体_meta_1789379284979.json",
+    "size": 906
+  },
+  {
+    "path": "debug/a3s/08_a3s_目标画像智能体_prompt_1789379284979.txt",
+    "size": 14557
+  },
+  {
+    "path": "debug/a3s/08_a3s_目标画像智能体_response_1789379284979.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_目标画像智能体_snapshot_1789379284979.json",
+    "size": 48006
+  },
+  {
+    "path": "debug/a3s/08_a3s_解析器序列化候选发现智能体_events_1789379365592.jsonl",
+    "size": 81408
+  },
+  {
+    "path": "debug/a3s/08_a3s_解析器序列化候选发现智能体_meta_1789379365592.json",
+    "size": 1019
+  },
+  {
+    "path": "debug/a3s/08_a3s_解析器序列化候选发现智能体_prompt_1789379365592.txt",
+    "size": 73985
+  },
+  {
+    "path": "debug/a3s/08_a3s_解析器序列化候选发现智能体_response_1789379365592.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_解析器序列化候选发现智能体_snapshot_1789379365592.json",
+    "size": 237846
+  },
+  {
+    "path": "debug/a3s/08_a3s_通用候选发现智能体_events_1789379374960.jsonl",
+    "size": 81381
+  },
+  {
+    "path": "debug/a3s/08_a3s_通用候选发现智能体_meta_1789379374960.json",
+    "size": 947
+  },
+  {
+    "path": "debug/a3s/08_a3s_通用候选发现智能体_prompt_1789379374960.txt",
+    "size": 73958
+  },
+  {
+    "path": "debug/a3s/08_a3s_通用候选发现智能体_response_1789379374960.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_通用候选发现智能体_snapshot_1789379374960.json",
+    "size": 237765
+  },
+  {
+    "path": "debug/a3s/08_a3s_配置密钥候选发现智能体_events_1789379369783.jsonl",
+    "size": 81408
+  },
+  {
+    "path": "debug/a3s/08_a3s_配置密钥候选发现智能体_meta_1789379369783.json",
+    "size": 983
+  },
+  {
+    "path": "debug/a3s/08_a3s_配置密钥候选发现智能体_prompt_1789379369783.txt",
+    "size": 73985
+  },
+  {
+    "path": "debug/a3s/08_a3s_配置密钥候选发现智能体_response_1789379369783.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_配置密钥候选发现智能体_snapshot_1789379369783.json",
+    "size": 237846
+  },
+  {
+    "path": "debug/a3s/08_a3s_验证任务规划智能体_events_1789379385143.jsonl",
+    "size": 42622
+  },
+  {
+    "path": "debug/a3s/08_a3s_验证任务规划智能体_meta_1789379385143.json",
+    "size": 944
+  },
+  {
+    "path": "debug/a3s/08_a3s_验证任务规划智能体_prompt_1789379385143.txt",
+    "size": 37107
+  },
+  {
+    "path": "debug/a3s/08_a3s_验证任务规划智能体_response_1789379385143.txt",
+    "size": 0
+  },
+  {
+    "path": "debug/a3s/08_a3s_验证任务规划智能体_snapshot_1789379385143.json",
+    "size": 121488
+  },
+  {
+    "path": "debug/logs/a3s_interactions.jsonl",
+    "size": 2358983
+  },
+  {
+    "path": "debug/logs/events.jsonl",
+    "size": 37718
+  },
+  {
+    "path": "records/01_skill_assignments.json",
+    "size": 9785
+  },
+  {
+    "path": "records/15_validation_skill_assignments.json",
+    "size": 25566
+  },
+  {
+    "path": "records/agent_pool_status.json",
+    "size": 17109
+  },
+  {
+    "path": "records/feedback_memory.json",
+    "size": 182
+  },
+  {
+    "path": "records/process.md",
+    "size": 10935
+  },
+  {
+    "path": "records/run_status.json",
+    "size": 582
+  },
+  {
+    "path": "records/state.json",
+    "size": 420
+  },
+  {
+    "path": "SUMMARY.md",
+    "size": 1655
+  }
+]

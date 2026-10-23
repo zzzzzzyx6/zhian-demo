@@ -1,0 +1,13 @@
+/* List text follows the sidebar scale; overview metrics keep their own hierarchy. */
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table :is(th,td){font-size:13px!important;line-height:1.6}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table th{font-weight:600!important}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table td{font-weight:400}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table td :is(a,button,span,strong,b,p,div,code){font-size:inherit!important;line-height:inherit}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table td :is(strong,b,.ds-name){font-weight:500}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table td :is(small,.hint,.muted,.la-identity,.la-model-id,.la-endpoint){font-size:12px!important;font-weight:400;line-height:1.5}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table td :is(.badge,.rc-priority,.la-state,.la-source-tag,.la-tags>span){font-size:12px!important;line-height:1.45}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) table :is(.ec-row-actions,.lo-actions) :is(button,a){font-size:12px!important}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) :is(.toolbar,.lp-toolbar,.la-list-toolbar,.lo-toolbar) :is(input,select,button,.btn){font-size:12px!important}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) :is(.la-associated>div,.ds-history-row){font-size:13px}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) :is(.la-associated>div,.ds-history-row) :is(button,strong,b){font-size:13px;font-weight:500}
+body #app.platform-shell #view:not(:has(.platform-dashboard,.ev-overview)) :is(.la-associated>div,.ds-history-row) small{font-size:12px}

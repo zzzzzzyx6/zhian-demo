@@ -1,0 +1,49 @@
+{
+  "software_identity": {
+    "name": "20260914_174732_2c360f",
+    "version": "未知",
+    "version_evidence": [],
+    "confidence": 0.4
+  },
+  "software_type": "源码目录",
+  "domain": "未知",
+  "target_profile": {
+    "name": "20260914_174732_2c360f",
+    "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+    "input_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+    "target_mode": "source_tree",
+    "languages": {
+      "python": 232
+    },
+    "manifests": [],
+    "test_commands": [],
+    "counts": {
+      "source_file_count": 232,
+      "binary_artifact_count": 0,
+      "binary_executable_count": 0,
+      "binary_total_size": 0,
+      "binary_suffix_counts": {},
+      "binary_name_signal_counts": {}
+    },
+    "full_inventory_artifact": "00_profile_intel/project_profile.json"
+  },
+  "runtime_surfaces": [],
+  "security_relevant_features": [],
+  "recommended_focus": [],
+  "intel_search_queries": [
+    {
+      "query": "20260914_174732_2c360f",
+      "reason": "目标文件或项目名称，可作为辅助检索词。",
+      "confidence": 0.4
+    },
+    {
+      "query": "src",
+      "reason": "输入目标文件名，可作为辅助检索词。",
+      "confidence": 0.35
+    }
+  ],
+  "tool_runs": [],
+  "limitations": [
+    "目标画像智能体未运行或未返回有效 JSON，使用主程序粗画像。"
+  ]
+}

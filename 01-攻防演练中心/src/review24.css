@@ -1,0 +1,20 @@
+/* Stable animation frame and left-aligned list controls. */
+body #app.platform-shell #view .r24-demo-actions{display:flex;justify-content:flex-end;margin:-4px 0 18px;clear:both}
+body #app.platform-shell #view .page-heading>.page-actions{margin-left:auto}
+body #app.platform-shell #view .or-review-entry{background:radial-gradient(ellipse at 0 0,#f5ebdc,transparent 70%),linear-gradient(100deg,#fffdfa,#fff)!important;border:1px solid #e9e0d3!important;color:#242b33}
+body #app.platform-shell #view .or-review-entry .link-btn,body #app.platform-shell #view .or-review-entry strong{color:#242b33!important}
+body #app.platform-shell #view .dashboard-b .db-scan{height:1160px;max-height:1160px;overflow:hidden;align-self:start}
+body #app.platform-shell #view .dashboard-b .db-agent-flow{height:550px;min-height:550px;max-height:550px;flex:none;overflow:auto;scrollbar-width:thin}
+body #app.platform-shell #view .dashboard-b .db-core-grid{grid-template-rows:680px 462px;align-items:stretch}
+body #app.platform-shell #view .dashboard-b .db-exercise,body #app.platform-shell #view .dashboard-b .db-protection{min-height:0;overflow:hidden}
+body #app.platform-shell #view :is(.toolbar,.policy-toolbar,.mr-toolbar,.la-list-toolbar,.la-management-filters,.or-dataset-filters,.review21-result-filters,.rt-toolbar){justify-content:flex-start!important;gap:12px!important;flex-wrap:wrap}
+body #app.platform-shell #view :is(.toolbar,.policy-toolbar,.mr-toolbar,.la-management-filters,.or-dataset-filters,.review21-result-filters,.rt-toolbar)>:is(select,input,label){flex:0 1 auto!important;width:auto;max-width:100%;margin-left:0!important}
+body #app.platform-shell #view :is(.toolbar,.or-dataset-filters,.review21-result-filters,.rt-toolbar){grid-template-columns:repeat(auto-fit,minmax(160px,max-content))!important}
+body #app.platform-shell #view :is(.toolbar,.rt-toolbar) input{width:220px!important}
+body #app.platform-shell.review24-scanner #center-sidebar{display:flex!important;left:0!important}
+body #app.platform-shell.review24-scanner>.main-shell{margin-left:var(--center-nav-size)!important;width:calc(100% - var(--center-nav-size))!important;grid-column:auto!important}
+body #app.platform-shell.review24-scanner.has-center-nav #view.main-content{padding:0!important;max-width:none!important;margin:0!important}
+.r24-nav-group{font-size:11px;color:#8090a4;padding:20px 14px 7px}
+.r24-method h3{margin:22px 0 10px}.r24-method p,.r24-method li{line-height:1.85}.r24-method li{margin-bottom:8px}.r24-tag-more{display:inline-flex;padding:2px 8px;cursor:help;color:#3e6eab;border-radius:4px;background:#edf3fa}
+.r24-tag-more{position:relative}.r24-tag-more .r24-tag-popup{display:none!important;position:absolute;z-index:70;bottom:100%;left:0;width:280px;white-space:normal;line-height:1.8;background:#203c59;color:white;padding:12px;border-radius:6px;box-shadow:0 5px 20px #132d4930}.r24-tag-more:hover .r24-tag-popup,.r24-tag-more:focus .r24-tag-popup{display:block!important}
+@media(max-width:900px){body #app.platform-shell #view .dashboard-b .db-core-grid{grid-template-rows:auto;grid-auto-rows:auto}body #app.platform-shell #view .dashboard-b .db-scan{height:760px;max-height:760px}body #app.platform-shell #view .dashboard-b .db-agent-flow{height:550px;min-height:550px}body #app.platform-shell #view .dashboard-b .db-exercise,body #app.platform-shell #view .dashboard-b .db-protection{overflow:visible}}

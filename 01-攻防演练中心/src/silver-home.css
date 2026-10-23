@@ -1,0 +1,39 @@
+/* Silver surfaces, dark typography, restrained color zoning. */
+.ph-workbench{--wb-ink:#263b50;--wb-muted:#596a7c;--wb-line:#e0e6ec;--wb-blue:#3c6387;color:#354d63}
+.ph-workbench .wb-heading{border-bottom:1px solid #dfe6ec;padding-bottom:16px}.ph-workbench .wb-heading h1{color:#23394f;letter-spacing:1px}
+.ph-workbench :is(.wb-card,.wb-resource-card,.runtime-panel){border:1px solid #e0e6ec!important;box-shadow:inset 0 1px #fff,0 5px 20px #30475c05!important;border-radius:11px}
+.ph-workbench .runtime-panel.or-arena{background:radial-gradient(ellipse at 100% 0,#e8eff7,transparent 65%),linear-gradient(135deg,#fff,#f8fafc)!important}
+.ph-workbench .runtime-panel.or-scan-empty{background:linear-gradient(145deg,#fff,#f1f5f8)!important;box-shadow:inset 0 1px #fff!important}
+body #app.platform-shell #view .ph-workbench .wb-evaluation{background:radial-gradient(ellipse at 100% 0,#e4edf7,transparent 64%),linear-gradient(150deg,#fff,#f8fafc)!important;border:1px solid #dee6ee!important}
+body #app.platform-shell #view .ph-workbench .wb-protection{background:radial-gradient(ellipse at 100% 0,#e4efeb,transparent 65%),linear-gradient(150deg,#fff,#f8fbfa)!important;border:1px solid #dfe8e5!important}
+body #app.platform-shell #view .ph-workbench .wb-assets{background:radial-gradient(ellipse at 100% 0,#e9e9f2,transparent 68%),linear-gradient(150deg,#fff,#f9f9fc)!important;border:1px solid #e3e4ec!important}
+body #app.platform-shell #view .ph-workbench .wb-strategies{background:radial-gradient(ellipse at 100% 0,#e7edf3,transparent 68%),linear-gradient(150deg,#fff,#f8fafb)!important;border:1px solid #e0e6ec!important}
+body #app.platform-shell #view .ph-workbench .wb-attention{background:radial-gradient(ellipse at 0 0,#f5ebdc,transparent 70%),linear-gradient(100deg,#fffdfa,#fff)!important;border:1px solid #e9e0d3!important}
+body #app.platform-shell #view .ph-workbench .wb-attention section,body #app.platform-shell #view .ph-workbench .wb-attention header{background:transparent!important}
+.ph-workbench :is(.wb-card-head,.wb-resource-head){position:relative}
+.ph-workbench :is(.wb-card-head,.wb-resource-head):after{content:'';position:absolute;left:20px;bottom:-1px;width:32px;height:2px;background:#7b98b0}
+.ph-workbench .wb-protection .wb-card-head:after{background:#7d9b8d}.ph-workbench .wb-assets .wb-resource-head:after{background:#9595ad}.ph-workbench .wb-strategies .wb-resource-head:after{background:#879bab}
+.ph-workbench :is(.wb-card-head,.wb-resource-card>footer,.wb-strategy-column+.wb-strategy-column,.wb-assessment-section+.wb-assessment-section,.wb-enforcement,.wb-pending-list,.wb-connected-apps,.wb-protection-metrics,.wb-scan-block,.wb-scan-asset,.wb-method-chart,.wb-connected-app+.wb-connected-app){border-color:#e0e6ec}
+.ph-workbench :is(h2,h3,h4,.wb-assessment-heading h3>button,.wb-dimension-summary>strong,.wb-coverage b){color:#293f54!important}
+.ph-workbench :is(p,small,dt,.wb-resource-total,.wb-resource-none,.wb-result-chart-label,.wb-result-count,.wb-progress-label,.wb-detection-title,.wb-verdict-legend,.wb-enforcement,.wb-dimension-label,.wb-dimension-note,.wb-app-state,.wb-coverage-copy>span,.wb-resource-family-title,.wb-asset-legend small,.wb-scan-comparison small,.wb-risk-ring small,.wb-attention-subhead){color:#586a7c!important}
+.ph-workbench :is(.wb-text-link,.wb-live-entry,.wb-task-name,.wb-todo-list button,.wb-resource-family-title b,.wb-asset-legend>button,.wb-scan-comparison>button,.wb-resource-card>footer button,.wb-app-copy strong,.wb-method-row,.wb-dimension-name,.wb-scan-object-row,.wb-scan-legend,.wb-assessment-counts>button,.wb-strategy-count,.wb-reset){color:#405d76!important}
+.ph-workbench :is(.wb-result-facts dd,.wb-strategy-count strong,.wb-coverage>strong,.wb-risk-ring strong,.wb-risk-levels strong,.wb-detection-title>strong,.wb-enforcement b,.wb-verdict-legend b,.wb-assessment-counts b,.wb-resource-total b,.wb-protection-metrics dd,.wb-scan-pie b,.wb-scan-object-row>b,.wb-scan-overview .wb-scan-legend b,.wb-dimension-value b,.wb-asset-value b){font-family:'Bahnschrift','DIN Alternate',Arial,sans-serif;font-variant-numeric:tabular-nums;color:#315472!important;text-shadow:none}
+.ph-workbench .wb-asset-value.is-zero b{color:#68798a!important}
+.ph-workbench :is(.wb-resource-tag,.wb-status,.wb-todo-label){background:#ffffffc7;border-color:#dce4ec;color:#496078}
+.ph-workbench .wb-resource-tag:hover{background:#eaf0f6;color:#294f72}.ph-workbench .wb-status.live{background:#e8f2ee;color:#3e7161}
+.ph-workbench :is(.wb-attention-title h2,.wb-attention-todos h2){color:#6e5131!important}
+.ph-workbench .wb-attention-guidance>p{color:#83552e!important}.ph-workbench .wb-attention-todos{border-color:#e7dfd3}
+.ph-workbench .wb-attention .wb-attention-todos .wb-todo-copy>.wb-todo-name{color:#3a4652}.ph-workbench .wb-attention .wb-todo-copy>small{color:#6c6254!important}
+.ph-workbench .wb-attention .wb-text-link{color:#7d5b32!important}.ph-workbench .wb-attention .wb-todo-label{background:#fff9ed;color:#795a30;border-color:#e8dfcf}
+.ph-workbench :is(.wb-comparison-bars,.wb-progress,.wb-verdict-strip,.wb-scan-object-track,.wb-dimension-track,.wb-method-row>div,.wb-posture-coverage>div){background:#e4ebf1}
+.ph-workbench .wb-progress>span{background:linear-gradient(90deg,#527b9b,#93b2c5)}
+.ph-workbench .wb-dimension-row.is-leading{background:linear-gradient(90deg,#f3e4d8,#faf5ef)}.ph-workbench .wb-dimension-row:hover{background:#edf2f7}.ph-workbench .wb-dimension-row.is-leading .wb-dimension-value b{color:#955c35!important}
+.ph-workbench .wb-result-trend text{fill:#5d7083}.ph-workbench .wb-asset-pie path{stroke:#f8f9fc}.ph-workbench .wb-asset-pie{filter:saturate(.8)}
+.ph-workbench .wb-app-state.on{color:#3c7562!important}.ph-workbench .wb-app-state.needs-review{color:#91621f!important}
+.ph-workbench .or-eyebrow{color:#4d6780}.ph-workbench .or-current-question p{color:#354f67!important}.ph-workbench .or-task-name small,.ph-workbench .or-current-question>span,.ph-workbench .or-progress-caption,.ph-workbench .or-arena footer{color:#536b80}
+.ph-workbench .or-progress-caption b{color:#345976}.ph-workbench .or-progress>i{background:linear-gradient(90deg,#567fa1,#91afc6)}
+.range-slot,.range-product{background:#f2f5f8!important;border-color:#dce4ec}
+.range-product .range-3d-status,.range-product .range-node-detail,.range-product .range-3d-caption{color:#536b7e}.range-product .range-node-detail strong{color:#2c465b}
+.range-product .range-3d-label{background:#fbfdfff2;color:#326b70;border-color:#a5bec1;box-shadow:0 3px 9px #34485f0c}.range-product .range-3d-label.red{color:#9f4c49}.range-product .range-3d-label.blue{color:#3a638c}.range-product .range-3d-label.purple{color:#71538d}
+.range-product .range-3d-label.selected,.range-product .range-3d-label:hover{background:#fff;border-color:currentColor}
+.range-product .range-3d-tools button{color:#5d7082;background:#ffffffa8;border-color:#dce3eb}

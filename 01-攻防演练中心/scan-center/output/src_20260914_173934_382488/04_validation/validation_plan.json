@@ -1,0 +1,319 @@
+{
+  "plan": {
+    "strategy": "验证任务规划智能体未运行或失败，使用本地默认批次。",
+    "requires_serial_execution": false,
+    "shared_environment_policy": "independent_temp_dirs",
+    "validation_batches": [
+      {
+        "batch_id": "validation-001",
+        "candidate_ids": [
+          "VULN-009"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-002",
+        "candidate_ids": [
+          "VULN-005"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-003",
+        "candidate_ids": [
+          "VULN-006"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-004",
+        "candidate_ids": [
+          "VULN-007"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-005",
+        "candidate_ids": [
+          "VULN-008"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-006",
+        "candidate_ids": [
+          "VULN-010"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-007",
+        "candidate_ids": [
+          "VULN-011"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-008",
+        "candidate_ids": [
+          "VULN-012"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-009",
+        "candidate_ids": [
+          "VULN-013"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-010",
+        "candidate_ids": [
+          "VULN-014"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-011",
+        "candidate_ids": [
+          "VULN-016"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      },
+      {
+        "batch_id": "validation-012",
+        "candidate_ids": [
+          "VULN-015"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    ],
+    "restore_checkpoints": [],
+    "limitations": []
+  },
+  "effective_batches": [
+    {
+      "index": 1,
+      "candidate_ids": [
+        "VULN-009"
+      ],
+      "metadata": {
+        "batch_id": "validation-001",
+        "candidate_ids": [
+          "VULN-009"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 2,
+      "candidate_ids": [
+        "VULN-005"
+      ],
+      "metadata": {
+        "batch_id": "validation-002",
+        "candidate_ids": [
+          "VULN-005"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 3,
+      "candidate_ids": [
+        "VULN-006"
+      ],
+      "metadata": {
+        "batch_id": "validation-003",
+        "candidate_ids": [
+          "VULN-006"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 4,
+      "candidate_ids": [
+        "VULN-007"
+      ],
+      "metadata": {
+        "batch_id": "validation-004",
+        "candidate_ids": [
+          "VULN-007"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 5,
+      "candidate_ids": [
+        "VULN-008"
+      ],
+      "metadata": {
+        "batch_id": "validation-005",
+        "candidate_ids": [
+          "VULN-008"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 6,
+      "candidate_ids": [
+        "VULN-010"
+      ],
+      "metadata": {
+        "batch_id": "validation-006",
+        "candidate_ids": [
+          "VULN-010"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 7,
+      "candidate_ids": [
+        "VULN-011"
+      ],
+      "metadata": {
+        "batch_id": "validation-007",
+        "candidate_ids": [
+          "VULN-011"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 8,
+      "candidate_ids": [
+        "VULN-012"
+      ],
+      "metadata": {
+        "batch_id": "validation-008",
+        "candidate_ids": [
+          "VULN-012"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 9,
+      "candidate_ids": [
+        "VULN-013"
+      ],
+      "metadata": {
+        "batch_id": "validation-009",
+        "candidate_ids": [
+          "VULN-013"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 10,
+      "candidate_ids": [
+        "VULN-014"
+      ],
+      "metadata": {
+        "batch_id": "validation-010",
+        "candidate_ids": [
+          "VULN-014"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 11,
+      "candidate_ids": [
+        "VULN-016"
+      ],
+      "metadata": {
+        "batch_id": "validation-011",
+        "candidate_ids": [
+          "VULN-016"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    },
+    {
+      "index": 12,
+      "candidate_ids": [
+        "VULN-015"
+      ],
+      "metadata": {
+        "batch_id": "validation-012",
+        "candidate_ids": [
+          "VULN-015"
+        ],
+        "focus": "本地默认批次",
+        "isolation": "independent_temp_dir",
+        "requires_restore_after_batch": false
+      }
+    }
+  ],
+  "serial_execution": false,
+  "agent_pool": {
+    "max_workers": 4,
+    "min_workers": 2,
+    "running_total": 0,
+    "by_stage": {
+      "validation": {
+        "running": 0,
+        "completed": 1,
+        "failed": 0
+      },
+      "discovery": {
+        "running": 0,
+        "completed": 8,
+        "failed": 0
+      }
+    }
+  }
+}

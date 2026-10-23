@@ -1,0 +1,1407 @@
+{
+  "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+  "name": "20260914_174732_2c360f",
+  "files": [
+    {
+      "path": "OpenRT-main/eval.py",
+      "language": "python",
+      "size": 28429,
+      "lines": 715
+    },
+    {
+      "path": "OpenRT-main/eval_async.py",
+      "language": "python",
+      "size": 20584,
+      "lines": 536
+    },
+    {
+      "path": "OpenRT-main/example/actor_attack_example.py",
+      "language": "python",
+      "size": 6153,
+      "lines": 153
+    },
+    {
+      "path": "OpenRT-main/example/adaptive_attack_example.py",
+      "language": "python",
+      "size": 8599,
+      "lines": 263
+    },
+    {
+      "path": "OpenRT-main/example/air_attack_example.py",
+      "language": "python",
+      "size": 5112,
+      "lines": 147
+    },
+    {
+      "path": "OpenRT-main/example/artprompt_attack_example.py",
+      "language": "python",
+      "size": 11308,
+      "lines": 331
+    },
+    {
+      "path": "OpenRT-main/example/asa_example.py",
+      "language": "python",
+      "size": 2548,
+      "lines": 80
+    },
+    {
+      "path": "OpenRT-main/example/autodan_attack_example_2024.py",
+      "language": "python",
+      "size": 3350,
+      "lines": 104
+    },
+    {
+      "path": "OpenRT-main/example/autodan_turbo_example.py",
+      "language": "python",
+      "size": 3974,
+      "lines": 121
+    },
+    {
+      "path": "OpenRT-main/example/autodan_turbo_r_example.py",
+      "language": "python",
+      "size": 9980,
+      "lines": 221
+    },
+    {
+      "path": "OpenRT-main/example/cipherchat_attack_example_2024.py",
+      "language": "python",
+      "size": 3674,
+      "lines": 95
+    },
+    {
+      "path": "OpenRT-main/example/coa_attack_example.py",
+      "language": "python",
+      "size": 3341,
+      "lines": 102
+    },
+    {
+      "path": "OpenRT-main/example/code_attack_example.py",
+      "language": "python",
+      "size": 2821,
+      "lines": 87
+    },
+    {
+      "path": "OpenRT-main/example/crescendo_attack_example.py",
+      "language": "python",
+      "size": 8118,
+      "lines": 180
+    },
+    {
+      "path": "OpenRT-main/example/csdj_attack_example.py",
+      "language": "python",
+      "size": 3474,
+      "lines": 100
+    },
+    {
+      "path": "OpenRT-main/example/deepinception_attack_example_2024.py",
+      "language": "python",
+      "size": 3052,
+      "lines": 92
+    },
+    {
+      "path": "OpenRT-main/example/drattack_example.py",
+      "language": "python",
+      "size": 3243,
+      "lines": 100
+    },
+    {
+      "path": "OpenRT-main/example/evosynth_example.py",
+      "language": "python",
+      "size": 2225,
+      "lines": 70
+    },
+    {
+      "path": "OpenRT-main/example/figstep_attack_example.py",
+      "language": "python",
+      "size": 4643,
+      "lines": 126
+    },
+    {
+      "path": "OpenRT-main/example/flipattack_example.py",
+      "language": "python",
+      "size": 2791,
+      "lines": 88
+    },
+    {
+      "path": "OpenRT-main/example/gptfuzzer_attack_example_2023.py",
+      "language": "python",
+      "size": 4207,
+      "lines": 114
+    },
+    {
+      "path": "OpenRT-main/example/hades_attack_example.py",
+      "language": "python",
+      "size": 6695,
+      "lines": 181
+    },
+    {
+      "path": "OpenRT-main/example/himrd_attack_example.py",
+      "language": "python",
+      "size": 3840,
+      "lines": 127
+    },
+    {
+      "path": "OpenRT-main/example/ica_attack_example_2023.py",
+      "language": "python",
+      "size": 3911,
+      "lines": 101
+    },
+    {
+      "path": "OpenRT-main/example/ideator_attack_example.py",
+      "language": "python",
+      "size": 4337,
+      "lines": 119
+    },
+    {
+      "path": "OpenRT-main/example/imperceptible_jailbreak_example.py",
+      "language": "python",
+      "size": 3582,
+      "lines": 106
+    },
+    {
+      "path": "OpenRT-main/example/jailbroken_attack_example_2023.py",
+      "language": "python",
+      "size": 3281,
+      "lines": 93
+    },
+    {
+      "path": "OpenRT-main/example/jam_attack_example.py",
+      "language": "python",
+      "size": 3768,
+      "lines": 109
+    },
+    {
+      "path": "OpenRT-main/example/jood_attack_example.py",
+      "language": "python",
+      "size": 4555,
+      "lines": 136
+    },
+    {
+      "path": "OpenRT-main/example/jsonl_dataset_examply.py",
+      "language": "python",
+      "size": 10240,
+      "lines": 274
+    },
+    {
+      "path": "OpenRT-main/example/mml_attack_example.py",
+      "language": "python",
+      "size": 7380,
+      "lines": 195
+    },
+    {
+      "path": "OpenRT-main/example/mousetrap_example.py",
+      "language": "python",
+      "size": 3007,
+      "lines": 93
+    },
+    {
+      "path": "OpenRT-main/example/multilingual_attack_example_2024.py",
+      "language": "python",
+      "size": 2685,
+      "lines": 75
+    },
+    {
+      "path": "OpenRT-main/example/nanogcg_attack_example.py",
+      "language": "python",
+      "size": 6026,
+      "lines": 181
+    },
+    {
+      "path": "OpenRT-main/example/pair_attack_example_2024.py",
+      "language": "python",
+      "size": 3411,
+      "lines": 96
+    },
+    {
+      "path": "OpenRT-main/example/past_tense_attack_example.py",
+      "language": "python",
+      "size": 6487,
+      "lines": 198
+    },
+    {
+      "path": "OpenRT-main/example/prefill_attack.py",
+      "language": "python",
+      "size": 2485,
+      "lines": 79
+    },
+    {
+      "path": "OpenRT-main/example/query_relevant_attack_example.py",
+      "language": "python",
+      "size": 6216,
+      "lines": 160
+    },
+    {
+      "path": "OpenRT-main/example/race_attack_example.py",
+      "language": "python",
+      "size": 3509,
+      "lines": 105
+    },
+    {
+      "path": "OpenRT-main/example/rainbow_teaming_attack_example.py",
+      "language": "python",
+      "size": 5843,
+      "lines": 153
+    },
+    {
+      "path": "OpenRT-main/example/redqueen_attack_example.py",
+      "language": "python",
+      "size": 5654,
+      "lines": 135
+    },
+    {
+      "path": "OpenRT-main/example/renellm_attack_example.py",
+      "language": "python",
+      "size": 6137,
+      "lines": 197
+    },
+    {
+      "path": "OpenRT-main/example/response_attack_example.py",
+      "language": "python",
+      "size": 7371,
+      "lines": 215
+    },
+    {
+      "path": "OpenRT-main/example/seqar_attack_example.py",
+      "language": "python",
+      "size": 2756,
+      "lines": 90
+    },
+    {
+      "path": "OpenRT-main/example/si_attack_example.py",
+      "language": "python",
+      "size": 7721,
+      "lines": 229
+    },
+    {
+      "path": "OpenRT-main/example/test_openai_image.py",
+      "language": "python",
+      "size": 1131,
+      "lines": 42
+    },
+    {
+      "path": "OpenRT-main/example/tree_attack_example_2024.py",
+      "language": "python",
+      "size": 3715,
+      "lines": 103
+    },
+    {
+      "path": "OpenRT-main/example/visual_jailbreak_example.py",
+      "language": "python",
+      "size": 8516,
+      "lines": 233
+    },
+    {
+      "path": "OpenRT-main/example/xteaming_attack_2025.py",
+      "language": "python",
+      "size": 3344,
+      "lines": 98
+    },
+    {
+      "path": "OpenRT-main/main.py",
+      "language": "python",
+      "size": 10772,
+      "lines": 295
+    },
+    {
+      "path": "OpenRT-main/OpenRT/__init__.py",
+      "language": "python",
+      "size": 75,
+      "lines": 2
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/__init__.py",
+      "language": "python",
+      "size": 95,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/base_attack.py",
+      "language": "python",
+      "size": 704,
+      "lines": 26
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/__init__.py",
+      "language": "python",
+      "size": 508,
+      "lines": 17
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/base.py",
+      "language": "python",
+      "size": 516,
+      "lines": 16
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/__init__.py",
+      "language": "python",
+      "size": 3763,
+      "lines": 81
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/actor_attack.py",
+      "language": "python",
+      "size": 14135,
+      "lines": 337
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "language": "python",
+      "size": 24144,
+      "lines": 569
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/AIR/__init__.py",
+      "language": "python",
+      "size": 58,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/AIR/air_attack.py",
+      "language": "python",
+      "size": 7821,
+      "lines": 189
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/AIR/reform_prompt.py",
+      "language": "python",
+      "size": 21319,
+      "lines": 293
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/__init__.py",
+      "language": "python",
+      "size": 76,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/artprompt_attack.py",
+      "language": "python",
+      "size": 10057,
+      "lines": 268
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "language": "python",
+      "size": 24486,
+      "lines": 513
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan.py",
+      "language": "python",
+      "size": 5613,
+      "lines": 136
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/__init__.py",
+      "language": "python",
+      "size": 183,
+      "lines": 5
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/agents.py",
+      "language": "python",
+      "size": 18248,
+      "lines": 301
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/autodan_turbo.py",
+      "language": "python",
+      "size": 11149,
+      "lines": 263
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/strategy_library.py",
+      "language": "python",
+      "size": 8344,
+      "lines": 198
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/summarizer.py",
+      "language": "python",
+      "size": 8207,
+      "lines": 210
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/__init__.py",
+      "language": "python",
+      "size": 747,
+      "lines": 20
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/attacker_reasoning_model.py",
+      "language": "python",
+      "size": 12728,
+      "lines": 211
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/autodan_turbo_r.py",
+      "language": "python",
+      "size": 30230,
+      "lines": 715
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/retrival.py",
+      "language": "python",
+      "size": 7734,
+      "lines": 262
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/scorer_reasoning_model.py",
+      "language": "python",
+      "size": 4586,
+      "lines": 121
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/summarizer_reasoning_model.py",
+      "language": "python",
+      "size": 7158,
+      "lines": 124
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/__init__.py",
+      "language": "python",
+      "size": 290,
+      "lines": 10
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/attack.py",
+      "language": "python",
+      "size": 11602,
+      "lines": 257
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/ciphers/__init__.py",
+      "language": "python",
+      "size": 1141,
+      "lines": 43
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/ciphers/ascii.py",
+      "language": "python",
+      "size": 480,
+      "lines": 16
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/ciphers/atbash.py",
+      "language": "python",
+      "size": 641,
+      "lines": 22
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/ciphers/base.py",
+      "language": "python",
+      "size": 410,
+      "lines": 16
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/ciphers/caesar.py",
+      "language": "python",
+      "size": 1052,
+      "lines": 33
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/ciphers/morse.py",
+      "language": "python",
+      "size": 1572,
+      "lines": 41
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/coa/__init__.py",
+      "language": "python",
+      "size": 210,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/coa/coa_attack.py",
+      "language": "python",
+      "size": 5331,
+      "lines": 131
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/coa/coa_modules.py",
+      "language": "python",
+      "size": 4531,
+      "lines": 117
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CodeAttack/__init__.py",
+      "language": "python",
+      "size": 157,
+      "lines": 9
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CodeAttack/attack.py",
+      "language": "python",
+      "size": 6916,
+      "lines": 182
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/crescendo_attack.py",
+      "language": "python",
+      "size": 17843,
+      "lines": 440
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CSDJ/__init__.py",
+      "language": "python",
+      "size": 557,
+      "lines": 17
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CSDJ/attack.py",
+      "language": "python",
+      "size": 16303,
+      "lines": 402
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CSDJ/image_generator.py",
+      "language": "python",
+      "size": 9133,
+      "lines": 256
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/deepinception_attack.py",
+      "language": "python",
+      "size": 5252,
+      "lines": 133
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/direct_attack.py",
+      "language": "python",
+      "size": 2796,
+      "lines": 81
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/DrAttack/__init__.py",
+      "language": "python",
+      "size": 149,
+      "lines": 9
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/DrAttack/analyzer.py",
+      "language": "python",
+      "size": 4354,
+      "lines": 126
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/DrAttack/attack.py",
+      "language": "python",
+      "size": 4802,
+      "lines": 125
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/DrAttack/core.py",
+      "language": "python",
+      "size": 25882,
+      "lines": 609
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/DrAttack/library.py",
+      "language": "python",
+      "size": 2431,
+      "lines": 40
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/DrAttack/parser.py",
+      "language": "python",
+      "size": 6407,
+      "lines": 134
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/__init__.py",
+      "language": "python",
+      "size": 581,
+      "lines": 20
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/__init__.py",
+      "language": "python",
+      "size": 7680,
+      "lines": 224
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "language": "python",
+      "size": 61596,
+      "lines": 1261
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "language": "python",
+      "size": 24975,
+      "lines": 543
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "language": "python",
+      "size": 31733,
+      "lines": 837
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/master_coordinator_agent.py",
+      "language": "python",
+      "size": 20392,
+      "lines": 370
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/reconnaissance_agent.py",
+      "language": "python",
+      "size": 12625,
+      "lines": 245
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/tool_synthesizer.py",
+      "language": "python",
+      "size": 22802,
+      "lines": 444
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/basic_usage.py",
+      "language": "python",
+      "size": 2004,
+      "lines": 62
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/config/__init__.py",
+      "language": "python",
+      "size": 184,
+      "lines": 7
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/config/default_config.py",
+      "language": "python",
+      "size": 1644,
+      "lines": 40
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/__init__.py",
+      "language": "python",
+      "size": 3635,
+      "lines": 114
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "language": "python",
+      "size": 34297,
+      "lines": 848
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/test_tool_system.py",
+      "language": "python",
+      "size": 5735,
+      "lines": 199
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/unified_context.py",
+      "language": "python",
+      "size": 3953,
+      "lines": 121
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/evosynth_attack.py",
+      "language": "python",
+      "size": 13642,
+      "lines": 346
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/exec_env/ai_response.py",
+      "language": "python",
+      "size": 2593,
+      "lines": 82
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/exec_env/test_ai_response.py",
+      "language": "python",
+      "size": 4618,
+      "lines": 146
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/exec_env/test_attack_tool.py",
+      "language": "python",
+      "size": 875,
+      "lines": 31
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/utils/__init__.py",
+      "language": "python",
+      "size": 48,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/utils/data_saver.py",
+      "language": "python",
+      "size": 27818,
+      "lines": 608
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/FigStep/__init__.py",
+      "language": "python",
+      "size": 138,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/FigStep/attack.py",
+      "language": "python",
+      "size": 6306,
+      "lines": 154
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/FigStep/image_generator.py",
+      "language": "python",
+      "size": 2027,
+      "lines": 58
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/flipattack.py",
+      "language": "python",
+      "size": 4009,
+      "lines": 97
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/genetic_attack.py",
+      "language": "python",
+      "size": 676,
+      "lines": 14
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/gptfuzzer/__init__.py",
+      "language": "python",
+      "size": 170,
+      "lines": 9
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/gptfuzzer/core.py",
+      "language": "python",
+      "size": 10164,
+      "lines": 256
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/gptfuzzer/mutator.py",
+      "language": "python",
+      "size": 8206,
+      "lines": 216
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/gptfuzzer/selection.py",
+      "language": "python",
+      "size": 5032,
+      "lines": 159
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/__init__.py",
+      "language": "python",
+      "size": 130,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "language": "python",
+      "size": 29434,
+      "lines": 576
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/image_generator.py",
+      "language": "python",
+      "size": 4786,
+      "lines": 128
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/__init__.py",
+      "language": "python",
+      "size": 59,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py",
+      "language": "python",
+      "size": 28237,
+      "lines": 708
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/ica_attack.py",
+      "language": "python",
+      "size": 6765,
+      "lines": 154
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/IDEATOR/__init__.py",
+      "language": "python",
+      "size": 62,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/IDEATOR/attack.py",
+      "language": "python",
+      "size": 8701,
+      "lines": 206
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/IDEATOR/messages.py",
+      "language": "python",
+      "size": 6174,
+      "lines": 72
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/iterative_base.py",
+      "language": "python",
+      "size": 2431,
+      "lines": 55
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/jailbroken_attack.py",
+      "language": "python",
+      "size": 20236,
+      "lines": 430
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/__init__.py",
+      "language": "python",
+      "size": 58,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/bert_toxic.py",
+      "language": "python",
+      "size": 5616,
+      "lines": 102
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/jam_attack.py",
+      "language": "python",
+      "size": 8908,
+      "lines": 192
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/jood/__init__.py",
+      "language": "python",
+      "size": 57,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/jood/attack.py",
+      "language": "python",
+      "size": 16145,
+      "lines": 414
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/jood/image_mixer.py",
+      "language": "python",
+      "size": 6093,
+      "lines": 186
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/jood/string_mixer.py",
+      "language": "python",
+      "size": 5442,
+      "lines": 164
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/__init__.py",
+      "language": "python",
+      "size": 122,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/attack.py",
+      "language": "python",
+      "size": 8147,
+      "lines": 195
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/const.py",
+      "language": "python",
+      "size": 27452,
+      "lines": 381
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/image_generator.py",
+      "language": "python",
+      "size": 6909,
+      "lines": 189
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/mousetrap.py",
+      "language": "python",
+      "size": 20321,
+      "lines": 386
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/multilingual_attack.py",
+      "language": "python",
+      "size": 9932,
+      "lines": 211
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/pair_attack.py",
+      "language": "python",
+      "size": 8139,
+      "lines": 197
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/past_tense_attack.py",
+      "language": "python",
+      "size": 7545,
+      "lines": 190
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/prefill_attack.py",
+      "language": "python",
+      "size": 4360,
+      "lines": 135
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/query_relevant/__init__.py",
+      "language": "python",
+      "size": 163,
+      "lines": 5
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/query_relevant/attack.py",
+      "language": "python",
+      "size": 11612,
+      "lines": 268
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/query_relevant/image_generator.py",
+      "language": "python",
+      "size": 9154,
+      "lines": 243
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/race/__init__.py",
+      "language": "python",
+      "size": 283,
+      "lines": 5
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/race/attack_state_machine.py",
+      "language": "python",
+      "size": 1329,
+      "lines": 39
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/race/race_attack.py",
+      "language": "python",
+      "size": 4343,
+      "lines": 104
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/race/race_modules.py",
+      "language": "python",
+      "size": 3967,
+      "lines": 116
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/rainbow_teaming.py",
+      "language": "python",
+      "size": 15320,
+      "lines": 389
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/redqueen_attack.py",
+      "language": "python",
+      "size": 9211,
+      "lines": 171
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/renellm_attack.py",
+      "language": "python",
+      "size": 18660,
+      "lines": 472
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/response_attack/__init__.py",
+      "language": "python",
+      "size": 64,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/response_attack/attack.py",
+      "language": "python",
+      "size": 7081,
+      "lines": 187
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/response_attack/dialogue_generator.py",
+      "language": "python",
+      "size": 10183,
+      "lines": 216
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/seqar_attack.py",
+      "language": "python",
+      "size": 10464,
+      "lines": 95
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/si_attack.py",
+      "language": "python",
+      "size": 10500,
+      "lines": 263
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/tree_attack.py",
+      "language": "python",
+      "size": 21389,
+      "lines": 466
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/xteaming_attack.py",
+      "language": "python",
+      "size": 27833,
+      "lines": 644
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/__init__.py",
+      "language": "python",
+      "size": 509,
+      "lines": 18
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/base.py",
+      "language": "python",
+      "size": 1470,
+      "lines": 44
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/__init__.py",
+      "language": "python",
+      "size": 704,
+      "lines": 21
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/__init__.py",
+      "language": "python",
+      "size": 0,
+      "lines": 1
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+      "language": "python",
+      "size": 16694,
+      "lines": 377
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/config.py",
+      "language": "python",
+      "size": 513,
+      "lines": 21
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/__init__.py",
+      "language": "python",
+      "size": 251,
+      "lines": 9
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+      "language": "python",
+      "size": 16511,
+      "lines": 453
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/config.py",
+      "language": "python",
+      "size": 1142,
+      "lines": 38
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/nanogcg/__init__.py",
+      "language": "python",
+      "size": 0,
+      "lines": 1
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/nanogcg/attack.py",
+      "language": "python",
+      "size": 17870,
+      "lines": 453
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/nanogcg/config.py",
+      "language": "python",
+      "size": 975,
+      "lines": 34
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/nanogcg/utils.py",
+      "language": "python",
+      "size": 3136,
+      "lines": 93
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/__init__.py",
+      "language": "python",
+      "size": 126,
+      "lines": 3
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+      "language": "python",
+      "size": 27879,
+      "lines": 664
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/config.py",
+      "language": "python",
+      "size": 1916,
+      "lines": 58
+    },
+    {
+      "path": "OpenRT-main/OpenRT/core/__init__.py",
+      "language": "python",
+      "size": 21,
+      "lines": 2
+    },
+    {
+      "path": "OpenRT-main/OpenRT/core/async_orchestrator.py",
+      "language": "python",
+      "size": 19694,
+      "lines": 469
+    },
+    {
+      "path": "OpenRT-main/OpenRT/core/orchestrator.py",
+      "language": "python",
+      "size": 4921,
+      "lines": 106
+    },
+    {
+      "path": "OpenRT-main/OpenRT/core/registry.py",
+      "language": "python",
+      "size": 1185,
+      "lines": 34
+    },
+    {
+      "path": "OpenRT-main/OpenRT/datasets/__init__.py",
+      "language": "python",
+      "size": 122,
+      "lines": 5
+    },
+    {
+      "path": "OpenRT-main/OpenRT/datasets/base_dataset.py",
+      "language": "python",
+      "size": 970,
+      "lines": 30
+    },
+    {
+      "path": "OpenRT-main/OpenRT/datasets/implementations/__init__.py",
+      "language": "python",
+      "size": 126,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/datasets/implementations/jsonl_dataset.py",
+      "language": "python",
+      "size": 4281,
+      "lines": 124
+    },
+    {
+      "path": "OpenRT-main/OpenRT/datasets/implementations/static_dataset.py",
+      "language": "python",
+      "size": 817,
+      "lines": 26
+    },
+    {
+      "path": "OpenRT-main/OpenRT/eval.py",
+      "language": "python",
+      "size": 28440,
+      "lines": 717
+    },
+    {
+      "path": "OpenRT-main/OpenRT/evaluators/__init__.py",
+      "language": "python",
+      "size": 253,
+      "lines": 6
+    },
+    {
+      "path": "OpenRT-main/OpenRT/evaluators/base_evaluator.py",
+      "language": "python",
+      "size": 1009,
+      "lines": 31
+    },
+    {
+      "path": "OpenRT-main/OpenRT/evaluators/implementations/__init__.py",
+      "language": "python",
+      "size": 224,
+      "lines": 9
+    },
+    {
+      "path": "OpenRT-main/OpenRT/evaluators/implementations/grouped_evaluator.py",
+      "language": "python",
+      "size": 4468,
+      "lines": 126
+    },
+    {
+      "path": "OpenRT-main/OpenRT/evaluators/implementations/judge_evaluator.py",
+      "language": "python",
+      "size": 2853,
+      "lines": 70
+    },
+    {
+      "path": "OpenRT-main/OpenRT/evaluators/implementations/keyword_evaluator.py",
+      "language": "python",
+      "size": 827,
+      "lines": 20
+    },
+    {
+      "path": "OpenRT-main/OpenRT/evaluators/multi_thread_evaluator.py",
+      "language": "python",
+      "size": 2842,
+      "lines": 83
+    },
+    {
+      "path": "OpenRT-main/OpenRT/judges/__init__.py",
+      "language": "python",
+      "size": 116,
+      "lines": 5
+    },
+    {
+      "path": "OpenRT-main/OpenRT/judges/base_judge.py",
+      "language": "python",
+      "size": 3074,
+      "lines": 80
+    },
+    {
+      "path": "OpenRT-main/OpenRT/judges/implementations/__init__.py",
+      "language": "python",
+      "size": 111,
+      "lines": 4
+    },
+    {
+      "path": "OpenRT-main/OpenRT/judges/implementations/llm_judge.py",
+      "language": "python",
+      "size": 8663,
+      "lines": 153
+    },
+    {
+      "path": "OpenRT-main/OpenRT/judges/implementations/refusal_judge.py",
+      "language": "python",
+      "size": 2004,
+      "lines": 52
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/__init__.py",
+      "language": "python",
+      "size": 289,
+      "lines": 13
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/base_image_generator.py",
+      "language": "python",
+      "size": 1108,
+      "lines": 37
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/base_model.py",
+      "language": "python",
+      "size": 1351,
+      "lines": 34
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/__init__.py",
+      "language": "python",
+      "size": 654,
+      "lines": 21
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/diffusion_generator.py",
+      "language": "python",
+      "size": 2821,
+      "lines": 75
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/huggingface_model.py",
+      "language": "python",
+      "size": 12870,
+      "lines": 334
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/mock_model.py",
+      "language": "python",
+      "size": 810,
+      "lines": 20
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/multithreaded_openai_model.py",
+      "language": "python",
+      "size": 8066,
+      "lines": 206
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/openai_generator.py",
+      "language": "python",
+      "size": 4061,
+      "lines": 105
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/openai_model.py",
+      "language": "python",
+      "size": 13811,
+      "lines": 318
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/typography_generator.py",
+      "language": "python",
+      "size": 3572,
+      "lines": 106
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/multithreaded_model.py",
+      "language": "python",
+      "size": 5134,
+      "lines": 136
+    },
+    {
+      "path": "OpenRT-main/OpenRT/strategies/__init__.py",
+      "language": "python",
+      "size": 49,
+      "lines": 2
+    },
+    {
+      "path": "OpenRT-main/OpenRT/strategies/advancers.py",
+      "language": "python",
+      "size": 2453,
+      "lines": 63
+    },
+    {
+      "path": "OpenRT-main/OpenRT/strategies/base_strategy.py",
+      "language": "python",
+      "size": 345,
+      "lines": 12
+    },
+    {
+      "path": "OpenRT-main/OpenRT/strategies/propagators.py",
+      "language": "python",
+      "size": 4891,
+      "lines": 115
+    },
+    {
+      "path": "OpenRT-main/OpenRT/utils/__init__.py",
+      "language": "python",
+      "size": 103,
+      "lines": 2
+    },
+    {
+      "path": "OpenRT-main/OpenRT/utils/logging_utils.py",
+      "language": "python",
+      "size": 320,
+      "lines": 12
+    },
+    {
+      "path": "OpenRT-main/OpenRT/utils/text_processing.py",
+      "language": "python",
+      "size": 215,
+      "lines": 9
+    }
+  ],
+  "languages": {
+    "python": 232
+  },
+  "manifests": [],
+  "test_commands": [],
+  "target_mode": "source_tree",
+  "input_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+  "target_url": "",
+  "binary_artifacts": []
+}

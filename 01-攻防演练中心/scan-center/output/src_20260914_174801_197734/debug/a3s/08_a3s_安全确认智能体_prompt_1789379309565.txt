@@ -1,0 +1,1493 @@
+你是安全确认智能体。你负责对给定候选完成“确认计划 -> 受控执行 -> 证据归档 -> 确认/驳回”的闭环。
+
+边界：
+- 只能处理输入中的候选，不能新增候选。
+- 确认结果必须基于源码/二进制证据、可解释触发路径和运行/诊断/强静态证据。
+- 情报只能辅助判断优先级，不能作为确认漏洞的唯一证据。
+- 可以使用 CLI 工具进行受控确认，优先复用 environment 中的 build/test/sanitizer/coverage/safe_runtime 命令。
+- 工具选择要针对每个候选的证据缺口：例如用静态规则确认路径、用依赖/密钥/配置扫描补线索、用 sanitizer/Valgrind/gdb/trace/fuzz/协议客户端收集运行证据；不要对所有候选执行同一套工具清单。
+- scanner 或 fuzz 输出必须经过 triage；只有能解释可达性、影响和证据质量时才可支持 confirmed。
+- 可以使用临时 harness、短预算 sanitizer、coverage、调试器和覆盖引导随机测试；随机测试默认 30-120 秒，并必须独立临时目录、限时限资源。
+- 任何会修改状态的测试必须遵守 isolation_policy，不得污染其他并发 agent。
+- 先做快速可达性和证据质量判断；如果在预算内无法拿到足够证据，返回 inconclusive 或 rejected，并写清楚缺口，不要拖到无界探索。
+- 不要输出可直接复用的触发细节、外部滥用步骤或第三方滥用材料。
+- 所有自然语言内容必须使用中文。
+
+确认启发模板不是硬约束。如果模板不适用，必须给出 custom_validation_plan 和 why_template_insufficient。
+
+只返回严格 JSON：
+{
+  "validation_results": [
+    {
+      "candidate_id": "候选 ID",
+      "template_used": "Memory Safety|null|custom",
+      "custom_validation_plan": "自定义验证方案",
+      "why_template_insufficient": "模板不足原因或空",
+      "tool_strategy": [
+        {"question": "本候选要确认/驳回的问题", "tool_class": "工具类别或命令族", "why": "选择原因", "outcome": "结果如何影响裁决"}
+      ],
+      "plan": ["确认步骤"],
+      "tool_runs": [
+        {"command": "实际命令", "cwd": "运行目录", "budget": "时间/资源上限", "exit_code": 0, "evidence": "关键输出或产物路径"}
+      ],
+      "evidence": ["证据摘要"],
+      "crash_artifacts": [
+        {"path": "证据路径", "summary": "崩溃/core/ASAN/栈摘要"}
+      ],
+      "verdict": "confirmed|rejected|inconclusive",
+      "rationale": "裁决理由",
+      "environment_dirty": false,
+      "restore_required_before_next_batch": false,
+      "environment_effect": "若本批修改了临时文件、进程、容器、数据库或构建状态，在这里说明；否则为空"
+    }
+  ],
+  "confirmed_findings": [
+    {
+      "id": "候选 ID",
+      "category": "类别",
+      "severity": "CRITICAL|HIGH|MEDIUM|LOW",
+      "cwe": "CWE-000",
+      "file": "路径",
+      "line": 42,
+      "location": "函数/符号/组件",
+      "description": "确认问题说明",
+      "code_snippet": "关键证据片段",
+      "impact": "影响",
+      "remediation_hint": "修复或缓解建议",
+      "confidence": 0.0,
+      "status": "confirmed",
+      "rationale": "为什么确认"
+    }
+  ],
+  "limitations": ["仍缺少的证据"]
+}
+
+输入：
+```json
+{
+  "project": {
+    "name": "20260914_174732_2c360f",
+    "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+    "input_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+    "target_mode": "source_tree",
+    "languages": {
+      "python": 232
+    },
+    "manifests": [],
+    "test_commands": [],
+    "counts": {
+      "source_file_count": 232,
+      "binary_artifact_count": 0,
+      "binary_executable_count": 0,
+      "binary_total_size": 0,
+      "binary_suffix_counts": {},
+      "binary_name_signal_counts": {}
+    },
+    "full_inventory_artifact": "00_profile_intel/project_profile.json",
+    "source_files_sample": [
+      {
+        "path": "OpenRT-main/eval.py",
+        "language": "python",
+        "size": 28429,
+        "lines": 715
+      },
+      {
+        "path": "OpenRT-main/eval_async.py",
+        "language": "python",
+        "size": 20584,
+        "lines": 536
+      },
+      {
+        "path": "OpenRT-main/example/actor_attack_example.py",
+        "language": "python",
+        "size": 6153,
+        "lines": 153
+      },
+      {
+        "path": "OpenRT-main/example/adaptive_attack_example.py",
+        "language": "python",
+        "size": 8599,
+        "lines": 263
+      },
+      {
+        "path": "OpenRT-main/example/air_attack_example.py",
+        "language": "python",
+        "size": 5112,
+        "lines": 147
+      },
+      {
+        "path": "OpenRT-main/example/artprompt_attack_example.py",
+        "language": "python",
+        "size": 11308,
+        "lines": 331
+      },
+      {
+        "path": "OpenRT-main/example/asa_example.py",
+        "language": "python",
+        "size": 2548,
+        "lines": 80
+      },
+      {
+        "path": "OpenRT-main/example/autodan_attack_example_2024.py",
+        "language": "python",
+        "size": 3350,
+        "lines": 104
+      },
+      {
+        "path": "OpenRT-main/example/autodan_turbo_example.py",
+        "language": "python",
+        "size": 3974,
+        "lines": 121
+      },
+      {
+        "path": "OpenRT-main/example/autodan_turbo_r_example.py",
+        "language": "python",
+        "size": 9980,
+        "lines": 221
+      },
+      {
+        "path": "OpenRT-main/example/cipherchat_attack_example_2024.py",
+        "language": "python",
+        "size": 3674,
+        "lines": 95
+      },
+      {
+        "path": "OpenRT-main/example/coa_attack_example.py",
+        "language": "python",
+        "size": 3341,
+        "lines": 102
+      },
+      {
+        "path": "OpenRT-main/example/code_attack_example.py",
+        "language": "python",
+        "size": 2821,
+        "lines": 87
+      },
+      {
+        "path": "OpenRT-main/example/crescendo_attack_example.py",
+        "language": "python",
+        "size": 8118,
+        "lines": 180
+      },
+      {
+        "path": "OpenRT-main/example/csdj_attack_example.py",
+        "language": "python",
+        "size": 3474,
+        "lines": 100
+      },
+      {
+        "path": "OpenRT-main/example/deepinception_attack_example_2024.py",
+        "language": "python",
+        "size": 3052,
+        "lines": 92
+      },
+      {
+        "path": "OpenRT-main/example/drattack_example.py",
+        "language": "python",
+        "size": 3243,
+        "lines": 100
+      },
+      {
+        "path": "OpenRT-main/example/evosynth_example.py",
+        "language": "python",
+        "size": 2225,
+        "lines": 70
+      },
+      {
+        "path": "OpenRT-main/example/figstep_attack_example.py",
+        "language": "python",
+        "size": 4643,
+        "lines": 126
+      },
+      {
+        "path": "OpenRT-main/example/flipattack_example.py",
+        "language": "python",
+        "size": 2791,
+        "lines": 88
+      }
+    ],
+    "binary_artifacts_sample": [],
+    "prompt_policy": "这里只提供紧凑画像和代表性样本；如需完整文件/二进制清单，请读取 full_inventory_artifact。"
+  },
+  "candidates": [
+    {
+      "id": "VULN-001",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "line": 321,
+      "location": "top-level",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "exec(code, exec_globals)",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "candidate_context_bundles": [
+    {
+      "candidate_id": "VULN-001",
+      "file": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "line": 321,
+      "source_context_excerpt": "251:     Returns:\n252:         Formatted code context with line numbers\n253:     \"\"\"\n254:     lines = code.split('\\n')\n255:     \n256:     if error_line is None:\n257:         # Show entire code with line numbers\n258:         result = []\n259:         for i, line in enumerate(lines, 1):\n260:             result.append(f\"{i:3d}: {line}\")\n261:         return '\\n'.join(result)\n262:     \n263:     # Show context around error line\n264:     start_line = max(1, error_line - context_lines)\n265:     end_line = min(len(lines), error_line + context_lines)\n266:     \n267:     result = []\n268:     for i in range(start_line, end_line + 1):\n269:         line_content = lines[i - 1]\n270:         prefix = f\"{i:3d}: \"\n271:         if i == error_line:\n272:             # Highlight error line\n273:             result.append(f\"{prefix}>>> {line_content} <<< ERROR\")\n274:         else:\n275:             result.append(f\"",
+      "embedded_binary_inventory": [],
+      "input_surface_matrix": {},
+      "runtime_entrypoints": {},
+      "attention_signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "low_attention_area",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource",
+        "underexplored_path"
+      ],
+      "risk_score": 1.0,
+      "underexplored_score": 0.64,
+      "ranking_hint": {
+        "id": "VULN-001",
+        "priority": 1.07,
+        "reason": "候选合并排序智能体失败，使用本地严重性和置信度排序。",
+        "validation_focus": [
+          "源码证据",
+          "可达性",
+          "运行证据"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+      },
+      "feedback_relevant": {}
+    }
+  ],
+  "intel": {
+    "raw_items": [
+      {
+        "title": "CVE-1999-0490",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-1999-0490",
+        "summary": "MSHTML.DLL in Internet Explorer 5.0 allows a remote attacker to learn information about a local user's files via an IMG SRC tag. 发布日期：1999-04-21T04:00:00.000",
+        "category": "CVE HIGH",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2001-0807",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2001-0807",
+        "summary": "Internet Explorer 5.0, and possibly other versions, may allow remote attackers (malicious web pages) to read known text files from a client's hard drive via a SCRIPT tag with a SRC value that points to the text file. 发布日期：2001-12-06T05:00:00.000",
+        "category": "CVE LOW",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-0591",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0591",
+        "summary": "Directory traversal vulnerability in AOL Instant Messenger (AIM) 4.8 beta and earlier allows remote attackers to create arbitrary files and execute commands via a Direct Connection with an IMG tag with a SRC attribute that specifies the target filename. 发布日期：2002-06-18T04:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-0317",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0317",
+        "summary": "Gator ActiveX component (IEGator.dll) 3.0.6.1 allows remote web sites to install arbitrary software by specifying a Trojan Gator installation file (setup.ex_) in the src parameter. 发布日期：2002-06-25T04:00:00.000",
+        "category": "CVE HIGH",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-0738",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0738",
+        "summary": "MHonArc 2.5.2 and earlier does not properly filter Javascript from archived e-mail messages, which could allow remote attackers to execute script in web clients by (1) splitting the SCRIPT tag into smaller pieces, (2) including the script in a SRC argument to an IMG tag, or (3) using \"&={script}\" syntax. 发布日期：2002-08-12T04:00:00.000",
+        "category": "CVE HIGH",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-0902",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0902",
+        "summary": "Cross-site scripting vulnerability in phpBB 2.0.0 (phpBB2) allows remote attackers to execute Javascript as other phpBB users by including a http:// and a double-quote (\") in the [IMG] tag, which bypasses phpBB's security check, terminates the src parameter of the resulting HTML IMG tag, and injects the script. 发布日期：2002-10-04T04:00:00.000",
+        "category": "CVE HIGH",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-1965",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-1965",
+        "summary": "Cross-site scripting (XSS) vulnerability in Errors.gsl in Imatix Xitami 2.5b4 and 2.5b5 allows remote attackers to inject arbitrary web script or HTML via the (1) Javascript events, as demonstrated via an onerror event in an IMG SRC tag or (2) User-Agent field in an HTTP GET request. 发布日期：2002-12-31T05:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-2031",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-2031",
+        "summary": "Internet Explorer 5.0, 5.0.1 and 5.5 with JavaScript execution enabled allows remote attackers to determine the existence of arbitrary files via a script tag with a src parameter that references a non-JavaScript file, then using the onError event handler to monitor the results. 发布日期：2002-12-31T05:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-2086",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-2086",
+        "summary": "Multiple cross-site scripting (XSS) vulnerabilities in magicHTML of SquirrelMail before 1.2.6 allow remote attackers to inject arbitrary web script or HTML via (1) \"<<script\" in unspecified input fields or (2) a javascript: URL in the src attribute of an IMG tag. 发布日期：2002-12-31T05:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-2386",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-2386",
+        "summary": "Cross-site scripting (XSS) vulnerability in the Quizz module for XOOPS 1.0, when allowing on-line question development, allows remote attackers to inject arbitrary web script or HTML via a javascript: URL in the SRC attribute of an IMG tag. 发布日期：2002-12-31T05:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2002-1493",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2002-1493",
+        "summary": "Cross-site scripting (XSS) vulnerability in Lycos HTMLGear guestbook allows remote attackers to inject arbitrary script via (1) STYLE attributes or (2) SRC attributes in an IMG tag. 发布日期：2003-04-02T05:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2003-1305",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2003-1305",
+        "summary": "Microsoft Internet Explorer allows remote attackers to cause a denial of service (resource consumption) via a Javascript src attribute that recursively loads the current web page. 发布日期：2003-12-31T05:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2004-0501",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2004-0501",
+        "summary": "Outlook 2003 allows remote attackers to bypass intended access restrictions and cause Outlook to request a URL from a remote site via an HTML e-mail message containing a Vector Markup Language (VML) entity whose src parameter points to the remote site, which could allow remote attackers to know when a message has been read, verify valid e-mail addresses, and possibly leak other information. 发布日期：2004-08-18T04:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2004-1594",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2004-1594",
+        "summary": "Cross-site scripting (XSS) vulnerability in FuseTalk 4.0 allows remote attackers to execute arbitrary web script via an img src tag. 发布日期：2004-10-13T04:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2004-1050",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2004-1050",
+        "summary": "Heap-based buffer overflow in Internet Explorer 6 allows remote attackers to execute arbitrary code via long (1) SRC or (2) NAME attributes in IFRAME, FRAME, and EMBED elements, as originally discovered using the mangleme utility, aka \"the IFRAME vulnerability\" or the \"HTML Elements Vulnerability.\" 发布日期：2004-12-31T05:00:00.000",
+        "category": "CVE HIGH",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2005-0719",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-0719",
+        "summary": "Unknown vulnerability in the systems message queue in HP Tru64 Unix 4.0F PK8 through 5.1B-2/PK4 allows local users to cause a denial of service (process crash) for processes such as nfsstat, pfstat, arp, ogated, rarpd, route, sendmail, srconfig, strsetup, trpt, netstat, and xntpd. 发布日期：2005-03-09T05:00:00.000",
+        "category": "CVE LOW",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2005-1282",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-1282",
+        "summary": "Multiple cross-site scripting (XSS) vulnerabilities in Argosoft Mail Server Pro 1.8.7.6 allow remote attackers to inject arbitrary web script or HTML via (1) the src parameter in an IMG tag, (2) User settings, or (3) Address book input boxes in the webmail interface. 发布日期：2005-05-02T04:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2005-0918",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-0918",
+        "summary": "The NPSVG3.dll ActiveX control for Adobe SVG Viewer 3.02 and earlier, when running on Internet Explorer, allows remote attackers to determine the existence of arbitrary files by setting the src property to the target filename and using Javascript to determine if the web page immediately stops loading, which indicates whether the file exists or not. 发布日期：2005-05-05T04:00:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2005-2127",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-2127",
+        "summary": "Microsoft Internet Explorer 5.01, 5.5, and 6 allows remote attackers to cause a denial of service (application crash) and possibly execute arbitrary code via a web page with embedded CLSIDs that reference certain COM objects that are not intended for use within Internet Explorer, as originally demonstrated using the (1) DDS Library Shape Control (Msdds.dll) COM object, and other objects including (2) Blnmgrps.dll, (3) Ciodm.dll, (4) Comsvcs.dll, (5) Danim.dll, (6) Htmlmarq.ocx, (7) Mdt2dd.dll (as demonstrated using a heap corruption attack with uninitialized memory), (8) Mdt2qd.dll, (9) Mpg4ds32.ax, (10) Msadds32.ax, (11) Msb1esen.dll, (12) Msb1fren.dll, (13) Msb1geen.dll, (14) Msdtctm.dll, (15) Mshtml.dll, (16) Msoeacct.dll, (17) Msosvfbr.dll, (18) Mswcrun.dll, (19) Netshell.dll, (20) Ole2disp.dll, (21) Outllib.dll, (22) Psisdecd.dll, (23) Qdvd.dll, (24) Repodbc.dll, (25) Shdocvw.dll, ( 发布日期：2005-08-19T04:00:00.000",
+        "category": "CVE HIGH",
+        "confidence": 0.65,
+        "query": "src"
+      },
+      {
+        "title": "CVE-2005-3015",
+        "source": "nvd.nist.gov",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2005-3015",
+        "summary": "Cross-site scripting (XSS) vulnerability in IBM Lotus Domino 6.5.2 allows remote attackers to inject arbitrary web script or HTML via the (1) BaseTarget or (2) Src parameters. 发布日期：2005-09-21T21:03:00.000",
+        "category": "CVE MEDIUM",
+        "confidence": 0.65,
+        "query": "src"
+      }
+    ]
+  },
+  "environment": {
+    "environment_ready": true,
+    "target_mode": "source_tree",
+    "source": "local_deterministic_probe",
+    "environment_summary": "本地编排器已建立只读、可复现、可清理的基础环境；后续验证在独立临时目录或受限命令中按候选执行。",
+    "workspace": {
+      "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+      "build_dir": "",
+      "artifact_dir": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts",
+      "temp_dirs": [
+        "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\tmp"
+      ]
+    },
+    "validated_commands": {
+      "build": [],
+      "test": [],
+      "sanitizer": [],
+      "coverage": [],
+      "safe_runtime": [
+        "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+      ],
+      "fuzz_smoke": [],
+      "metadata": [
+        "find . -maxdepth 2 -type d",
+        "find . -maxdepth 3 -type f -perm /111"
+      ]
+    },
+    "runtime_entrypoints": {
+      "start": [],
+      "stop": [],
+      "health_check": [],
+      "client": [],
+      "packaged_start": [],
+      "packaged_client": [],
+      "blocked": false,
+      "blocked_reason": ""
+    },
+    "embedded_binary_inventory": [],
+    "input_surface_matrix": [],
+    "available_inputs": {
+      "test_dirs": [],
+      "sample_inputs": [
+        "OpenRT-main/example/configs",
+        "OpenRT-main/docs",
+        "OpenRT-main/docs/materials",
+        "OpenRT-main/example",
+        "OpenRT-main/pyproject.toml"
+      ],
+      "existing_random_test_targets": [],
+      "seed_sources": [
+        "OpenRT-main/example/configs",
+        "OpenRT-main/docs",
+        "OpenRT-main/docs/materials",
+        "OpenRT-main/example",
+        "OpenRT-main/pyproject.toml"
+      ],
+      "planned_input_surfaces": []
+    },
+    "test_input_plan": {
+      "surfaces": [
+        {
+          "name": "file_format",
+          "entrypoint": "",
+          "input_location": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\seeds",
+          "driver": "环境智能体需按目标类型补充具体输入驱动。",
+          "command_template": "",
+          "observability": [
+            "exit_code",
+            "stderr",
+            "logs",
+            "core"
+          ],
+          "safety_limits": "timeout 60s; local-only; inputs under artifact_dir/inputs",
+          "ready": false,
+          "blocked_reason": "本地探针只发现样例目录，尚未建立目标专用输入驱动。"
+        }
+      ],
+      "coverage_expectation": {
+        "memory_safety_surfaces": [],
+        "not_exhaustive": true,
+        "note": "这里枚举可控输入类别和验证前置条件；是否实际构造样本取决于验证阶段是否具备安全运行入口。"
+      },
+      "corpus_layout": {
+        "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs",
+        "seeds": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\seeds",
+        "generated": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\generated",
+        "crashes": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\crashes"
+      }
+    },
+    "fuzz_capabilities": {
+      "tools": [
+        {
+          "name": "afl-fuzz",
+          "available": false,
+          "command": "",
+          "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+        },
+        {
+          "name": "honggfuzz",
+          "available": false,
+          "command": "",
+          "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+        },
+        {
+          "name": "radamsa",
+          "available": false,
+          "command": "",
+          "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+        },
+        {
+          "name": "boofuzz",
+          "available": false,
+          "command": "",
+          "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+        },
+        {
+          "name": "sqlancer",
+          "available": false,
+          "command": "",
+          "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+        },
+        {
+          "name": "sqlsmith",
+          "available": false,
+          "command": "",
+          "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+        },
+        {
+          "name": "zzuf",
+          "available": false,
+          "command": "",
+          "notes": "本地探针只记录工具可用性；环境智能体负责判断适用输入面和命令模板。"
+        }
+      ],
+      "applicable_surfaces": [],
+      "seed_corpus_plan": [
+        "将可复用样例输入复制或引用到 C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\seeds，生成输入放入 C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\inputs\\generated。"
+      ],
+      "harness_strategy": [
+        "等待环境智能体根据目标运行方式补充。"
+      ],
+      "short_budget_commands": [],
+      "blocked_reason": "尚未由环境智能体确认可运行入口、输入驱动和适用 fuzz 工具。"
+    },
+    "runtime_limits": {
+      "timeout_seconds": 60,
+      "memory": "按验证任务设置；默认只读探查不限制内存。",
+      "network": "disabled/local-only"
+    },
+    "isolation_policy": {
+      "default": "shared_readonly",
+      "requires_clone": [
+        "stateful_test",
+        "patch",
+        "random_test_crash",
+        "unknown_binary_execution"
+      ],
+      "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+    },
+    "environment_cache": {
+      "dependency_status": [],
+      "tool_status": [
+        {
+          "tool": "file",
+          "status": "missing"
+        },
+        {
+          "tool": "readelf",
+          "status": "missing"
+        },
+        {
+          "tool": "strings",
+          "status": "missing"
+        },
+        {
+          "tool": "objdump",
+          "status": "missing"
+        },
+        {
+          "tool": "gdb",
+          "status": "missing"
+        },
+        {
+          "tool": "strace",
+          "status": "available"
+        },
+        {
+          "tool": "valgrind",
+          "status": "missing"
+        },
+        {
+          "tool": "timeout",
+          "status": "available"
+        },
+        {
+          "tool": "docker",
+          "status": "available"
+        },
+        {
+          "tool": "podman",
+          "status": "missing"
+        }
+      ],
+      "failed_commands": [
+        {
+          "command": "find . -maxdepth 2 -type d",
+          "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+          "budget": "5s",
+          "exit_code": 2,
+          "evidence": ""
+        },
+        {
+          "command": "find . -maxdepth 3 -type f -perm /111",
+          "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+          "budget": "5s",
+          "exit_code": 2,
+          "evidence": ""
+        }
+      ],
+      "key_binaries": [],
+      "config_files": [
+        "OpenRT-main/pyproject.toml"
+      ],
+      "top_attention_paths": [
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py",
+        "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+        "OpenRT-main/OpenRT/eval.py",
+        "OpenRT-main/eval.py",
+        "OpenRT-main/eval_async.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/tree_attack.py",
+        "OpenRT-main/OpenRT/core/async_orchestrator.py",
+        "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/crescendo_attack.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/jailbroken_attack.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/const.py",
+        "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+        "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/master_coordinator_agent.py"
+      ]
+    },
+    "tool_runs": [
+      {
+        "command": "find . -maxdepth 2 -type d",
+        "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+        "budget": "5s",
+        "exit_code": 2,
+        "evidence": ""
+      },
+      {
+        "command": "find . -maxdepth 3 -type f -perm /111",
+        "cwd": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+        "budget": "5s",
+        "exit_code": 2,
+        "evidence": ""
+      }
+    ],
+    "cleanup_strategy": "删除本次输出目录下的临时目录：C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\tmp",
+    "limitations": [
+      "未发现可直接复用的测试命令。",
+      "容器运行环境未完全就绪：容器镜像构建失败。"
+    ],
+    "local_environment_context": {
+      "source": "local_deterministic_probe",
+      "workspace": {
+        "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+        "build_dir": "",
+        "artifact_dir": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts",
+        "temp_dirs": [
+          "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\tmp"
+        ]
+      },
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "limitations": [
+        "未发现可直接复用的测试命令。"
+      ]
+    },
+    "container_plan": {
+      "enabled": true,
+      "source": "local_default",
+      "runtime": "docker",
+      "base_image": "rockylinux:8",
+      "image_name": "shuan-env-src-20260914-174801-197734:latest",
+      "dockerfile": "FROM rockylinux:8\nSHELL [\"/bin/bash\", \"-lc\"]\nRUN set -eux; \\\n    if command -v dnf >/dev/null 2>&1; then \\\n      dnf -y install findutils file unzip procps-ng net-tools which glibc-langpack-en || \\\n      dnf -y install findutils file unzip procps-ng net-tools which; \\\n      dnf clean all; \\\n    elif command -v apt-get >/dev/null 2>&1; then \\\n      apt-get update; \\\n      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends bash coreutils findutils file tar gzip unzip procps net-tools ca-certificates passwd; \\\n      rm -rf /var/lib/apt/lists/*; \\\n    else \\\n      echo \"No supported package manager found; continuing with base image tools\"; \\\n    fi\nRUN groupadd -r shuan 2>/dev/null || true; \\\n    id shuan >/dev/null 2>&1 || useradd -m -g shuan -s /bin/bash shuan\nENV LANG=C.UTF-8 LC_ALL=C.UTF-8 SHUAN_TARGET=/target SHUAN_ARTIFACTS=/artifacts\nWORKDIR /workspace\nCOPY scripts/ /opt/shuan/scripts/\nRUN chmod +x /opt/shuan/scripts/*.sh\nENTRYPOINT [\"/opt/shuan/scripts/entryp...<truncated 10 chars>",
+      "context_files": [
+        {
+          "path": "scripts/entrypoint.sh",
+          "content": "#!/usr/bin/env bash\nset -euo pipefail\n\ncmd=\"${1:-check}\"\ncase \"$cmd\" in\n  shell)\n    exec /bin/bash\n    ;;\n  check)\n    exec /opt/shuan/scripts/check_container.sh\n    ;;\n  provision)\n    shift || true\n    exec /opt/shuan/scripts/provision_runtime.sh \"$@\"\n    ;;\n  *)\n    exec \"$@\"\n    ;;\nesac\n"
+        },
+        {
+          "path": "scripts/check_container.sh",
+          "content": "#!/usr/bin/env bash\nset -euo pipefail\n\necho \"[container] target=${SHUAN_TARGET:-/target}\"\necho \"[container] artifacts=${SHUAN_ARTIFACTS:-/artifacts}\"\ntest -d \"${SHUAN_TARGET:-/target}\" || { echo \"target mount missing\"; exit 2; }\nmkdir -p \"${SHUAN_ARTIFACTS:-/artifacts}/container-runtime\"\nid shuan\nfor tool in bash tar gzip unzip file timeout; do\n  command -v \"$tool\" >/dev/null 2>&1 && echo \"tool[$tool]=ok\" || echo \"tool[$tool]=missing\"\ndone\nfind \"${SHUAN_TARGET:-/target}\" -maxdepth 3 -type f -print | head -40\n"
+        },
+        {
+          "path": "scripts/provision_runtime.sh",
+          "content": "#!/usr/bin/env bash\nset -euo pipefail\n\nTARGET=\"${SHUAN_TARGET:-/target}\"\nARTIFACTS=\"${SHUAN_ARTIFACTS:-/artifacts}\"\nRUNTIME_DIR=\"$ARTIFACTS/container-runtime\"\nmkdir -p \"$RUNTIME_DIR\"/{logs,data,tmp}\n\ncat <<MSG\n[container] generic provisioning placeholder.\ntarget=$TARGET\nartifacts=$ARTIFACTS\nruntime_dir=$RUNTIME_DIR\nProvide a target-specific container_plan.context_files from the environment agent\nwhen installation, service startup, users, license files, ports, or product-specific\ninitialization are required.\nMSG\n"
+        }
+      ],
+      "build_command": "docker build -t shuan-env-src-20260914-174801-197734:latest C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\container",
+      "run_command": "docker run --user 0:0 --rm -it --network none --cpus 2 --memory 4g -v C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src:/target:ro -v C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts:/artifacts:rw shuan-env-src-20260914-174801-197734:latest check",
+      "mounts": [
+        {
+          "source": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+          "target": "/target",
+          "mode": "ro"
+        },
+        {
+          "source": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts",
+          "target": "/artifacts",
+          "mode": "rw"
+        }
+      ],
+      "ports": [],
+      "ready": true,
+      "blocked_reason": "",
+      "notes": [
+        "默认镜像只准备通用可控运行基座；目标专用安装和启动逻辑由环境 agent 的 container_plan.context_files 提供。",
+        "目标目录以只读方式挂载，运行态数据写入 artifact_dir/container-runtime。"
+      ],
+      "context_dir": "01_environment/artifacts/container",
+      "dockerfile_path": "01_environment/artifacts/container/Dockerfile",
+      "build_result": {
+        "status": "failed",
+        "tool": "docker",
+        "command": "docker build -t shuan-env-src-20260914-174801-197734:latest C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\container",
+        "exit_code": 1,
+        "elapsed_seconds": 3.782,
+        "log_path": "01_environment/artifacts/container/build.log"
+      }
+    },
+    "container_artifacts": {
+      "context_dir": "01_environment/artifacts/container",
+      "image_name": "shuan-env-src-20260914-174801-197734:latest",
+      "files": [
+        {
+          "path": "01_environment/artifacts/container/Dockerfile",
+          "purpose": "container_dockerfile"
+        },
+        {
+          "path": "01_environment/artifacts/container/scripts/entrypoint.sh",
+          "purpose": "entrypoint.sh"
+        },
+        {
+          "path": "01_environment/artifacts/scripts/entrypoint.sh",
+          "purpose": "runtime_entrypoint.sh"
+        },
+        {
+          "path": "01_environment/artifacts/container/scripts/check_container.sh",
+          "purpose": "check_container.sh"
+        },
+        {
+          "path": "01_environment/artifacts/scripts/check_container.sh",
+          "purpose": "runtime_check_container.sh"
+        },
+        {
+          "path": "01_environment/artifacts/container/scripts/provision_runtime.sh",
+          "purpose": "provision_runtime.sh"
+        },
+        {
+          "path": "01_environment/artifacts/scripts/provision_runtime.sh",
+          "purpose": "runtime_provision_runtime.sh"
+        },
+        {
+          "path": "01_environment/artifacts/container/build.log",
+          "purpose": "container_build_log"
+        }
+      ],
+      "build_result": {
+        "status": "failed",
+        "tool": "docker",
+        "command": "docker build -t shuan-env-src-20260914-174801-197734:latest C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts\\container",
+        "exit_code": 1,
+        "elapsed_seconds": 3.782,
+        "log_path": "01_environment/artifacts/container/build.log"
+      },
+      "run_command": "docker run --user 0:0 --rm -it --network none --cpus 2 --memory 4g -v C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src:/target:ro -v C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts:/artifacts:rw shuan-env-src-20260914-174801-197734:latest check",
+      "mounts": [
+        {
+          "source": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+          "target": "/target",
+          "mode": "ro"
+        },
+        {
+          "source": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\01_environment\\artifacts",
+          "target": "/artifacts",
+          "mode": "rw"
+        }
+      ]
+    }
+  },
+  "feedback_memory": {},
+  "agent_toolchain_context": {
+    "purpose": "给 A3S agent 的命令行能力上下文；agent 可以按任务需要多轮使用当前环境中的任意本地 CLI 工具，但工具使用必须围绕假设和证据闭环，而不是脚本式全量扫描。",
+    "project": {
+      "name": "20260914_174732_2c360f",
+      "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+      "languages": {
+        "python": 232
+      },
+      "manifests": [],
+      "test_commands": []
+    },
+    "inventory": {
+      "mode": "not_enumerated"
+    },
+    "artifact_root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\04_validation\\artifacts",
+    "tooling_hint": "当前环境允许多轮使用任意本地 CLI 工具；按假设和证据目标自主选择命令，不预设命令类型白名单，不要把工具类别当作全量执行清单。",
+    "adaptive_tool_use": {
+      "principle": "工具由 agent 智能选择，用来回答当前假设问题、缩小不确定性或收集确认/驳回证据；不要把可用工具简单顺序调用一遍。",
+      "workflow": [
+        "先写清楚当前要回答的问题或候选假设。",
+        "选择最小、最相关、可限时且可清理的工具或命令组合。",
+        "解释为什么选择该工具，以及为什么不需要更重的扫描。",
+        "运行后提炼关键输出，判断它支持、削弱还是改变原假设。",
+        "根据结果决定继续深入、进入验证、驳回、降级或记录为证据不足。"
+      ],
+      "tool_categories": [
+        {
+          "category": "static_security_rules",
+          "examples": [
+            "semgrep",
+            "codeql",
+            "bandit",
+            "gosec",
+            "spotbugs",
+            "eslint-security"
+          ],
+          "use_when": "源码目标需要快速发现危险 API、权限边界、注入、反序列化、路径和加密误用线索。"
+        },
+        {
+          "category": "dependency_and_supply_chain",
+          "examples": [
+            "osv-scanner",
+            "pip-audit",
+            "npm audit",
+            "cargo audit",
+            "govulncheck",
+            "syft",
+            "grype",
+            "trivy"
+          ],
+          "use_when": "存在 manifest、锁文件、容器镜像、第三方库或二进制依赖，需要判断依赖风险和版本暴露面。"
+        },
+        {
+          "category": "secret_and_config_scan",
+          "examples": [
+            "gitleaks",
+            "trufflehog",
+            "detect-secrets",
+            "ripgrep"
+          ],
+          "use_when": "候选或专长涉及默认凭据、证书、token、配置权限、TLS/加密默认值或敏感路径。"
+        },
+        {
+          "category": "binary_metadata_and_hardening",
+          "examples": [
+            "file",
+            "readelf",
+            "checksec",
+            "ldd",
+            "nm",
+            "objdump",
+            "strings",
+            "rabin2",
+            "rizin"
+          ],
+          "use_when": "无源码/二进制目标需要文件类型、架构、动态依赖、符号、字符串、RPATH/RUNPATH 或 hardening 证据。"
+        },
+        {
+          "category": "dynamic_diagnostics",
+          "examples": [
+            "asan",
+            "ubsan",
+            "valgrind",
+            "gdb",
+            "strace",
+            "ltrace",
+            "perf",
+            "coverage tools"
+          ],
+          "use_when": "验证阶段需要崩溃、core、栈、越界诊断、运行行为、权限检查点或覆盖反馈。"
+        },
+        {
+          "category": "input_generation_and_fuzzing",
+          "examples": [
+            "afl-fuzz",
+            "libFuzzer",
+            "honggfuzz",
+            "radamsa",
+            "boofuzz",
+            "sqlancer",
+            "sqlsmith"
+          ],
+          "use_when": "环境已提供输入入口和隔离策略，候选需要短预算随机输入、协议/SQL/文件格式输入或 corpus 反馈。"
+        },
+        {
+          "category": "protocol_api_and_infra_checks",
+          "examples": [
+            "curl",
+            "openssl",
+            "nmap-local",
+            "hadolint",
+            "checkov",
+            "kube-linter",
+            "trivy config"
+          ],
+          "use_when": "目标暴露本地服务、HTTP/RPC/TLS/数据库协议、容器/IaC/部署配置或管理面。"
+        },
+        {
+          "category": "web_site_security_baseline",
+          "examples": [
+            "curl",
+            "openssl",
+            "testssl.sh",
+            "sslscan",
+            "whatweb",
+            "webanalyze",
+            "httpx",
+            "nuclei-safe",
+            "nikto-low",
+            "zap-baseline"
+          ],
+          "use_when": "目标是已授权 HTTP(S) 站点、管理面或 API，需要非破坏性确认 TLS、响应头、Cookie、CORS、技术指纹、敏感暴露和安全扫描器线索。",
+          "constraints": "仅限授权 origin 的低强度只读探测；禁止目录爆破、参数 fuzz、撞库、主动漏洞利用、资源耗尽、深度爬取和写操作。"
+        }
+      ],
+      "anti_patterns": [
+        "不要因为某个 scanner 可用就无差别全量运行。",
+        "不要把 scanner 命中、CVE 命中或可疑字符串直接当作已确认漏洞。",
+        "不要把大量原始输出塞进报告；只保留能影响判断的证据。",
+        "不要扫描无关目录、第三方目标或超出授权范围的网络目标。",
+        "Web 站点工具只能在明确授权、限时限量和只读边界内使用；不要运行 intrusive、dos、fuzz、bruteforce 或 destructive 模板。",
+        "不要让候选发现无限延伸；有高价值候选时优先交给验证阶段。"
+      ]
+    },
+    "agent_contract": {
+      "must_record": [
+        "tool_strategy: question/hypothesis, selected tool class, reason, outcome, next decision",
+        "tool_runs: command, cwd, timeout/budget, exit code, key output tail",
+        "coverage_observations: what feedback was observed or why it was unavailable",
+        "crash_artifacts: crash input path, sanitizer/core/log path, stack summary when available",
+        "environment_setup: dependencies, sandbox/container, runtime arguments, logs/core/sanitizer/coverage settings and cleanup plan",
+        "limitations: why a tool was not run or why evidence remains inconclusive"
+      ],
+      "safety": [
+        "Only run commands against the local authorized workspace, artifact directory, temp directory, or explicitly configured local test target.",
+        "Use time, CPU, memory, corpus and output limits.",
+        "Prefer temporary harnesses and artifacts under /tmp or the configured artifact_root.",
+        "Do not operate on third-party targets or unrelated user directories.",
+        "For authorized web targets, use only bounded read-only HTTP/TLS checks unless the stage explicitly configures a local test environment.",
+        "Do not generate exploit deliverables or third-party attack payloads."
+      ]
+    },
+    "recommended_workflow": [
+      "First decide whether the target is a source tree, single source file, binary, or no-source archive.",
+      "Prepare the smallest repeatable experiment environment before running invasive validation.",
+      "Choose tools by hypothesis: static/security scanners, SCA, secret scanners, binary metadata tools, dynamic diagnostics, fuzzers, protocol/API checks, web baseline tools, or infra scanners only when they answer the current question.",
+      "Inspect existing tests, fuzz targets, build scripts and corpus before inventing a harness.",
+      "Treat automated tool findings as leads until the agent has triaged reachability, impact and evidence quality.",
+      "For memory candidates, prefer sanitizer or existing fuzz harness evidence over static reasoning alone.",
+      "Use coverage feedback as a guide for the next agent decision, not as the sole success criterion.",
+      "If no coverage tool is available, report scenario/input coverage and missing observability explicitly."
+    ],
+    "full_toolchain_artifact": "00_profile_intel/agent_tool_capabilities.json"
+  },
+  "skill_assignment": {
+    "phase": "validation.validate_candidates",
+    "agent_role": "validation",
+    "node_type": "validation_batch",
+    "policy": "system_filtered_agent_may_use",
+    "available_skills": {
+      "count": 2,
+      "sample": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "reviewing-secure-configuration-baselines",
+        "name": "reviewing-secure-configuration-baselines",
+        "score": 59
+      },
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "reviewing-secure-configuration-baselines",
+        "name": "reviewing-secure-configuration-baselines",
+        "summary": "Review service and application configuration against secure baseline expectations.",
+        "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+        "why_shortlisted": "phase match: validation; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+      },
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: validation; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ],
+    "selected_skill_names": [
+      "reviewing-secure-configuration-baselines",
+      "triaging-dependency-vulnerabilities"
+    ]
+  },
+  "skill_context": {
+    "phase": "validation.validate_candidates",
+    "request": {
+      "phase": "validation.validate_candidates",
+      "project": {
+        "name": "20260914_174732_2c360f",
+        "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+        "input_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "manifests": [],
+        "test_commands": [],
+        "counts": {
+          "source_file_count": 232,
+          "binary_artifact_count": 0,
+          "binary_executable_count": 0,
+          "binary_total_size": 0,
+          "binary_suffix_counts": {},
+          "binary_name_signal_counts": {}
+        },
+        "full_inventory_artifact": "00_profile_intel/project_profile.json",
+        "source_files_sample": [
+          {
+            "path": "OpenRT-main/eval.py",
+            "language": "python",
+            "size": 28429,
+            "lines": 715
+          },
+          {
+            "path": "OpenRT-main/eval_async.py",
+            "language": "python",
+            "size": 20584,
+            "lines": 536
+          },
+          {
+            "path": "OpenRT-main/example/actor_attack_example.py",
+            "language": "python",
+            "size": 6153,
+            "lines": 153
+          },
+          {
+            "path": "OpenRT-main/example/adaptive_attack_example.py",
+            "language": "python",
+            "size": 8599,
+            "lines": 263
+          },
+          {
+            "path": "OpenRT-main/example/air_attack_example.py",
+            "language": "python",
+            "size": 5112,
+            "lines": 147
+          },
+          {
+            "path": "OpenRT-main/example/artprompt_attack_example.py",
+            "language": "python",
+            "size": 11308,
+            "lines": 331
+          },
+          {
+            "path": "OpenRT-main/example/asa_example.py",
+            "language": "python",
+            "size": 2548,
+            "lines": 80
+          },
+          {
+            "path": "OpenRT-main/example/autodan_attack_example_2024.py",
+            "language": "python",
+            "size": 3350,
+            "lines": 104
+          },
+          {
+            "path": "OpenRT-main/example/autodan_turbo_example.py",
+            "language": "python",
+            "size": 3974,
+            "lines": 121
+          },
+          {
+            "path": "OpenRT-main/example/autodan_turbo_r_example.py",
+            "language": "python",
+            "size": 9980,
+            "lines": 221
+          },
+          {
+            "path": "OpenRT-main/example/cipherchat_attack_example_2024.py",
+            "language": "python",
+            "size": 3674,
+            "lines": 95
+          },
+          {
+            "path": "OpenRT-main/example/coa_attack_example.py",
+            "language": "python",
+            "size": 3341,
+            "lines": 102
+          },
+          {
+            "path": "OpenRT-main/example/code_attack_example.py",
+            "language": "python",
+            "size": 2821,
+            "lines": 87
+          },
+          {
+            "path": "OpenRT-main/example/crescendo_attack_example.py",
+            "language": "python",
+            "size": 8118,
+            "lines": 180
+          },
+          {
+            "path": "OpenRT-main/example/csdj_attack_example.py",
+            "language": "python",
+            "size": 3474,
+            "lines": 100
+          },
+          {
+            "path": "OpenRT-main/example/deepinception_attack_example_2024.py",
+            "language": "python",
+            "size": 3052,
+            "lines": 92
+          },
+          {
+            "path": "OpenRT-main/example/drattack_example.py",
+            "language": "python",
+            "size": 3243,
+            "lines": 100
+          },
+          {
+            "path": "OpenRT-main/example/evosynth_example.py",
+            "language": "python",
+            "size": 2225,
+            "lines": 70
+          },
+          {
+            "path": "OpenRT-main/example/figstep_attack_example.py",
+            "language": "python",
+            "size": 4643,
+            "lines": 126
+          },
+          {
+            "path": "OpenRT-main/example/flipattack_example.py",
+            "language": "python",
+            "size": 2791,
+            "lines": 88
+          }
+        ],
+        "binary_artifacts_sample": [],
+        "prompt_policy": "这里只提供紧凑画像和代表性样本；如需完整文件/二进制清单，请读取 full_inventory_artifact。"
+      }
+    },
+    "available_skills": {
+      "count": 2,
+      "sample": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ],
+      "disabled": false
+    },
+    "shortlist": [
+      {
+        "id": "reviewing-secure-configuration-baselines",
+        "name": "reviewing-secure-configuration-baselines",
+        "score": 59
+      },
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "score": 59
+      }
+    ],
+    "capsules": [
+      {
+        "id": "reviewing-secure-configuration-baselines",
+        "name": "reviewing-secure-configuration-baselines",
+        "summary": "Review service and application configuration against secure baseline expectations.",
+        "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+        "why_shortlisted": "phase match: validation; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+      },
+      {
+        "id": "triaging-dependency-vulnerabilities",
+        "name": "triaging-dependency-vulnerabilities",
+        "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+        "why_shortlisted": "phase match: validation; target mode match: source-tree",
+        "source": "mukul975/Anthropic-Cybersecurity-Skills",
+        "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+      }
+    ]
+  }
+}
+```
+
+A3S 命令行能力上下文：
+- 当前环境允许多轮使用任意本地 CLI 工具，不预设命令类型白名单。
+- agent 必须按目标形态、阶段职责和当前假设智能选择工具；不要把常见工具简单顺序调用一遍。
+- 可考虑的工具类别包括静态安全规则、依赖/SBOM、密钥与配置扫描、二进制元数据/hardening、动态诊断、短预算 fuzz/随机输入、协议/API/基础设施检查和 Web 站点安全基线；这些只是启发，不是固定清单。
+- 每次用工具前先明确要回答的问题；工具结果必须被解释，并影响候选、验证、驳回或下一步计划。
+- scanner 命中、CVE 命中或可疑字符串只能作为线索；确认漏洞必须依赖可解释证据和影响判断。
+- 只记录实际运行过的命令、预算、退出码和关键证据。
+- 所有命令只能用于当前本地授权目标，必须限时、限资源、可停止、可清理；在线 Web 目标只允许授权 origin 的只读低强度探测。
+- 建议证据目录：`C:\Users\huangchenghao\Downloads\InternShannon-Vulnerability-Detect-dev-pub\InternShannon-Vulnerability-Detect-dev-pub\output\src_20260914_174801_197734\04_validation\artifacts`。
+
+A3S skill context:
+- phase: validation.validate_candidates
+- Use the selected skill capsules as optional guidance when they fit the task; fall back to the normal phase contract when they do not apply.
+```json
+{
+  "phase": "validation.validate_candidates",
+  "request": {
+    "phase": "validation.validate_candidates",
+    "project": {
+      "name": "20260914_174732_2c360f",
+      "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+      "input_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
+      "target_mode": "source_tree",
+      "languages": {
+        "python": 232
+      },
+      "manifests": [],
+      "test_commands": [],
+      "counts": {
+        "source_file_count": 232,
+        "binary_artifact_count": 0,
+        "binary_executable_count": 0,
+        "binary_total_size": 0,
+        "binary_suffix_counts": {},
+        "binary_name_signal_counts": {}
+      },
+      "full_inventory_artifact": "00_profile_intel/project_profile.json",
+      "source_files_sample": [
+        {
+          "path": "OpenRT-main/eval.py",
+          "language": "python",
+          "size": 28429,
+          "lines": 715
+        },
+        {
+          "path": "OpenRT-main/eval_async.py",
+          "language": "python",
+          "size": 20584,
+          "lines": 536
+        },
+        {
+          "path": "OpenRT-main/example/actor_attack_example.py",
+          "language": "python",
+          "size": 6153,
+          "lines": 153
+        },
+        {
+          "path": "OpenRT-main/example/adaptive_attack_example.py",
+          "language": "python",
+          "size": 8599,
+          "lines": 263
+        },
+        {
+          "path": "OpenRT-main/example/air_attack_example.py",
+          "language": "python",
+          "size": 5112,
+          "lines": 147
+        },
+        {
+          "path": "OpenRT-main/example/artprompt_attack_example.py",
+          "language": "python",
+          "size": 11308,
+          "lines": 331
+        },
+        {
+          "path": "OpenRT-main/example/asa_example.py",
+          "language": "python",
+          "size": 2548,
+          "lines": 80
+        },
+        {
+          "path": "OpenRT-main/example/autodan_attack_example_2024.py",
+          "language": "python",
+          "size": 3350,
+          "lines": 104
+        },
+        {
+          "path": "OpenRT-main/example/autodan_turbo_example.py",
+          "language": "python",
+          "size": 3974,
+          "lines": 121
+        },
+        {
+          "path": "OpenRT-main/example/autodan_turbo_r_example.py",
+          "language": "python",
+          "size": 9980,
+          "lines": 221
+        },
+        {
+          "path": "OpenRT-main/example/cipherchat_attack_example_2024.py",
+          "language": "python",
+          "size": 3674,
+          "lines": 95
+        },
+        {
+          "path": "OpenRT-main/example/coa_attack_example.py",
+          "language": "python",
+          "size": 3341,
+          "lines": 102
+        },
+        {
+          "path": "OpenRT-main/example/code_attack_example.py",
+          "language": "python",
+          "size": 2821,
+          "lines": 87
+        },
+        {
+          "path": "OpenRT-main/example/crescendo_attack_example.py",
+          "language": "python",
+          "size": 8118,
+          "lines": 180
+        },
+        {
+          "path": "OpenRT-main/example/csdj_attack_example.py",
+          "language": "python",
+          "size": 3474,
+          "lines": 100
+        },
+        {
+          "path": "OpenRT-main/example/deepinception_attack_example_2024.py",
+          "language": "python",
+          "size": 3052,
+          "lines": 92
+        },
+        {
+          "path": "OpenRT-main/example/drattack_example.py",
+          "language": "python",
+          "size": 3243,
+          "lines": 100
+        },
+        {
+          "path": "OpenRT-main/example/evosynth_example.py",
+          "language": "python",
+          "size": 2225,
+          "lines": 70
+        },
+        {
+          "path": "OpenRT-main/example/figstep_attack_example.py",
+          "language": "python",
+          "size": 4643,
+          "lines": 126
+        },
+        {
+          "path": "OpenRT-main/example/flipattack_example.py",
+          "language": "python",
+          "size": 2791,
+          "lines": 88
+        }
+      ],
+      "binary_artifacts_sample": [],
+      "prompt_policy": "这里只提供紧凑画像和代表性样本；如需完整文件/二进制清单，请读取 full_inventory_artifact。"
+    }
+  },
+  "available_skills": {
+    "count": 2,
+    "sample": [
+      "reviewing-secure-configuration-baselines",
+      "triaging-dependency-vulnerabilities"
+    ],
+    "disabled": false
+  },
+  "shortlist": [
+    {
+      "id": "reviewing-secure-configuration-baselines",
+      "name": "reviewing-secure-configuration-baselines",
+      "score": 59
+    },
+    {
+      "id": "triaging-dependency-vulnerabilities",
+      "name": "triaging-dependency-vulnerabilities",
+      "score": 59
+    }
+  ],
+  "capsules": [
+    {
+      "id": "reviewing-secure-configuration-baselines",
+      "name": "reviewing-secure-configuration-baselines",
+      "summary": "Review service and application configuration against secure baseline expectations.",
+      "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+      "why_shortlisted": "phase match: validation; target mode match: source-tree",
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+    },
+    {
+      "id": "triaging-dependency-vulnerabilities",
+      "name": "triaging-dependency-vulnerabilities",
+      "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+      "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+      "why_shortlisted": "phase match: validation; target mode match: source-tree",
+      "source": "mukul975/Anthropic-Cybersecurity-Skills",
+      "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+    }
+  ]
+}
+```

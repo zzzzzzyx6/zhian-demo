@@ -1,0 +1,41 @@
+.model-access-form .field{margin-bottom:12px;min-width:0}
+.model-access-form .field label{font-size:13px;margin-bottom:6px}
+.model-access-form .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.model-access-form .optional{font-size:12px;font-weight:400;color:#8290a4}
+.compact-service-row{display:flex;align-items:center;gap:16px}
+.compact-service-row .field{flex:1}
+.compact-protocol{font-size:12px;color:#73849b;padding-top:12px;white-space:nowrap}
+.compact-key-label{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px}
+.model-access-form .compact-key-label select{width:auto;font-size:11px;padding:0 5px;height:21px;margin-top:-6px;border-color:transparent;background:#f5f7fa}
+.compact-no-auth{height:36px;padding:10px;border-radius:6px;background:#f8fafc;color:#8190a3;font-size:12px}
+.compact-test-button{margin-right:auto}
+.custom-series-fields{background:#f7f9fc;border:1px solid #e3eaf3;border-radius:7px;padding:12px 12px 9px;margin-bottom:12px}
+.custom-series-fields p{font-size:12px;line-height:1.6;color:#7b8ba2;margin:0}
+.compact-guard-identity{display:flex;flex-direction:column;gap:6px;background:#f5f8fd;padding:12px;border-radius:6px;margin-bottom:14px;font-size:13px;color:#304d72}
+.compact-guard-identity span{font-size:12px;color:#7b8ba2}
+.model-access-form .error-message:empty{display:none}
+.modal-panel:has(.model-access-form) .modal-body{padding:18px 22px}
+.modal-panel:has(.model-access-form) .modal-header{padding:16px 22px}
+.modal-panel:has(.model-access-form) .modal-footer{padding:13px 22px}
+.guard-access-link{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px;color:#76869e;margin-top:12px}
+.hosting-options{display:flex;border:1px solid #dce4ee;border-radius:6px;padding:3px;gap:3px;background:#f7f9fc}
+.hosting-options button{flex:1;white-space:nowrap;padding:7px 8px;background:transparent;border:0;border-radius:4px;color:#677b95;font-size:13px}
+.hosting-options button[aria-pressed="true"]{background:#fff;color:#2563eb;box-shadow:0 1px 4px #1e3a5f1a;font-weight:600}
+.model-access-form .call-id-help{font-size:12px;line-height:1.6;color:#7b8ba2;margin:-2px 0 10px}
+.series-cascader{position:relative}
+.series-trigger{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:36px;text-align:left;padding:8px 11px;background:#fff;border:1px solid #dce4ee;border-radius:6px;color:#8290a4;font-size:13px}
+.series-trigger span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.series-trigger.has-value{color:#243d5d}
+.series-trigger[aria-expanded="true"]{border-color:#6f99ee;box-shadow:0 0 0 2px #edf3ff}
+.series-panel{position:absolute;top:calc(100% + 5px);left:0;width:400px;max-width:calc(100vw - 96px);height:clamp(180px,calc(100vh - 372px),238px);display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);background:#fff;border:1px solid #dae3ef;border-radius:8px;box-shadow:0 10px 30px #19385726;z-index:5;overflow:hidden}
+.series-panel[hidden]{display:none}
+.series-column{min-width:0;min-height:0;display:flex;flex-direction:column}
+.series-column+.series-column{border-left:1px solid #e5ebf3}
+.series-column-title{flex-shrink:0;font-size:12px;color:#7c8ba0;padding:10px 12px;background:#f8fafc}
+.series-options{flex:1;min-height:0;overflow-y:auto;padding:4px}
+.series-options button{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;background:#fff;color:#314969;font-size:13px;text-align:left;border-radius:4px;padding:8px;overflow-wrap:anywhere}
+.series-options button:hover,.series-options button[aria-pressed="true"]{background:#edf4ff;color:#2563eb}
+.series-column .series-add{flex-shrink:0;border:0;border-top:1px solid #e5ebf3;background:#fff;text-align:left;padding:10px 12px;color:#2563eb;font-size:13px}
+.series-empty{font-size:13px;color:#94a0b3;padding:25px 8px;text-align:center}
+@media(max-width:520px){.model-access-form .form-grid{grid-template-columns:1fr}.compact-service-row{gap:10px}.compact-protocol{font-size:11px}.modal-panel:has(.model-access-form) .modal-footer{gap:8px;padding:12px 16px}}
+@media(max-width:520px){.compact-service-row{flex-wrap:wrap;gap:0}.compact-service-row>.field{min-width:100%}.compact-protocol{padding-top:0;margin:-5px 0 12px}.series-panel{width:100%}}

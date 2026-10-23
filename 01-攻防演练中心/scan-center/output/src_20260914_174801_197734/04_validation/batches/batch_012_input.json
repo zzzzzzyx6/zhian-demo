@@ -1,0 +1,201 @@
+{
+  "batch": 12,
+  "metadata": {
+    "batch_id": "validation-008",
+    "candidate_ids": [
+      "VULN-012"
+    ],
+    "focus": "本地默认批次",
+    "isolation": "independent_temp_dir",
+    "requires_restore_after_batch": false,
+    "skill_assignment": {
+      "phase": "validation.validate_candidates",
+      "agent_role": "validation",
+      "node_type": "validation_batch",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 2,
+        "sample": [
+          "reviewing-secure-configuration-baselines",
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "score": 59
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "reviewing-secure-configuration-baselines",
+          "name": "reviewing-secure-configuration-baselines",
+          "summary": "Review service and application configuration against secure baseline expectations.",
+          "content": "Skill guidance for reviewing-secure-configuration-baselines: Review service and application configuration against secure baseline expectations.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/reviewing-secure-configuration-baselines/SKILL.md"
+        },
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: validation; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "reviewing-secure-configuration-baselines",
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "id": "VULN-012",
+      "category": "Code Injection",
+      "severity": "CRITICAL",
+      "cwe": "CWE-94",
+      "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+      "line": 288,
+      "location": "def __init__(self, model, config",
+      "description": "Dynamic code execution API is used.",
+      "code_snippet": "self.hf_model.eval()",
+      "impact": "User-controlled expressions can execute arbitrary code.",
+      "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+      "confidence": 0.7,
+      "source": "static",
+      "status": "candidate",
+      "rationale": ""
+    }
+  ],
+  "context_bundles": [
+    {
+      "candidate": {
+        "id": "VULN-012",
+        "category": "Code Injection",
+        "severity": "CRITICAL",
+        "cwe": "CWE-94",
+        "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+        "line": 288,
+        "location": "def __init__(self, model, config",
+        "description": "Dynamic code execution API is used.",
+        "code_snippet": "self.hf_model.eval()",
+        "impact": "User-controlled expressions can execute arbitrary code.",
+        "remediation_hint": "Replace dynamic execution with explicit parsing or dispatch tables.",
+        "confidence": 0.7,
+        "source": "static",
+        "status": "candidate",
+        "rationale": ""
+      },
+      "source_context": {
+        "file": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+        "line": 288,
+        "start_line": 218,
+        "end_line": 333,
+        "source": "218:                         modified = output[0].clone()\n219:                         # add steer vector to the hidden states of last token\n220:                         modified[:, -1, :] += steer_vector.to(modified.device)\n221:                         new_output = (modified,) + output[1:] if len(output) > 1 else (modified,)\n222:                         if export_hidden_states:\n223:                             origin_hidden_states[layer_idx].append(output[0][:, -1, :].clone())\n224:                             steered_hidden_states[layer_idx].append(modified[:, -1, :].clone())\n225:                         return new_output\n226:                     else:\n227:                         modified = output.clone()\n228:                         modified[:, -1, :] += steer_vector.to(modified.device)\n229:                         return modified\n230:                 return output\n231:             hook_fn.applied = False\n232:             return hook_fn\n233:         for i, target_layer in enumerate(fetch_layers_by_ids(self.model, layer_list)):\n234:             layer_idx = layer_list[i]\n235:             hook = create_pos_steering_hook(layer_idx)\n236:             hooks.append(target_layer.register_forward_hook(hook))\n237:         with torch.no_grad():\n238:             steered_generations = self.model.generate(**inputs, max_new_tokens = max_new_tokens, do_sample=False, output_scores=True, return_dict_in_generate=True)\n239:             output_ids = steered_generations.sequences\n240:             steered_logits = steered_generations.scores\n241:             steered_prompts = self.tokenizer.decode(output_ids[0], skip_special_tokens=True).replace(seed_prompt[0], '')\n242:         for hook in hooks:\n243:             hook.remove()\n244:         if verbose:\n245:             console = Console()\n246:             origin_text = Text(origin_prompts)\n247:             origin_panel = Panel(\n248:                 origin_text,\n249:                 title=f\"[bold]Orgin Output (Layer {layer_list})\",\n250:                 border_style=\"green\"\n251:             )          \n252:             steered_text = Text(steered_prompts)\n253:             steered_panel = Panel(\n254:                 steered_text,\n255:                 title=f\"[bold]Steered Output (Layer {layer_list})\",\n256:                 border_style=\"red\"\n257:             )        \n258:             console.print(\"\\nPrompt:\", seed_prompt[0])\n259:             console.print(origin_panel)\n260:             console.print(steered_panel)\n261:         if export_hidden_states:\n262:             return origin_prompts, steered_prompts, origin_hidden_states, steered_hidden_states, origin_logits, steered_logits\n263:         else:\n264:             return origin_prompts, steered_prompts\n265:         \n266: \n267: @attack_registry.register(\"activation_steering_attack\")\n268: class ASAttack(BaseWhiteBoxAttack):\n269:     \"\"\"\n270:     Activation Steering Attack for Large Language Models.\n271: \n272:     Args:\n273:         model: Large Language Models supporting white-box attacks\n274:         config: Attack configuration\n275:         **kwargs: Additional arguments\n276:     \"\"\"\n277:     def __init__(self, model, config: ASAConfig = None, **kwargs):\n278:         super().__init__(model, **kwargs)\n279:         # Set config\n280:         self.config = config or ASAConfig()\n281:         # Get model components\n282:         self.hf_model = self.model.get_model()\n283:         self.tokenizer = self.model.get_tokenizer()\n284:         # Setup device\n285:         self.device = torch.device(\"cuda:0\" if torch.cuda.is_available() else \"cpu\")\n286:         self.hf_model = self.hf_model.to(self.device)\n287:         # Freeze model parameters\n288:         self.hf_model.eval()\n289:         self.hf_model.requires_grad_(False)\n290:         # load interventor\n291:         self.interventor = SteerVectorVisual(self.hf_model, self.tokenizer, seed=self.config.seed)\n292:         # Load seed data\n293:         self.seed_prompts = self._load_seed_data()[:1]\n294:         # TODO: if using trojan, you need to specify the path to negative dataset\n295:         pos_data = None\n296:         neg_data = None\n297: \n298:     def _load_seed_data(self):\n299:         def read_data_from_jsonlines(jsonl_path):\n300:             import jsonlines\n301:             data = []\n302:             with jsonlines.open(jsonl_path, 'r') as reader:\n303:                 for obj in reader:\n304:                     data.append(obj[\"question\"] + \" \")\n305:             return data\n306:         return read_data_from_jsonlines(\n307:             os.path.join(\n308:                 os.path.dirname(__file__),\n309:                 \"advbench_harmful_behaviors.json\"\n310:             )\n311:         )\n312:     \n313:     def attack(self, demo_prompt=None, evaluator_dict=None):\n314:         num_layers = self.hf_model.config.num_hidden_layers\n315:         config = {\n316:             'type': 'configuration'\n317:         }\n318:         with open(os.path.join(os.path.dirname(__file__), \"results.jsonl\"), 'w') as f:\n319:             f.write(json.dumps(config) + '\\n')\n320:         if demo_prompt != None:\n321:             self.seed_prompts = [demo_prompt]\n322:         prompt_bar = tqdm(enumerate(self.seed_prompts), total=len(self.seed_prompts), desc=\"Processing prompts\")\n323:         results = []\n324:         for prompt_idx, prompt in prompt_bar:\n325:             layer_bar = tqdm(range(num_layers), total=num_layers, \n326:                             desc=f\"Prompt {prompt_idx+1}/{len(self.seed_prompts)}\", \n327:                             leave=False)\n328:             for layer_idx in layer_bar:\n329:                 original_response, steered_response = self.interventor.generate_w_steer(\n330:                     prompt,\n331:                     [layer_idx],\n332:                     self.config.max_new_tokens,\n333:                     self.config.method",
+        "nearby_symbols": [
+          "169: steer_model.eval()",
+          "176: num_samples = len(seed_prompt)",
+          "177: normal_hidden_states = torch.zeros((num_layer, num_samples, self.model.config.hidden_size), device=self.model.device)",
+          "179: inputs = self.tokenizer(seed_prompt, return_tensors=\"pt\").to(self.model.device)",
+          "180: inputs_seq_len = inputs[\"attention_mask\"].sum(dim=-1).sub_(1)",
+          "181: batch_size = inputs[\"input_ids\"].size(0)",
+          "182: batch_indices = torch.arange(batch_size)",
+          "184: origin_outputs = self.model(**inputs, do_sample=False, output_hidden_states=True)",
+          "186: origin_generations = self.model.generate(**inputs, max_new_tokens = max_new_tokens, do_sample=False, output_scores=True, return_dict_in_generate=True)",
+          "189: origin_prompts = self.tokenizer.decode(origin_output_ids[0], skip_special_tokens=True).replace(seed_prompt[0], '')",
+          "194: steer_vector_dict[layer_idx] = steer_model(normal_hidden_states[layer_idx])",
+          "196: return_static_vector = self.get_static_steer_vector(normal_hidden_states[layer_idx])",
+          "201: raise ValueError('Suffix List should not be None!')",
+          "202: steer_vector = self.gasa_attack(seed_prompt, target_suffix, layer_list, normal_hidden_states[layer_idx])",
+          "206: return_static_vector = self.trojan_attack(self.pos_data, self.neg_data, normal_hidden_states[layer_idx], layer_idx).squeeze(0)",
+          "208: steer_vector = torch.cat([layer_static_vector for _ in range(num_samples)], dim=0)",
+          "211: raise NotImplementedError(f\"Mode {mode} Not Implemented\")",
+          "213: def create_pos_steering_hook(layer_idx):",
+          "214: def hook_fn(module, input, output):",
+          "218: modified = output[0].clone()"
+        ]
+      },
+      "attention": {
+        "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+        "language": "python",
+        "lines": 377,
+        "risk_score": 1.0,
+        "underexplored_score": 0.234,
+        "reachability": "high",
+        "signals": [
+          "authorization",
+          "configuration",
+          "dangerous_api",
+          "entrypoint",
+          "injection",
+          "intel_related",
+          "memory_safety",
+          "no_obvious_tests",
+          "parser"
+        ],
+        "category_hits": {
+          "memory_safety": 5,
+          "authorization": 2,
+          "parser": 1,
+          "injection": 2,
+          "configuration": 4
+        },
+        "recommended_agents": [
+          "内存安全候选发现智能体",
+          "权限认证候选发现智能体",
+          "解析器序列化候选发现智能体",
+          "动态输入候选发现智能体",
+          "配置密钥候选发现智能体",
+          "低关注面候选发现智能体",
+          "通用候选发现智能体"
+        ]
+      },
+      "intel_related": [],
+      "environment_ready": true,
+      "validated_commands": {
+        "build": [],
+        "test": [],
+        "sanitizer": [],
+        "coverage": [],
+        "safe_runtime": [
+          "只读源码/配置检查；如需运行测试，由验证阶段按候选选择最小命令。"
+        ],
+        "fuzz_smoke": [],
+        "metadata": [
+          "find . -maxdepth 2 -type d",
+          "find . -maxdepth 3 -type f -perm /111"
+        ]
+      },
+      "isolation_policy": {
+        "default": "shared_readonly",
+        "requires_clone": [
+          "stateful_test",
+          "patch",
+          "random_test_crash",
+          "unknown_binary_execution"
+        ],
+        "workspace_template": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src"
+      },
+      "ranking_hint": {},
+      "feedback_relevant": [],
+      "project_context": {
+        "target_mode": "source_tree",
+        "languages": {
+          "python": 232
+        },
+        "test_commands": []
+      }
+    }
+  ]
+}

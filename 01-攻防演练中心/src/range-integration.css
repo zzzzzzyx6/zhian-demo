@@ -1,0 +1,36 @@
+.range-slot{width:100%;min-width:0;overflow:hidden;border:1px solid #d7e2ee;border-radius:12px;background:#eaf0f7}
+.range-product{height:440px;min-height:440px;border-radius:11px}
+.runtime-exercise .range-slot{margin:14px 0 18px}.runtime-exercise .range-product{height:360px;min-height:360px}
+.range-product .range-3d-label{max-width:180px;font-size:11px!important;letter-spacing:.02em;border-radius:6px;backdrop-filter:blur(8px)}
+.range-product .range-3d-tools{bottom:34px;max-width:calc(100% - 24px);border-color:#4c6883;background:#14273bef;box-shadow:0 8px 24px #0003}
+.range-product .range-3d-tools button{font-size:11px!important;padding:6px 9px;min-width:0;cursor:pointer}
+.range-product .range-3d-status{color:#c4d7eb;font-size:11px!important;top:18px}
+.range-node-detail{position:absolute;left:18px;top:46px;pointer-events:none;display:flex;flex-direction:column;gap:4px;max-width:60%;color:#b2c8de;font-size:11px}
+.range-node-detail strong{color:#edf5ff;max-width:100%;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.range-product .range-3d-caption{color:#9aafc7;font-size:10px!important}
+.range-battle-stage{padding:0!important;min-width:0}.range-battle-stage .range-slot{border:0;border-radius:0}.range-battle-stage .range-product{height:520px;border-radius:0}
+.range-3d-fallback .range-3d-labels{top:38%}.range-3d-fallback .range-3d-label{left:auto!important;top:auto!important}
+@media(max-width:900px){.runtime-panels:has(.range-slot){grid-template-columns:1fr}.runtime-scan.or-scan-empty{min-height:80px}.range-product{height:390px;min-height:390px}.range-battle-stage .range-product{height:450px}}
+
+/* Softer daylight surround, with a single unobtrusive camera reset. */
+.range-product{background:linear-gradient(145deg,#f1f5fa,#eaf0f7)}
+.range-product .range-3d-status{color:#536982;right:74px}
+.range-product .range-3d-status i{background:#91a5bc}
+.range-product .range-3d-status i.active{background:#399e94;box-shadow:0 0 6px #399e9430}
+.range-product .range-node-detail{color:#647991}.range-product .range-node-detail strong{color:#304963}
+.range-product .range-3d-caption{color:#71849b}
+.range-product .range-3d-label{background:#f8fbfff0;color:#296d72;border-color:#8cb7bc;box-shadow:0 3px 10px #536e8414}
+.range-product .range-3d-label.red{color:#a25452;border-color:#d2a09d}
+.range-product .range-3d-label.blue{color:#396c9e;border-color:#9bb8d3}
+.range-product .range-3d-label.purple{color:#7c649e;border-color:#b9acd0}
+.range-product .range-3d-label.selected,.range-product .range-3d-label:hover{background:#fff;border-color:currentColor}
+.range-product .range-3d-tools{top:10px;right:12px;bottom:auto;left:auto;transform:none;padding:0;border:0;background:transparent;box-shadow:none;max-width:none}
+.range-product .range-3d-tools button{height:28px;padding:4px 8px;color:#71849a;background:#ffffff65;border:1px solid #b7c6d642;border-radius:5px;font-size:11px!important}
+.range-product .range-3d-tools button:hover{background:#fff;color:#3f6084;border-color:#b7c6d6}
+.range-product .range-3d-tools button:disabled{opacity:.4}
+
+/* Closer, lower default camera with more vertical room for the live campus. */
+.runtime-exercise .range-product{height:460px;min-height:460px}
+.range-battle-stage .range-product{height:580px;min-height:580px}
+@media(max-width:900px){.runtime-exercise .range-product{height:430px;min-height:430px}.range-battle-stage .range-product{height:500px;min-height:500px}}
+@media(max-width:560px){.runtime-exercise .range-product{height:380px;min-height:380px}.range-battle-stage .range-product{height:420px;min-height:420px}}

@@ -1,0 +1,2846 @@
+你是候选发现规划智能体。你只负责把候选发现阶段拆成可并发执行的工作，不直接发现漏洞。
+
+要求：
+- 根据软件画像、情报摘要和风险关注度地图，决定哪些专长智能体应该启动，以及每类最多拆成多少切片。
+- 一类智能体可以启动多个实例，每个实例只看一个切片；总并发受 agent_pool 控制。
+- 不需要精确列出所有文件，只给分片策略、优先级、需要降权的路径模式和恢复/隔离注意事项。
+- 可以多轮使用任意本地 CLI 工具确认目录规模、模块边界和切片可行性。
+- 不输出漏洞，不输出攻击步骤。
+- 所有自然语言内容必须使用中文。
+
+只返回严格 JSON：
+{
+  "strategy": "候选发现分片策略摘要",
+  "enabled_specialties": ["memory_safety", "parser", "general"],
+  "specialty_priorities": ["memory_safety", "parser", "authorization", "underexplored", "general"],
+  "max_tasks": 8,
+  "max_tasks_per_specialty": 2,
+  "slice_size": 8,
+  "deprioritized_paths": ["third_party/example.c"],
+  "coverage_notes": ["哪些区域优先，哪些区域只是兜底"],
+  "risk_controls": ["每个智能体只读自己的 task.files", "不要全仓库扫描"],
+  "limitations": ["信息不足处"]
+}
+
+输入：
+```json
+{
+  "project": {
+    "name": "20260914_173107_f48600",
+    "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src",
+    "input_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src",
+    "target_mode": "source_tree",
+    "languages": {
+      "python": 232
+    },
+    "manifests": [],
+    "test_commands": [],
+    "counts": {
+      "source_file_count": 232,
+      "binary_artifact_count": 0,
+      "binary_executable_count": 0,
+      "binary_total_size": 0,
+      "binary_suffix_counts": {},
+      "binary_name_signal_counts": {}
+    },
+    "full_inventory_artifact": "00_profile_intel/project_profile.json"
+  },
+  "profile_summary": {
+    "software_identity": {
+      "name": "20260914_173107_f48600",
+      "version": "未知",
+      "version_evidence": [],
+      "confidence": 0.4
+    },
+    "software_type": "源码目录",
+    "domain": "未知",
+    "target_profile": {
+      "name": "20260914_173107_f48600",
+      "root": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src",
+      "input_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src",
+      "target_mode": "source_tree",
+      "languages": {
+        "python": 232
+      },
+      "manifests": [],
+      "test_commands": [],
+      "counts": {
+        "source_file_count": 232,
+        "binary_artifact_count": 0,
+        "binary_executable_count": 0,
+        "binary_total_size": 0,
+        "binary_suffix_counts": {},
+        "binary_name_signal_counts": {}
+      },
+      "full_inventory_artifact": "00_profile_intel/project_profile.json"
+    },
+    "runtime_surfaces": [],
+    "security_relevant_features": [],
+    "recommended_focus": [],
+    "intel_search_queries": [
+      {
+        "query": "20260914 173107 f48600",
+        "reason": "目标文件或项目名称，可作为辅助检索词。",
+        "confidence": 0.4
+      },
+      {
+        "query": "src",
+        "reason": "输入目标文件名，可作为辅助检索词。",
+        "confidence": 0.35
+      }
+    ],
+    "tool_runs": [],
+    "limitations": [
+      "目标画像智能体未运行或未返回有效 JSON，使用主程序粗画像。"
+    ]
+  },
+  "intel_summary": {
+    "software_identity": null,
+    "recommended_focus": null,
+    "historical_vulnerability_patterns": null,
+    "dependency_risks": null
+  },
+  "attention_summary": {
+    "file_count": 232,
+    "high_risk_count": 160,
+    "underexplored_count": 2
+  },
+  "top_attention_items": [
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "language": "python",
+      "lines": 837,
+      "risk_score": 1.0,
+      "underexplored_score": 0.64,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "low_attention_area",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource",
+        "underexplored_path"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 4,
+        "parser": 1,
+        "injection": 5,
+        "configuration": 5,
+        "resource": 5
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "language": "python",
+      "lines": 513,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 2,
+        "configuration": 2,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "language": "python",
+      "lines": 576,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 3,
+        "parser": 2,
+        "injection": 7,
+        "configuration": 4,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "language": "python",
+      "lines": 569,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "authorization": 3,
+        "parser": 1,
+        "injection": 6,
+        "configuration": 2,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "language": "python",
+      "lines": 1261,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 2,
+        "parser": 2,
+        "injection": 6,
+        "configuration": 4,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "language": "python",
+      "lines": 543,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 4,
+        "configuration": 5,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "language": "python",
+      "lines": 848,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "parser": 2,
+        "injection": 5,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py",
+      "language": "python",
+      "lines": 708,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 6,
+        "configuration": 3,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/visual_jailbreak/attack.py",
+      "language": "python",
+      "lines": 664,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 5,
+        "authorization": 3,
+        "injection": 4,
+        "configuration": 4,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/eval.py",
+      "language": "python",
+      "lines": 717,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 6,
+        "parser": 4,
+        "injection": 7,
+        "configuration": 5,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/eval.py",
+      "language": "python",
+      "lines": 715,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 6,
+        "parser": 4,
+        "injection": 7,
+        "configuration": 5,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/eval_async.py",
+      "language": "python",
+      "lines": 536,
+      "risk_score": 1.0,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 3,
+        "parser": 3,
+        "injection": 7,
+        "configuration": 5,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/tree_attack.py",
+      "language": "python",
+      "lines": 466,
+      "risk_score": 1.0,
+      "underexplored_score": 0.257,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "authorization": 3,
+        "parser": 2,
+        "injection": 5,
+        "configuration": 2,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/core/async_orchestrator.py",
+      "language": "python",
+      "lines": 469,
+      "risk_score": 1.0,
+      "underexplored_score": 0.257,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 5,
+        "configuration": 4,
+        "resource": 5
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/imperceptible_jailbreak/attack.py",
+      "language": "python",
+      "lines": 453,
+      "risk_score": 1.0,
+      "underexplored_score": 0.253,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 4,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 3,
+        "configuration": 3,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/crescendo_attack.py",
+      "language": "python",
+      "lines": 440,
+      "risk_score": 1.0,
+      "underexplored_score": 0.25,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 3,
+        "parser": 2,
+        "injection": 5,
+        "configuration": 1,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/jailbroken_attack.py",
+      "language": "python",
+      "lines": 430,
+      "risk_score": 1.0,
+      "underexplored_score": 0.247,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 5,
+        "authorization": 2,
+        "parser": 2,
+        "injection": 6,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/const.py",
+      "language": "python",
+      "lines": 381,
+      "risk_score": 1.0,
+      "underexplored_score": 0.235,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 5,
+        "parser": 1,
+        "injection": 6,
+        "configuration": 4,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/asa/attack.py",
+      "language": "python",
+      "lines": 377,
+      "risk_score": 1.0,
+      "underexplored_score": 0.234,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 5,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 2,
+        "configuration": 4
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/master_coordinator_agent.py",
+      "language": "python",
+      "lines": 370,
+      "risk_score": 1.0,
+      "underexplored_score": 0.233,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 3,
+        "parser": 1,
+        "injection": 5,
+        "configuration": 3,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/agents.py",
+      "language": "python",
+      "lines": 301,
+      "risk_score": 1.0,
+      "underexplored_score": 0.215,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 5,
+        "parser": 3,
+        "injection": 5,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/IDEATOR/attack.py",
+      "language": "python",
+      "lines": 206,
+      "risk_score": 1.0,
+      "underexplored_score": 0.192,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "parser": 2,
+        "injection": 4,
+        "configuration": 1,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/strategy_library.py",
+      "language": "python",
+      "lines": 198,
+      "risk_score": 0.999,
+      "underexplored_score": 0.19,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 3,
+        "parser": 2,
+        "injection": 3,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/response_attack/attack.py",
+      "language": "python",
+      "lines": 187,
+      "risk_score": 0.995,
+      "underexplored_score": 0.187,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 5,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/judges/implementations/llm_judge.py",
+      "language": "python",
+      "lines": 153,
+      "risk_score": 0.981,
+      "underexplored_score": 0.178,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 4,
+        "parser": 2,
+        "injection": 5,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/DrAttack/core.py",
+      "language": "python",
+      "lines": 609,
+      "risk_score": 0.98,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "injection": 4,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/xteaming_attack.py",
+      "language": "python",
+      "lines": 644,
+      "risk_score": 0.98,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 4,
+        "parser": 3,
+        "injection": 6,
+        "configuration": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/nanogcg/attack.py",
+      "language": "python",
+      "lines": 453,
+      "risk_score": 0.98,
+      "underexplored_score": 0.253,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 6,
+        "authorization": 4,
+        "injection": 5,
+        "configuration": 4,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/tool_synthesizer.py",
+      "language": "python",
+      "lines": 444,
+      "risk_score": 0.978,
+      "underexplored_score": 0.251,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 4,
+        "injection": 6,
+        "configuration": 7,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/rainbow_teaming.py",
+      "language": "python",
+      "lines": 389,
+      "risk_score": 0.956,
+      "underexplored_score": 0.237,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 3,
+        "injection": 6,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/IDEATOR/messages.py",
+      "language": "python",
+      "lines": 72,
+      "risk_score": 0.949,
+      "underexplored_score": 0.158,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 5,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/huggingface_model.py",
+      "language": "python",
+      "lines": 334,
+      "risk_score": 0.934,
+      "underexplored_score": 0.224,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 2,
+        "injection": 2,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/openai_model.py",
+      "language": "python",
+      "lines": 318,
+      "risk_score": 0.927,
+      "underexplored_score": 0.22,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 6,
+        "authorization": 4,
+        "injection": 3,
+        "configuration": 3,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/example/jsonl_dataset_examply.py",
+      "language": "python",
+      "lines": 274,
+      "risk_score": 0.91,
+      "underexplored_score": 0.209,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "parser": 3,
+        "injection": 5,
+        "configuration": 3,
+        "resource": 4
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/example/visual_jailbreak_example.py",
+      "language": "python",
+      "lines": 233,
+      "risk_score": 0.893,
+      "underexplored_score": 0.198,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "injection": 5,
+        "configuration": 4,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/attacker_reasoning_model.py",
+      "language": "python",
+      "lines": 211,
+      "risk_score": 0.884,
+      "underexplored_score": 0.193,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 3,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/cipherchat/attack.py",
+      "language": "python",
+      "lines": 257,
+      "risk_score": 0.883,
+      "underexplored_score": 0.204,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 3,
+        "injection": 5,
+        "configuration": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/multithreaded_openai_model.py",
+      "language": "python",
+      "lines": 206,
+      "risk_score": 0.882,
+      "underexplored_score": 0.192,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 5,
+        "authorization": 3,
+        "injection": 3,
+        "configuration": 1,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/utils/data_saver.py",
+      "language": "python",
+      "lines": 608,
+      "risk_score": 0.88,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 4,
+        "configuration": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/renellm_attack.py",
+      "language": "python",
+      "lines": 472,
+      "risk_score": 0.88,
+      "underexplored_score": 0.258,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "parser": 2,
+        "injection": 6,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CodeAttack/attack.py",
+      "language": "python",
+      "lines": 182,
+      "risk_score": 0.873,
+      "underexplored_score": 0.185,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 5,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/models/implementations/openai_generator.py",
+      "language": "python",
+      "lines": 105,
+      "risk_score": 0.862,
+      "underexplored_score": 0.166,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 3,
+        "configuration": 2,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/autodan_turbo_r.py",
+      "language": "python",
+      "lines": 715,
+      "risk_score": 0.86,
+      "underexplored_score": 0.26,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "large_file",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "parser": 2,
+        "injection": 4,
+        "configuration": 5
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/mousetrap.py",
+      "language": "python",
+      "lines": 386,
+      "risk_score": 0.854,
+      "underexplored_score": 0.237,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 3,
+        "injection": 6,
+        "configuration": 4,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/example/redqueen_attack_example.py",
+      "language": "python",
+      "lines": 135,
+      "risk_score": 0.854,
+      "underexplored_score": 0.174,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 4,
+        "configuration": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/summarizer_reasoning_model.py",
+      "language": "python",
+      "lines": 124,
+      "risk_score": 0.85,
+      "underexplored_score": 0.171,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "authorization": 2,
+        "parser": 1,
+        "injection": 3,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/example/gptfuzzer_attack_example_2023.py",
+      "language": "python",
+      "lines": 114,
+      "risk_score": 0.846,
+      "underexplored_score": 0.169,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 3,
+        "injection": 5,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/actor_attack.py",
+      "language": "python",
+      "lines": 337,
+      "risk_score": 0.835,
+      "underexplored_score": 0.224,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "parser": 3,
+        "injection": 5,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/evosynth_attack.py",
+      "language": "python",
+      "lines": 346,
+      "risk_score": 0.818,
+      "underexplored_score": 0.227,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "authorization": 4,
+        "injection": 6,
+        "configuration": 6,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/main.py",
+      "language": "python",
+      "lines": 295,
+      "risk_score": 0.818,
+      "underexplored_score": 0.214,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "parser": 3,
+        "injection": 4,
+        "configuration": 4
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/artprompt_attack.py",
+      "language": "python",
+      "lines": 268,
+      "risk_score": 0.807,
+      "underexplored_score": 0.207,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "parser": 1,
+        "injection": 5,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/autodan_turbo.py",
+      "language": "python",
+      "lines": 263,
+      "risk_score": 0.805,
+      "underexplored_score": 0.206,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 4,
+        "configuration": 4
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/retrival.py",
+      "language": "python",
+      "lines": 262,
+      "risk_score": 0.805,
+      "underexplored_score": 0.206,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "parser": 1,
+        "injection": 2,
+        "configuration": 5,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/si_attack.py",
+      "language": "python",
+      "lines": 263,
+      "risk_score": 0.805,
+      "underexplored_score": 0.206,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "injection": 4,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/gptfuzzer/core.py",
+      "language": "python",
+      "lines": 256,
+      "risk_score": 0.802,
+      "underexplored_score": 0.204,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "injection": 5,
+        "configuration": 1,
+        "resource": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/query_relevant/attack.py",
+      "language": "python",
+      "lines": 268,
+      "risk_score": 0.787,
+      "underexplored_score": 0.207,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "parser": 2,
+        "injection": 5,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/response_attack/dialogue_generator.py",
+      "language": "python",
+      "lines": 216,
+      "risk_score": 0.786,
+      "underexplored_score": 0.194,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "parser": 1,
+        "injection": 4,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo/summarizer.py",
+      "language": "python",
+      "lines": 210,
+      "risk_score": 0.784,
+      "underexplored_score": 0.193,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "parser": 2,
+        "injection": 2,
+        "configuration": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/multilingual_attack.py",
+      "language": "python",
+      "lines": 211,
+      "risk_score": 0.784,
+      "underexplored_score": 0.193,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 2,
+        "injection": 5,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/reconnaissance_agent.py",
+      "language": "python",
+      "lines": 245,
+      "risk_score": 0.778,
+      "underexplored_score": 0.201,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 4,
+        "injection": 3,
+        "configuration": 5
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/__init__.py",
+      "language": "python",
+      "lines": 224,
+      "risk_score": 0.77,
+      "underexplored_score": 0.196,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 3,
+        "injection": 5,
+        "configuration": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/ica_attack.py",
+      "language": "python",
+      "lines": 154,
+      "risk_score": 0.762,
+      "underexplored_score": 0.179,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 5,
+        "injection": 4,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/pair_attack.py",
+      "language": "python",
+      "lines": 197,
+      "risk_score": 0.759,
+      "underexplored_score": 0.189,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "authorization": 1,
+        "injection": 5,
+        "configuration": 1,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/example/hades_attack_example.py",
+      "language": "python",
+      "lines": 181,
+      "risk_score": 0.752,
+      "underexplored_score": 0.185,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "injection": 3,
+        "configuration": 2,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/redqueen_attack.py",
+      "language": "python",
+      "lines": 171,
+      "risk_score": 0.748,
+      "underexplored_score": 0.183,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "injection": 6,
+        "configuration": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/coa/coa_modules.py",
+      "language": "python",
+      "lines": 117,
+      "risk_score": 0.747,
+      "underexplored_score": 0.169,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 2,
+        "parser": 1,
+        "injection": 5,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/attack.py",
+      "language": "python",
+      "lines": 195,
+      "risk_score": 0.738,
+      "underexplored_score": 0.189,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "injection": 5
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/seqar_attack.py",
+      "language": "python",
+      "lines": 95,
+      "risk_score": 0.738,
+      "underexplored_score": 0.164,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "authorization": 1,
+        "injection": 5,
+        "configuration": 1,
+        "resource": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/whitebox/implementations/nanogcg/utils.py",
+      "language": "python",
+      "lines": 93,
+      "risk_score": 0.737,
+      "underexplored_score": 0.163,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "resource"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "authorization": 1,
+        "injection": 1,
+        "configuration": 4,
+        "resource": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "并发资源候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/autodan_turbo_r/scorer_reasoning_model.py",
+      "language": "python",
+      "lines": 121,
+      "risk_score": 0.728,
+      "underexplored_score": 0.17,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "authorization": 1,
+        "parser": 1,
+        "injection": 3,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/jood/attack.py",
+      "language": "python",
+      "lines": 414,
+      "risk_score": 0.726,
+      "underexplored_score": 0.243,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "injection": 5,
+        "configuration": 3
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/FigStep/attack.py",
+      "language": "python",
+      "lines": 154,
+      "risk_score": 0.722,
+      "underexplored_score": 0.179,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "injection": 5
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CSDJ/attack.py",
+      "language": "python",
+      "lines": 402,
+      "risk_score": 0.721,
+      "underexplored_score": 0.241,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "injection": 5,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/bert_toxic.py",
+      "language": "python",
+      "lines": 102,
+      "risk_score": 0.721,
+      "underexplored_score": 0.166,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 2,
+        "authorization": 1,
+        "injection": 1,
+        "configuration": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/example/adaptive_attack_example.py",
+      "language": "python",
+      "lines": 263,
+      "risk_score": 0.685,
+      "underexplored_score": 0.206,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "authorization": 3,
+        "parser": 1,
+        "injection": 3,
+        "configuration": 2
+      },
+      "recommended_agents": [
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/config/default_config.py",
+      "language": "python",
+      "lines": 40,
+      "risk_score": 0.676,
+      "underexplored_score": 0.15,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "intel_related",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "authorization": 1,
+        "injection": 1,
+        "configuration": 6
+      },
+      "recommended_agents": [
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/example/response_attack_example.py",
+      "language": "python",
+      "lines": 215,
+      "risk_score": 0.666,
+      "underexplored_score": 0.194,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 1,
+        "authorization": 1,
+        "injection": 3,
+        "configuration": 2
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/CSDJ/image_generator.py",
+      "language": "python",
+      "lines": 256,
+      "risk_score": 0.662,
+      "underexplored_score": 0.204,
+      "reachability": "high",
+      "signals": [
+        "configuration",
+        "dangerous_api",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "injection": 2,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/JAM/jam_attack.py",
+      "language": "python",
+      "lines": 192,
+      "risk_score": 0.657,
+      "underexplored_score": 0.188,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests",
+        "parser"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "authorization": 3,
+        "parser": 1,
+        "injection": 6
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "解析器序列化候选发现智能体",
+        "动态输入候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    },
+    {
+      "path": "OpenRT-main/OpenRT/attacks/blackbox/implementations/MML/image_generator.py",
+      "language": "python",
+      "lines": 189,
+      "risk_score": 0.656,
+      "underexplored_score": 0.187,
+      "reachability": "high",
+      "signals": [
+        "authorization",
+        "configuration",
+        "entrypoint",
+        "injection",
+        "memory_safety",
+        "no_obvious_tests"
+      ],
+      "category_hits": {
+        "memory_safety": 3,
+        "authorization": 1,
+        "injection": 1,
+        "configuration": 1
+      },
+      "recommended_agents": [
+        "内存安全候选发现智能体",
+        "权限认证候选发现智能体",
+        "动态输入候选发现智能体",
+        "配置密钥候选发现智能体",
+        "低关注面候选发现智能体",
+        "通用候选发现智能体"
+      ]
+    }
+  ],
+  "agent_pool": {
+    "max_workers": 4,
+    "min_workers": 2,
+    "running_total": 0,
+    "by_stage": {
+      "validation": {
+        "running": 0,
+        "completed": 1,
+        "failed": 0
+      }
+    }
+  },
+  "defaults": {
+    "max_tasks": 8,
+    "max_tasks_per_specialty": 0,
+    "slice_size": 8
+  },
+  "available_specialties": [
+    "memory_safety",
+    "authorization",
+    "parser",
+    "injection",
+    "configuration",
+    "resource",
+    "underexplored",
+    "general"
+  ]
+}
+```

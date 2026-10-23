@@ -1,0 +1,18 @@
+{
+  "label": "目标画像智能体",
+  "safe_label": "目标画像智能体",
+  "stamp": 1789379284979,
+  "status": "completed",
+  "started_at": "2026-09-14T17:48:05+0800",
+  "timeout_seconds": 600,
+  "read_only_stage": true,
+  "max_tool_rounds": 12,
+  "max_execution_time_ms": 600000,
+  "prompt_path": "08_a3s_目标画像智能体_prompt_1789379284979.txt",
+  "response_path": "08_a3s_目标画像智能体_response_1789379284979.txt",
+  "events_path": "08_a3s_目标画像智能体_events_1789379284979.jsonl",
+  "snapshot_path": "08_a3s_目标画像智能体_snapshot_1789379284979.json",
+  "interaction_log_path": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\output\\src_20260914_174801_197734\\debug\\logs\\a3s_interactions.jsonl",
+  "completed_at": "2026-09-14T17:48:07+0800",
+  "response_bytes": 0
+}

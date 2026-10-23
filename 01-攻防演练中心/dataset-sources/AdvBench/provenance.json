@@ -1,0 +1,21 @@
+{
+  "dataset": "llm-attacks/llm-attacks · AdvBench",
+  "revision": "a62d1307e38b3a076e614b20781c785fd860d813",
+  "url": "https://github.com/llm-attacks/llm-attacks/blob/a62d1307e38b3a076e614b20781c785fd860d813/data/advbench/harmful_behaviors.csv",
+  "license": "MIT",
+  "file": "harmful_behaviors.csv",
+  "sha256": "6cd1a5c63c07610d7eb67307772ee5606017ee950b5770ab288a2c487489d3e1",
+  "upstreamCount": 520,
+  "verifiedAt": "2026-10-19",
+  "verification": "520 个本地 prompt 与官方 goal 逐题同序完全一致。",
+  "integration": "经 OpenRT 接入；官方原始来源为 llm-attacks/llm-attacks。",
+  "selection": "原始 520 道行为问题，题目不变；target 不是安全参考答案。",
+  "relatedFile": {
+    "file": "harmful_strings.csv",
+    "rows": 574,
+    "columns": [
+      "target"
+    ],
+    "note": "目标字符串集合，与本题库的行为问题集合用途不同。"
+  }
+}

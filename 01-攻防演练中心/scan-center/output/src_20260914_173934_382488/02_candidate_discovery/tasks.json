@@ -1,0 +1,458 @@
+[
+  {
+    "id": "discover-01-memory-shard-01",
+    "agent_name": "内存安全候选发现智能体",
+    "specialty": "memory_safety",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+    ],
+    "focus": "关注长度、缓冲区、解析边界、释放后使用、整数溢出。 当前为 memory_safety 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 40,
+      "max_candidates": 15,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  {
+    "id": "discover-02-authz-shard-01",
+    "agent_name": "权限认证候选发现智能体",
+    "specialty": "authorization",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+    ],
+    "focus": "关注身份、角色、租户、权限检查和越权路径。 当前为 authorization 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 40,
+      "max_candidates": 15,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  {
+    "id": "discover-03-parser-shard-01",
+    "agent_name": "解析器序列化候选发现智能体",
+    "specialty": "parser",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+    ],
+    "focus": "关注解析器、反序列化、协议编解码、格式转换和状态机。 当前为 parser 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 40,
+      "max_candidates": 15,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  {
+    "id": "discover-04-injection-shard-01",
+    "agent_name": "动态输入候选发现智能体",
+    "specialty": "injection",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+    ],
+    "focus": "关注命令、SQL、表达式、模板、动态执行和路径拼接边界。 当前为 injection 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 40,
+      "max_candidates": 15,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  {
+    "id": "discover-05-config-shard-01",
+    "agent_name": "配置密钥候选发现智能体",
+    "specialty": "configuration",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+    ],
+    "focus": "关注默认配置、硬编码密钥、TLS/加密、凭据和配置加载。 当前为 configuration 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 40,
+      "max_candidates": 15,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  {
+    "id": "discover-06-resource-shard-01",
+    "agent_name": "并发资源候选发现智能体",
+    "specialty": "resource",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+    ],
+    "focus": "关注资源限制、死循环、锁、缓存、压缩和拒绝服务风险。 当前为 resource 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 40,
+      "max_candidates": 15,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  {
+    "id": "discover-07-underexplored-shard-01",
+    "agent_name": "低关注面候选发现智能体",
+    "specialty": "underexplored",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/models/implementations/mock_model.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py"
+    ],
+    "focus": "覆盖测试少、历史久、边缘功能、错误处理、兼容层、恢复回滚。 当前为 underexplored 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 40,
+      "max_candidates": 15,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  },
+  {
+    "id": "discover-08-general-shard-01",
+    "agent_name": "通用候选发现智能体",
+    "specialty": "general",
+    "files": [
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/external_power_tools.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/ArtPrompt/base_prompt.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/HADES/attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/adaptive_attack.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/autonomous_orchestrator.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/ai_agents/exploitation_agent.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/evosynth/data_structures/ai_tool_system.py",
+      "OpenRT-main/OpenRT/attacks/blackbox/implementations/himrd/attack.py"
+    ],
+    "focus": "兜底寻找未被专长分类覆盖的安全边界和异常输入面。 当前为 general 第 1 个切片；只覆盖 task.files，不要尝试覆盖全仓库。",
+    "budget": {
+      "max_commands": 50,
+      "max_candidates": 20,
+      "timeout_seconds": 1800,
+      "shard_index": 1,
+      "slice_size": 8
+    },
+    "skill_assignment": {
+      "phase": "discovery.discover_candidates",
+      "agent_role": "discovery",
+      "node_type": "discovery_task",
+      "policy": "system_filtered_agent_may_use",
+      "available_skills": {
+        "count": 1,
+        "sample": [
+          "triaging-dependency-vulnerabilities"
+        ],
+        "disabled": false
+      },
+      "shortlist": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "score": 59
+        }
+      ],
+      "capsules": [
+        {
+          "id": "triaging-dependency-vulnerabilities",
+          "name": "triaging-dependency-vulnerabilities",
+          "summary": "Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "content": "Skill guidance for triaging-dependency-vulnerabilities: Triage dependency vulnerability findings and prioritize remediation using package metadata.",
+          "why_shortlisted": "phase match: discovery; target mode match: source-tree",
+          "source": "mukul975/Anthropic-Cybersecurity-Skills",
+          "path": "skills/triaging-dependency-vulnerabilities/SKILL.md"
+        }
+      ],
+      "selected_skill_names": [
+        "triaging-dependency-vulnerabilities"
+      ]
+    }
+  }
+]

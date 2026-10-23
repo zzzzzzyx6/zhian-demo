@@ -22,6 +22,7 @@ function rounds(u){
 }
 function guard(t,r,node){
   if(node==='output'&&r.blueBlocked==='input')return {label:'已跳过',tone:'muted',reason:'输入层已拦截，未调用靶标或输出护栏'};
+  if(node==='output'&&r.rawResponse==='未取得有效模型响应')return {label:'已跳过',tone:'muted',reason:'靶标调用异常，没有可审核的响应'};
   const evidence=(r.blueEvidence||[]).filter(e=>e.node===node).at(-1);
   if(r.blueBlocked===node||evidence?.action==='拦截')return {label:node==='input'?'输入层防住':'输出层防住',tone:'safe',active:true,reason:evidence?.reason||'记录显示该层已拦截'};
   if(evidence)return {label:evidence.action||'已执行',tone:'checked',active:true,reason:evidence.reason||'未记录详细理由'};
@@ -41,34 +42,32 @@ function stage(name,index,value){return `<div class="snapshot-stage ${value.tone
 function content(t,data){
   const {unit:u,round:r,input,output,multi}=data;
   if(!u)return `<div class="snapshot-empty"><strong>暂无攻击记录</strong><p>任务产生攻击记录后，可在这里按编号查看快照。</p></div>`;
+  const positions=X.guardFlow(t);
   const method=M[u.method]?.label||u.method,question=t.bankSnapshot?.items?.find(q=>q.id===u.questionId),verdict=resultLabel(r.result);
   const judge={label:verdict,tone:r.result==='breach'?'risk':r.result==='defended'?'safe':r.result==='error'?'warning':'muted',active:['breach','defended','error'].includes(r.result),reason:r.verdict||(r.result==='error'?'不计入有效判定':r.result==='pending'?'本轮尚未产生裁判结论':'仅记录结果，未保存裁判理由')};
   const guardSummary=r.blueBlocked==='input'?'输入层防住':r.blueBlocked==='output'?'输出层防住':input.active||output.active?'查看各层处理结果':t.defense?.mode==='guard'?'暂无可定位的拦截证据':'未配置独立输入 / 输出护栏';
   const rawPrompt=r.prompt||(r.summary&&finished(u)?question?.prompt:'')||'尚无本轮攻击输入记录';
   const delivered=r.response||(r.summary&&finished(u)?X.unitContent(t,u).response:'')||(r.result==='pending'?'等待本轮执行':'未保存最终判定对象');
   const evidence=(r.blueEvidence||[]).map(e=>`${e.node==='input'?'输入层':e.node==='output'?'输出层':'系统指令'} · ${e.action}：${e.reason||'未记录理由'}`).join('\n');
-  const topology=`<div class="snapshot-topology coordinated-flow">
+  const topology=`<div class="snapshot-topology coordinated-flow ${positions.enabled?'guard-flow '+(positions.input&&positions.output?'dual-guard-flow':positions.input?'input-guard-flow':'output-guard-flow'):''}">
     ${role('node-attack red','红队',M[u.method]?.gen?t.engine?.roles?.attacker?.name||t.engine?.attacker||'攻击生成':'本地模板 / 变换',method)}
     <span class="major-arrow attack"><b>→</b><small>攻击输入</small></span>
+    ${positions.input?role('node-blue blue','蓝队 · 输入',X.blueLabel(t.defense),'输入审核 · '+input.label,input.active)+`<span class="major-arrow guard-pass"><b>→</b><small>${r.blueBlocked==='input'?'已拦截':'放行后调用'}</small></span>`:''}
     ${role('node-target target','靶标',X.targetFor(t).name,r.blueBlocked==='input'?'输入已拦截 · 未调用':'被测模型')}
+    ${positions.output?`<span class="major-arrow guard-response"><b>→</b><small>${r.blueBlocked==='input'?'已跳过':'靶标响应'}</small></span>`+role('node-blue-output blue','蓝队 · 输出',X.blueLabel(t.defense),'输出审核 · '+output.label,output.active):''}
     <span class="major-arrow evidence"><b>→</b><small>判定证据</small></span>
     ${role('node-judge judge','裁判',t.engine?.roles?.judge?.name||t.engine?.judge||'未配置',verdict,judge.active)}
-    <div class="blue-target-link"><span>↑</span><small>防护靶标</small></div>
-    ${role('node-blue blue','蓝队',X.blueLabel(t.defense),guardSummary,input.active||output.active)}
+    ${!positions.enabled?`<div class="blue-target-link"><span>↑</span><small>防护靶标</small></div>`+role('node-blue blue','蓝队',X.blueLabel(t.defense),guardSummary,input.active||output.active):''}
   </div>`;
   return `<article class="attack-internal-flow snapshot-card" aria-label="所选攻击快照"><div id="snapshot-card-detail">
     <header class="snapshot-card-head"><div><span class="mono snapshot-id">${E(u.id)}</span><strong>${E(method)}</strong>${r.summary&&finished(u)?'<small>最终记录</small>':''}</div>
     ${multi&&data.rounds.some(row=>row.round)?`<label>轮次 <select aria-label="选择快照轮次" data-task="${E(t.id)}" onchange="App.attack.selectSnapshotRound(this.dataset.task,this.value)">${data.rounds.map(row=>`<option value="${E(row.key)}" ${row.key===r.key?'selected':''}>第 ${row.round} 轮 · ${resultLabel(row.result)}</option>`).join('')}</select></label>`:`<small>${multi?finished(u)?'多轮攻击 · 逐轮明细未保存':'多轮攻击 · 尚无已完成轮次':'单轮攻击'}</small>`}</header>
-    <div class="snapshot-stage-track">
-      ${stage('攻击生成',1,{label:r.prompt||r.summary&&finished(u)?'已生成':'等待生成',tone:'muted',reason:method})}
-      ${stage('输入防护',2,input)}
-      ${stage('靶标响应',3,{label:r.blueBlocked==='input'?'未调用':r.rawResponse||r.response?'已响应':r.summary&&finished(u)?'查看最终记录':'等待响应',tone:'muted',reason:r.blueBlocked==='input'?'输入已拦截':X.targetFor(t).name})}
-      ${stage('输出防护',4,output)}
-      ${stage('裁判判定',5,judge)}
+    <div class="snapshot-stage-track ${positions.enabled?'guard-stage-track':''}" style="--stage-count:${X.guardStages(t).length}">
+      ${X.guardStages(t).map(([name,phase],index)=>stage(name,index+1,[{label:r.prompt||r.summary&&finished(u)?'已生成':'等待生成',tone:'muted',reason:method},input,{label:r.blueBlocked==='input'?'未调用':r.rawResponse==='未取得有效模型响应'?'执行异常':r.rawResponse||r.response?'已响应':r.summary&&finished(u)?'查看最终记录':'等待响应',tone:'muted',reason:r.blueBlocked==='input'?'输入已拦截':X.targetFor(t).name},output,judge][phase])).join('')}
     </div>
     ${r.summary&&multi&&finished(u)?'<p class="snapshot-gap">该旧记录未保存逐轮明细，仅展示最终记录；无法还原未记录的轮次。</p>':''}
     <div class="snapshot-question"><span>攻击题目</span><p>${E(question?.prompt||u.seedPrompt||'原始题目未保存在任务快照中')}</p></div>
-    <details class="snapshot-evidence"><summary>查看${r.summary?'该记录':'本轮'}证据</summary><div><h4>实际攻击输入</h4><pre>${E(rawPrompt)}</pre><h4>最终判定对象</h4><pre>${E(delivered)}</pre>${evidence?`<h4>防护处理记录</h4><pre>${E(evidence)}</pre>`:''}<h4>裁判依据</h4><pre>${E(judge.reason)}</pre></div></details>
+    <details class="snapshot-evidence"><summary>查看${r.summary?'该记录':'本轮'}证据</summary><div><h4>实际攻击输入</h4><pre>${E(rawPrompt)}</pre>${r.blueBlocked==='output'&&r.rawResponse?`<h4>靶标原始响应（拦截证据）</h4><pre>${E(r.rawResponse)}</pre>`:''}<h4>最终判定对象</h4><pre>${E(delivered)}</pre>${evidence?`<h4>防护处理记录</h4><pre>${E(evidence)}</pre>`:''}<h4>裁判依据</h4><pre>${E(judge.reason)}</pre></div></details>
     <footer>${finished(u)?`<button class="link-btn" onclick="App.attack.sample(${args(u.id)})">查看完整记录 →</button>`:''}</footer>
   </div>${sliderHTML(t,data)}</article>${topology}`;
 }
