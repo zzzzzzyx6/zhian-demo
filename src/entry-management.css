@@ -1,5 +1,0 @@
-/* Shared delete controls in inventories, tables and detail headers. */
-.entry-delete{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:30px;height:30px;padding:0;flex:none;line-height:1;border:1px solid transparent;border-radius:6px;background:transparent;color:#bb5964;cursor:pointer}
-.entry-delete:hover{background:#fff1f2;border-color:#f3ccd1;color:#ba3345}.entry-delete:focus-visible{outline:2px solid #d96476;outline-offset:2px}.entry-delete:disabled{opacity:.45;cursor:not-allowed}
-.entry-delete>.icon{width:16px;height:16px;margin:0}.entry-delete-confirm{display:inline-flex;align-items:center;gap:7px}
-.la-row-end>.entry-delete,.lo-risk-row-end>.entry-delete{margin-left:8px}.lo-actions,.ec-row-actions,.mi-model-actions{align-items:center}.modal-footer>.entry-delete{margin-left:6px}

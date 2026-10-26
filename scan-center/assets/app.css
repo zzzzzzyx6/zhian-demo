@@ -610,3 +610,5 @@
 .posture-recent-list .scan-act-top b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .posture-history-list>div.muted-row{opacity:.9;cursor:default}
 .posture-history-list>div.muted-row .badge{opacity:.75}
+/* Keep every scanner list header and cell aligned with the platform list system. */
+table th,table td{text-align:left!important}
