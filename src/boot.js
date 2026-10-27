@@ -113,7 +113,7 @@
     'scan/review24',
     'exercise/exercise-product-refinement',
     'core/finish',
-    'core/standalone',
+    'core/startup',
   ];
   for (const name of order) {
     const part = window.AppParts[name];

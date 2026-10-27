@@ -1,0 +1,13 @@
+{
+  "name": "zhian-demo-verify",
+  "private": true,
+  "description": "回归比对工具的唯一开发依赖；不影响 index.html 的构建与使用。",
+  "scripts": {
+    "fingerprint": "node fingerprint.js",
+    "baseline": "node fingerprint.js --dump baseline.json",
+    "check": "node fingerprint.js --against baseline.json"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

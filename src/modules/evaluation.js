@@ -936,7 +936,7 @@ P.renderChrome=function(){
   let hash=R.domain+'/'+(R.view|| (P.state.item==='reports'?'reports':'tasks'));
   if(!R.view){if(P.state.item==='scan')hash+='/'+P.scanTab+(A.scanProduct.selected?'/'+encodeURIComponent(A.scanProduct.selected):'');else if(X.selected)hash+='/'+encodeURIComponent(X.selected);else if(V.scanReportId)hash+='/scan/'+encodeURIComponent(V.scanReportId);}
   if(location.hash.slice(1)!==hash)history.replaceState(null,'','#'+hash);
-  document.getElementById('current-crumb').textContent=(R.domain==='scan'?'安全扫描':'模型演练')+' / '+({results:'结果分析',datasets:'评测数据集'}[R.view]|| (P.state.item==='reports'?'报告':'任务'));
+  
  }
 };
 A.centers.render=P.renderChrome;

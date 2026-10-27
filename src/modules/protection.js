@@ -1657,7 +1657,7 @@ C.render=function(page){if(page==='reports'&&R.reportId){C.init();C.page='report
 const select=P.selectState;
 P.selectState=function(section,item,tab,id){const result=select.apply(P,arguments);if(result)R.reportId=section==='protection'&&item==='reports'&&tab?tab:null;return result;};
 const chrome=P.renderChrome;
-P.renderChrome=function(){const result=chrome.apply(P,arguments);if(P.state.section==='protection'&&P.state.item==='reports'&&R.reportId){const hash='protection/reports/'+encodeURIComponent(R.reportId);if(location.hash.slice(1)!==hash)history.replaceState(null,'','#'+hash);document.getElementById('current-crumb').textContent='安全防护 / 防护报告';document.title='防护报告 · AI安全平台';}return result;};
+P.renderChrome=function(){const result=chrome.apply(P,arguments);if(P.state.section==='protection'&&P.state.item==='reports'&&R.reportId){const hash='protection/reports/'+encodeURIComponent(R.reportId);if(location.hash.slice(1)!==hash)history.replaceState(null,'','#'+hash);document.title='防护报告 · AI安全平台';}return result;};
 A.centers.render=P.renderChrome;
 })();
 };
