@@ -1,7 +1,7 @@
 # 智安 · AI 安全平台 Demo
 
 单页前端演示，覆盖安全态势、安全扫描、模型演练、安全防护、策略中心、资产中心、风险中心七个栏目，
-另带一个可独立打开的漏洞扫描器 `scan-center/`。
+安全扫描栏目下嵌着一个可独立打开的漏洞扫描器 `src/scan-center/`。
 
 ## 运行
 
@@ -21,10 +21,10 @@ src/modules/          平台代码，按栏目聚合
   policy.js           策略中心
   evaluation.js       评估与报告
   assets.js           资产中心、风险中心、平台管理
-src/styles/app.css    全站样式
+src/scan-center/      独立漏洞扫描器：自成一页，被「安全扫描」栏目以 iframe 嵌入，自带样式与数据
+src/styles/app.css    全站样式（不含扫描器，扫描器样式在 src/scan-center/assets/）
 src/data/datasets.js  内置演示数据（题库、场景标注、预设，来源见下）
 src/vendor/           第三方代码（3D 园区引擎），非本项目编写
-scan-center/          独立漏洞扫描器，主平台以新窗口 / iframe 方式打开
 ```
 
 ## 第三方代码与数据来源
@@ -81,6 +81,7 @@ node fingerprint.js --against baseline.json   # 与基线比对，有差异则�
 node inspect.js                          # 打印外壳与关键容器的实际显示状态
 node probe.js '.some-selector'           # 检查某选择器是否真的渲染出来
 node boot-check.js                       # 模拟 sessionStorage 可用时的首屏渲染（真实浏览器行为）
+node paths.js                            # 校验 html 与扫描器里所有相对路径（无构建，移动目录必跑）
 ```
 
 改动结构、合并文件、删死代码这类「不该改变呈现」的操作，用指纹比对证明零差异。

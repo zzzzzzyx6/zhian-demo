@@ -1,4 +1,4 @@
-/* 安全扫描：代码 / 二进制 / Web 检测（扫描页面本体在 scan-center/）
+/* 安全扫描：代码 / 二进制 / Web 检测（扫描页面本体在 src/scan-center/）
  *
  * 本文件包含以下代码段（搜索「─── 名称」可直接跳转）：
  *   scan-product                       A self-contained scan demo. No network request or real scanner is invoked.
@@ -349,7 +349,7 @@ const A=window.App,P=A.platform,X=A.attack,V=A.evaluation,E=A.escape,R=A.october
 const scan=()=>P.state.section==='evaluation'&&R.domain==='scan';
 const Q=A.review24={};
 const render=A.modules.attack.render;
-const scanURL='scan-center/index.html';Q.scanRoute='/';
+const scanURL='src/scan-center/index.html';Q.scanRoute='/';
 Q.scanHTML=()=>'<iframe id="scan-center-full" title="安全扫描完整中心" src="'+scanURL+'#'+E(Q.scanRoute)+'" style="width:100%;height:calc(100dvh - var(--platform-header-height,76px));border:0;display:block"></iframe>';
 Q.scanGo=function(route){Q.scanRoute=route;const frame=document.getElementById('scan-center-full');if(frame)frame.contentWindow.postMessage({type:'platform-scan-navigate',route},'*');else P.go('scan','tasks');Q.syncScanSidebar();};
 Q.scanSidebar=function(){const items=[['/','总览','grid'],['/targets','被测对象','box'],['/scan/code','代码安全','code'],['/scan/app','应用安全','box'],['/scan/web','Web 安全','link'],['/models','模型管理','settings']];const active=Q.scanRoute.startsWith('/projects/')?'':Q.scanRoute.startsWith('/targets/')?'/targets':Q.scanRoute;return '<div class="platform-side-title"><strong>安全扫描</strong><button class="platform-collapse" onclick="App.platform.toggleSidebar()">'+A.icon('chevron',15)+'</button></div><nav id="center-navigation" aria-label="安全扫描侧边栏">'+items.map(([route,label,icon],i)=>(i===2?'<div class="r24-nav-group">漏洞扫描</div>':i===5?'<div class="r24-nav-group">系统配置</div>':'')+'<button class="platform-side-item '+(route===active?'active':'')+'" data-route="'+route+'" onclick="App.review24.scanGo(this.dataset.route)">'+A.icon(icon,18)+'<span>'+label+'</span></button>').join('')+'</nav><div class="platform-side-footer">AI 安全平台</div>';};
