@@ -603,7 +603,10 @@ function patch(a,b){
  const oldValue=a.value,selection=active&&typeof a.selectionStart==='number'?[a.selectionStart,a.selectionEnd]:null;
  for(const at of Array.from(a.attributes))if(!b.hasAttribute(at.name)&&!(details&&at.name==='open'))a.removeAttribute(at.name);
  for(const at of Array.from(b.attributes))if(a.getAttribute(at.name)!==at.value&&!(details&&at.name==='open'))a.setAttribute(at.name,at.value);
- if(a.tagName!=='IFRAME'&&a.tagName!=='TEXTAREA')children(a,b);
+ // 同名节点之间只做增量更新，保住输入焦点与滚动位置。
+ // iframe 与 textarea 内部不是我们生成的；带 data-own-dom 的容器由挂载方自己渲染
+ // （例如扫描器），也不能被这里的协调逻辑清空。
+ if(a.tagName!=='IFRAME'&&a.tagName!=='TEXTAREA'&&!a.hasAttribute('data-own-dom'))children(a,b);
  if(a.tagName==='INPUT'){
   if(!active&&a.type!=='file'&&a.value!==b.value)a.value=b.value;
   if(a.type==='checkbox'||a.type==='radio')a.checked=b.checked;

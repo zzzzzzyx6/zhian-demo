@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#fafbfc">
 <title>智安 · AI 安全平台</title>
 <link rel="stylesheet" href="src/styles/app.css">
+<link rel="stylesheet" href="src/styles/scan-app.css">
 </head>
 <body>
 <div id="app" class="app-shell"><header id="platform-header"></header><aside id="center-sidebar" class="center-sidebar" aria-label="当前栏目导航"></aside>
@@ -14,6 +15,8 @@
 <main id="view" class="main-content"></main></div></div>
 <div id="modal" class="overlay" onclick="if(event.target===this)App.closeModal()"></div><div id="drawer" class="overlay drawer-overlay" onclick="if(event.target===this)App.closeDrawer()"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script src="src/data/datasets.js"></script>
+<script src="src/scan-center/data.js"></script>
+<script src="src/scan-center/app.js"></script>
 <script src="src/vendor/range-engine.js"></script>
 <script src="src/modules/core.js"></script>
 <script src="src/modules/exercise.js"></script>

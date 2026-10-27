@@ -1,17 +1,19 @@
-/* app.js — 书安·智矛 漏洞检测控制台 · 静态 demo
+/* 扫描器（漏洞检测控制台）：平台的「安全扫描」栏目直接挂载这一段，
+ * 不再是独立页面，也不再有自己的地址栏路由。
  *
- * 由 web_console/frontend 的 React 视图（Shell / DashboardView / ServiceView /
- * CategoryView（三类场景工作台）/ ProjectDetailView 及子视图 / ModelsView /
- * FindingDrawer / CandidateDrawer / NewProjectModal）翻译为原生 JS。
- * 数据只读 demo/assets/data.js（window.DEMO_DATA），不依赖任何后端。
- * 原始产物文件置于 demo/output/<job-id>/ 下，结果文件链接指向这份真实副本。
+ * 由 web_console/frontend 的 React 视图翻译为原生 JS，数据只读
+ * src/scan-center/data.js（window.DEMO_DATA），不依赖任何后端。
+ *
+ * 对外接口（由 src/modules/scan.js 调用）：
+ *   window.ScanApp.mount()     把当前路由渲染进 #scan-app
+ *   window.ScanApp.navigate(r) 切到扫描器内部路由（'/'、'/targets'、'/scan/code' …）
  */
 (function () {
   'use strict';
 
   var D = window.DEMO_DATA;
   if (!D) {
-    document.getElementById('root').textContent = '缺少数据文件 assets/data.js';
+    console.warn('扫描器缺少数据文件 src/scan-center/data.js（window.DEMO_DATA）');
     return;
   }
 
@@ -146,14 +148,10 @@
   }
 
   // 演示环境提示：所有写操作（删除/还原/新建/测试连通）都不请求后端。
+  // 提示统一走平台的全局 toast（平台已提供 #toast，扫描器不再自己建一个）。
   function demoToast(msg) {
-    var box = document.getElementById('toast');
-    if (!box) return;
-    box.innerHTML = '<div class="cand-banner" style="border-color:var(--brand-soft);background:var(--brand-softer)">' +
-      icon('info', 15) + '<b>' + esc(msg) + '</b></div>';
-    box.classList.add('on');
-    clearTimeout(demoToast._t);
-    demoToast._t = setTimeout(function () { box.classList.remove('on'); }, 3600);
+    if (window.App && typeof window.App.toast === 'function') return window.App.toast(msg);
+    console.info(msg);
   }
 
   // ------------------------------------------------------------- export.ts
@@ -832,34 +830,6 @@
     'CWE-287': '身份认证缺陷', 'CWE-352': 'CSRF', 'CWE-125': '越界读取', 'CWE-787': '越界写入',
     'CWE-416': 'USE AFTER FREE', 'CWE-20': '输入校验不当', 'CWE-400': '资源耗尽', 'CWE-000': '未分类'
   };
-  function counts() {
-    return { projects: D.projects.length };
-  }
-  function Sidebar(active) {
-    var c = counts();
-    var nav = SECTIONS.map(function (sec) {
-      var items = sec.items.map(function (item) {
-        var on = item.path === '/' ? active === '/' : active.indexOf(item.path) === 0;
-        var badge = c[item.id] != null ? '<span class="count mono">' + c[item.id] + '</span>' : '';
-        return '<a class="nav-item' + (on ? ' active' : '') + '" aria-label="' + item.label + '" title="' + item.label + ' · ' + item.desc + '" href="#' + item.path + '">' +
-          '<span class="ico">' + icon(item.icon) + '</span><span class="nav-text"><strong>' + item.label + '</strong></span>' + badge + '</a>';
-      }).join('');
-      return '<div class="sidebar-section">' + sec.title + '</div>' + items;
-    }).join('');
-    return '<aside class="sidebar">' +
-      '<div class="sidebar-brand"><div><div class="name">漏洞扫描中心</div></div>' +
-      '<button class="zhian-collapse" type="button" aria-label="收起侧边栏" onclick="window.zhianToggle()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button></div>' + '<nav class="sidebar-nav">' + nav + '</nav>' +
-      '<div class="sidebar-foot">' +
-      '<div class="user-chip" id="user-chip" role="button" tabindex="0" title="账户菜单">' +
-      '<div class="avatar">安</div><div class="who"><div class="b" style="font-size:13px">安全管理员</div></div>' +
-      '<span class="user-chev" aria-hidden="true">›</span></div>' +
-      '<div class="user-menu' + (STATE.userMenu ? ' open' : '') + '" id="user-menu">' +
-      '<a class="user-menu-item" href="#" data-um="home">' + icon('home', 14) + '<span>回到首页</span></a>' +
-      '<button class="user-menu-item" data-um="logout">' + icon('logout', 14) + '<span>退出登录</span></button>' +
-      '<button class="user-menu-item" data-um="intro">' + icon('info', 14) + '<span>介绍页</span></button>' +
-      '</div></div>' +
-      '</aside>';
-  }
   function Kpi(label, value, delta, accent) {
     var valueColor = accent === 'critical' ? 'var(--sig-critical)' : 'var(--brand-ink)';
     return '<div class="kpi"><span class="label">' + esc(label) + '</span>' +
@@ -2349,13 +2319,19 @@ function WorkflowMap(job) {
     modelError: '',
     modelForm: { name: '', base_url: '', api_key: '', model: '' },
     np: { name: '', description: '', category: null, phase: 'agent-full', source: 'path', target_path: '', website_url: '', target_id: '', model_config_id: '', candidate_categories: '', discovery_slice_size: '8', validation_batch_size: '1', agent_pool_size: '4', agent_pool_min: '2' },
-    npError: '',
-    userMenu: false,
-    introOpen: false
+    npError: ''
   };
 
-  function parseHash() {
-    var raw = String(location.hash || '').replace(/^#/, '');
+  // 地址栏与页面外壳由平台管理，这里只维护扫描器自己的内部路由。
+  var ROUTE = '/';
+
+  function goRoute(next) {
+    ROUTE = String(next || '/').replace(/^#/, '') || '/';
+    render();
+  }
+
+  function parseRoute() {
+    var raw = String(ROUTE || '').replace(/^#/, '');
     if (!raw) return { name: 'dashboard' };
     var parts = raw.split('/').filter(Boolean);
     if (parts[0] === 'projects' && parts[1]) return { name: 'project', id: decodeURIComponent(parts[1]) };
@@ -2368,14 +2344,8 @@ function WorkflowMap(job) {
     return { name: 'dashboard' };
   }
 
-  function introOverlay() {
-    return '<div class="intro-modal" role="dialog" aria-modal="true" aria-label="产品介绍">' +
-        '<iframe class="intro-frame" src="assets/intro.html" title="产品介绍页"></iframe>' +
-      '</div>';
-  }
-
   function render() {
-    var route = parseHash();
+    var route = parseRoute();
     if (route.name === 'project' && route.id !== STATE.projectId) {
       STATE.projectId = route.id;
       // 详情页默认选中第一个「运行」tab
@@ -2397,32 +2367,22 @@ function WorkflowMap(job) {
         '<div class="page-body"><div class="empty"><div class="glyph">' + icon('project') + '</div>找不到任务 ' + esc(route.id) + '</div></div>';
     } else main = PostureOverviewView();
 
-    var navPath = location.hash.replace(/^#/, '') || '/';
-    if (navPath === '/scan/new') navPath = STATE.np.category ? SCAN_CATEGORIES[STATE.np.category].path : '/';
-    if (route.name === 'target') navPath = '/targets';
-    else if (route.name === 'project') {
-      var navProj = D.projects.find(function (p) { return p.id === route.id; });
-      if (navProj) navPath = SCAN_CATEGORIES[projectCategory(navProj)].path;
-    }
-
-    var root = document.getElementById('root');
-    var curPath = location.hash.replace(/^#/, '') || '/';
+    var root = document.getElementById('scan-app');
+    if (!root) return;
+    var curPath = ROUTE || '/';
     var samePage = STATE.prevPath === curPath;
     var keepScrollBody = samePage ? ((document.querySelector('.page-body') || {}).scrollTop || 0) : 0;
     var keepScrollMain = samePage ? ((document.querySelector('.main') || {}).scrollTop || 0) : 0;
     var keepDoc = document.documentElement || {};
     var keepScrollTop = samePage ? ((typeof window.scrollY === 'number' ? window.scrollY : 0) || (typeof keepDoc.scrollTop === 'number' ? keepDoc.scrollTop : 0)) : 0;
     root.innerHTML = '<div class="app">' +
-      Sidebar(navPath) + '<main class="main">' + main + '</main>' +
-      '' +
+      '<main class="main">' + main + '</main>' +
       (STATE.modelDraft ? modelModal() : '') +
       (STATE.modelDeleting ? modelDeleteModal() : '') +
-      (STATE.introOpen ? introOverlay() : '') +
       (STATE.targetPickerOpen ? targetPickerModal() : '') +
       (STATE.targetDeleting ? targetDeleteModal() : '') +
       (STATE.compareOpen ? targetCompareModal() : '') +
-      '</div>' +
-      '<div id="toast"></div>';
+      '</div>';
 
     var bodyAfter = document.querySelector('.page-body');
     if (bodyAfter && typeof bodyAfter.scrollTop === 'number' && bodyAfter.scrollHeight > bodyAfter.clientHeight) bodyAfter.scrollTop = keepScrollBody;
@@ -2432,7 +2392,7 @@ function WorkflowMap(job) {
       else window.scrollTo(0, keepScrollTop);
     }
     var focusSel = null; // 创建页交互后保持滚动即可，输入不触发重渲染
-    if (location.hash === '#/scan/new') {
+    if (ROUTE === '/scan/new') {
       var checked = document.querySelector('input[name="phase"]:checked');
       if (checked && document.activeElement && document.activeElement.tagName === 'BODY') checked.focus();
     }
@@ -2446,7 +2406,8 @@ function WorkflowMap(job) {
   }
 
   function bind() {
-    var root = document.getElementById('root');
+    var root = document.getElementById('scan-app');
+    if (!root) return;
 
     // tabs / segs
     onClick(root, '[data-tab]', function (e) {
@@ -2498,10 +2459,9 @@ function WorkflowMap(job) {
 
     // drawer close
     onClick(root, '[data-close]', function () { STATE.drawerFinding = null; STATE.drawerCandidate = null; STATE.selectedVuln = null; render(); });
-    onClick(root, '[data-intro-close]', function () { STATE.introOpen = false; render(); });
     document.onkeydown = function (e) {
-      if (e.key === 'Escape' && (STATE.drawerFinding || STATE.drawerCandidate || STATE.introOpen || STATE.targetDeleting || STATE.compareOpen)) {
-        STATE.drawerFinding = null; STATE.drawerCandidate = null; STATE.selectedVuln = null; STATE.introOpen = false;
+      if (e.key === 'Escape' && (STATE.drawerFinding || STATE.drawerCandidate || STATE.targetDeleting || STATE.compareOpen)) {
+        STATE.drawerFinding = null; STATE.drawerCandidate = null; STATE.selectedVuln = null;
         STATE.targetDeleting = null; STATE.compareOpen = false; render();
       }
     };
@@ -2534,7 +2494,7 @@ function WorkflowMap(job) {
       STATE.np.model_config_id = ''; STATE.np.target_path = ''; STATE.np.website_url = ''; STATE.np.target_id = '';
       STATE.np.targetName = ''; STATE.np.targetKind = ''; STATE.np.targetFiles = 0;
       if (cat) STATE.np.source = SCAN_CATEGORIES[cat].sources[0][0];
-      window.location.hash = '#/scan/new';
+      goRoute('/scan/new');
     };
     onClick(root, '[data-np-menu]', function (e) {
       STATE.npMenuOpen = false;
@@ -2553,14 +2513,14 @@ function WorkflowMap(job) {
         STATE.np.target_id = '';
         STATE.np.category = 'code';
       }
-      window.location.hash = '#/scan/new';
+      goRoute('/scan/new');
     });
-    onClick(root, '[data-back-targets]', function () { window.location.hash = '#/targets'; });
+    onClick(root, '[data-back-targets]', function () { goRoute('/targets'); });
     onClick(root, '[data-scan-target]', function (e) {
       var id = e.currentTarget.getAttribute('data-scan-target');
       STATE.np.category = POSTURE.targets.some(function (t) { return t.id === id && t.type.indexOf('Web') !== -1; }) ? 'web' : 'code';
       STATE.np.target_id = id;
-      window.location.hash = '#/scan/new';
+      goRoute('/scan/new');
     });
 
     onClick(root, '[data-tfilter]', function (e) { STATE.targetFilter = e.currentTarget.getAttribute('data-tfilter'); STATE.targetFilterOpen = false; render(); });
@@ -2615,7 +2575,7 @@ function WorkflowMap(job) {
     onClick(root, '[data-np-close]', function () {
       var back = STATE.np.category ? SCAN_CATEGORIES[STATE.np.category].path : '/';
       STATE.np.category = null;
-      window.location.hash = back;
+      goRoute(back);
     });
     onClick(root, '[data-np-phase]', function (e) { STATE.np.phase = e.currentTarget.getAttribute('data-np-phase'); render(); });
     root.querySelectorAll('[data-np-file]').forEach(function (el) {
@@ -2801,45 +2761,6 @@ function WorkflowMap(job) {
         demoToast(ok ? '连接测试成功' : '连接测试失败：缺少 API Key');
       }, 800);
     });
-    // 账户菜单：点击 chip 展开 / 收起，Escape 关闭，点空白处关闭
-    var chip = root.querySelector('#user-chip');
-    if (chip) {
-      var toggleMenu = function (e) {
-        if (e.stopPropagation) e.stopPropagation();
-        STATE.userMenu = !STATE.userMenu;
-        render();
-      };
-      chip.addEventListener('click', toggleMenu);
-      chip.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMenu(e); }
-      });
-    }
-    onClick(root, '[data-um]', function (e) {
-      if (e.stopPropagation) e.stopPropagation();
-      var act = e.currentTarget.getAttribute('data-um');
-      STATE.userMenu = false;
-      if (act === 'home') {
-        window.zhianHome();
-      } else if (act === 'logout') {
-        window.zhianLogout();
-      } else if (act === 'intro') {
-        STATE.introOpen = true;
-      }
-      render();
-    });
-    if (!STATE._docMenuBound) {
-      STATE._docMenuBound = true;
-      document.addEventListener('click', function (e) {
-        if (!STATE.userMenu) return;
-        var t = e.target;
-        if (t && t.closest && t.closest('#user-chip, #user-menu')) return;
-        STATE.userMenu = false;
-        render();
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && STATE.userMenu) { STATE.userMenu = false; render(); }
-      });
-    }
     onClick(root, '[data-test]', function () { demoToast('演示环境不发起模型连通性测试。'); });
 
     // write ops → demo toast
@@ -2857,12 +2778,12 @@ function WorkflowMap(job) {
     // 任务列表：整行点击进入详情（内部 a/button 除外）
     onClick(root, '.task-row[data-goto]', function (e) {
       if (e.target && e.target.closest && e.target.closest('a,button')) return;
-      window.location.hash = e.currentTarget.getAttribute('data-goto');
+      goRoute(e.currentTarget.getAttribute('data-goto'));
     });
     // 被测对象列表：整行点击进入对象详情（内部 a/button 除外）
     onClick(root, '.posture-target-row[data-goto]', function (e) {
       if (e.target && e.target.closest && e.target.closest('a,button')) return;
-      window.location.hash = e.currentTarget.getAttribute('data-goto');
+      goRoute(e.currentTarget.getAttribute('data-goto'));
     });
     // 任务列表：状态控制下拉
     onClick(root, '[data-statusact]', function (e) {
@@ -2906,13 +2827,12 @@ function WorkflowMap(job) {
     if (pre && STATE.logAutoscroll) pre.scrollTop = pre.scrollHeight;
   }
 
-  window.addEventListener('hashchange', render);
-  // 介绍页 iframe 内的“进入控制台”按钮通过 postMessage 请求关闭，回到工作台
-  window.addEventListener('message', function (e) {
-    if (e.data && e.data.type === 'zhian-close-intro') {
-      STATE.introOpen = false; render();
-    }
-  });
+  // 平台负责外壳与路由：这里只暴露挂载接口，不再自己监听 hashchange。
+  window.ScanApp = {
+    mount: function () { render(); },
+    navigate: goRoute,
+    getRoute: function () { return ROUTE; }
+  };
   // 演示数据保鲜：运行中任务的启动时间取相对当前时间，避免静态快照过期（仅 demo_run_* 任务）
   (function () {
     D.projects.forEach(function (p) {

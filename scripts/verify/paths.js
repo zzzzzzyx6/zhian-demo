@@ -1,12 +1,11 @@
-// 路径完整性检查：这个仓库没有构建步骤，所有 href/src 都是手写相对路径，
-// 移动目录后最容易静默失效（页面白屏、样式丢失），所以单独校一遍。
+// 路径与挂载契约检查：这个仓库没有构建步骤，所有 href/src 都是手写相对路径，
+// 移动目录后最容易静默失效（白屏、样式丢失），所以单独校一遍。
 //
 //   node scripts/verify/paths.js
 //
-// 检查三件事：
-//   1. 各 html 里的 <link href> 与 <script src> 是否指向真实文件；
-//   2. 主平台 src/modules/scan.js 里嵌入扫描器的路径是否有效；
-//   3. 扫描器内部的 ../ 回跳是否还能回到根目录的 index.html。
+// 检查：
+//   1. index.html 里 <link href> 与 <script src> 是否指向真实文件；
+//   2. 扫描器的挂载契约：scan.js 渲染 #scan-app，app.js 提供 window.ScanApp 并写入同一容器。
 const fs = require('fs');
 const path = require('path');
 
@@ -26,29 +25,23 @@ function checkHtml(relHtml) {
     checked.push(relHtml + ' → ' + u);
     if (!fs.existsSync(target)) problems.push(relHtml + ' 引用了不存在的文件：' + u);
   }
-  return html;
 }
 
-const pages = ['index.html', 'src/scan-center/index.html'];
-for (const p of pages) checkHtml(p);
+checkHtml('index.html');
 
-// 主平台嵌入扫描器的地址
+// 挂载契约：平台侧只渲染容器，扫描器自己往里画。
 const scanJs = fs.readFileSync(path.join(ROOT, 'src/modules/scan.js'), 'utf8');
-const m = scanJs.match(/const scanURL='([^']+)'/);
-if (!m) problems.push('src/modules/scan.js 里找不到 scanURL');
-else {
-  checked.push('scan.js → ' + m[1]);
-  if (!fs.existsSync(path.join(ROOT, m[1]))) problems.push('scan.js 的 iframe 地址无效：' + m[1]);
-}
+if (!scanJs.includes("'<div id=\"scan-app\"")) problems.push('scan.js 不再渲染 #scan-app 容器');
+if (!/window\.ScanApp\.(navigate|mount)/.test(scanJs)) problems.push('scan.js 没有调用 ScanApp');
+checked.push('scan.js → #scan-app 容器 + ScanApp 挂载');
 
-// 扫描器内部回跳根入口
-const shell = fs.readFileSync(path.join(ROOT, 'src/scan-center/assets/zhian-shell.js'), 'utf8');
-for (const hit of shell.matchAll(/location\.href='([^']+)'/g)) {
-  const target = path.resolve(path.join(ROOT, 'src/scan-center'), hit[1]);
-  checked.push('zhian-shell.js → ' + hit[1]);
-  if (!fs.existsSync(target)) problems.push('zhian-shell.js 回跳目标无效：' + hit[1] + '（解析为 ' + path.relative(ROOT, target) + '）');
-}
+const appJs = fs.readFileSync(path.join(ROOT, 'src/scan-center/app.js'), 'utf8');
+if (!appJs.includes("document.getElementById('scan-app')")) problems.push('app.js 没有写入 #scan-app');
+if (!appJs.includes('window.ScanApp')) problems.push('app.js 没有暴露 window.ScanApp');
+if (/location\.hash/.test(appJs)) problems.push('app.js 仍在读 location.hash（路由应交给平台）');
+if (/getElementById\(\s*['"]root['"]\s*\)/.test(appJs)) problems.push('app.js 仍在找 #root 容器');
+checked.push('app.js → window.ScanApp + #scan-app');
 
-console.log('已检查 ' + checked.length + ' 条路径引用');
-console.log(problems.length ? '问题 ' + problems.length + ' 处：\n  ' + problems.join('\n  ') : '全部可解析');
+console.log('已检查 ' + checked.length + ' 项');
+console.log(problems.length ? '问题 ' + problems.length + ' 处：\n  ' + problems.join('\n  ') : '全部通过');
 process.exit(problems.length ? 1 : 0);
