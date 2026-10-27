@@ -189,14 +189,12 @@ P.selectState=function(section,item,tab,id){
  if(section==='workspace')item='home';
  if(!sections.some(s=>s[0]===section)||(section!=='workspace'&&!menus[section].some(row=>row[0]===item)))return false;
  // Page changes discard unfinished forms; saved policies and task snapshots are unaffected.
- if(!A.scanRestoration?.formNavigation){
-  X.wizard=null;A.policies.draft=null;A.policies.taskPolicyReturn=null;A.connections.draft=null;A.connections.assetPickers={};
-  if(A.scanProduct)A.scanProduct.draft=null;
-  if(A.policyUsability){A.policyUsability.pendingPolicy=null;A.policyUsability.pendingTask=null;}
-  if(A.assessment)A.assessment.pendingScanDraft=null;
-  if(A.policyKnowledge)A.policyKnowledge.pendingDraft=null;
-  if(A.modelRoles){A.modelRoles.draft?.capabilityController?.abort();A.modelRoles.draft=null;}
- }
+ X.wizard=null;A.policies.draft=null;A.policies.taskPolicyReturn=null;A.connections.draft=null;A.connections.assetPickers={};
+ if(A.scanProduct)A.scanProduct.draft=null;
+ if(A.policyUsability){A.policyUsability.pendingPolicy=null;A.policyUsability.pendingTask=null;}
+ if(A.assessment)A.assessment.pendingScanDraft=null;
+ if(A.policyKnowledge)A.policyKnowledge.pendingDraft=null;
+ if(A.modelRoles){A.modelRoles.draft?.capabilityController?.abort();A.modelRoles.draft=null;}
  P.state={section,item};P.applicationId=section==='assets'&&item==='applications'?(tab||null):null;X.selected=null;X.rangePreview=false;X.tab='platform';
  if(A.evaluation)A.evaluation.scanReportId=null;
  if(section==='evaluation'&&item==='attack'){
