@@ -1,7 +1,7 @@
 # 智安 · AI 安全平台 Demo
 
 单页前端演示，覆盖安全态势、安全扫描、模型演练、安全防护、策略中心、资产中心、风险中心七个栏目，
-「安全扫描」栏目直接挂载 `src/scan-center/` 里的扫描器（同一页面内渲染，不再套 iframe）。
+「安全扫描」栏目直接挂载 `src/modules/scan.js` 里 scanner-app 段的扫描器（同一页面内渲染，不再套 iframe）。
 
 ## 运行
 
@@ -15,16 +15,16 @@ src/boot.js           启动表：按 order 数组执行各模块登记的代码
 src/modules/          平台代码，按栏目聚合
   core.js             基础能力、平台外壳、通用列表与交互
   dashboard.js        安全态势（仪表盘 A 版 / B 版）
-  scan.js             安全扫描
+  scan.js             安全扫描（平台侧接线 + scanner-app 段：漏洞扫描器本体）
   exercise.js         模型演练
   protection.js       安全防护
   policy.js           策略中心
   evaluation.js       评估与报告
   assets.js           资产中心、风险中心、平台管理
-src/scan-center/      独立漏洞扫描器：app.js 渲染 + data.js 数据，被「安全扫描」栏目直接挂载进内容区
+src/data/scan-data.js 扫描器演示数据（window.DEMO_DATA，在线控制台真实接口快照）
+src/data/datasets.js  内置演示数据（题库、场景标注、预设，来源见下）
 src/styles/app.css    全站样式
 src/styles/scan-app.css  扫描器样式（全部限定在 .scan-app 下，不影响其他页面）
-src/data/datasets.js  内置演示数据（题库、场景标注、预设，来源见下）
 src/vendor/           第三方代码（3D 园区引擎），非本项目编写
 ```
 
@@ -68,11 +68,12 @@ A.modules.attack.render = function () { return render.apply(this, arguments) /* 
 
 ## 扫描器如何接进平台
 
-扫描器（`src/scan-center/app.js`）原本是独立页面，现在按「平台渲染容器、扫描器自己画」的方式接入：
+扫描器本体在 `src/modules/scan.js` 的 scanner-app 段（原 src/scan-center/app.js，已并入），
+按「平台渲染容器、扫描器自己画」的方式接入：
 
 ```text
-src/modules/scan.js  →  <div id="scan-app" data-own-dom></div>   （只给容器）
-src/scan-center/app.js →  window.ScanApp.mount() / navigate(route) （往里渲染）
+src/modules/scan.js（平台侧段落） →  <div id="scan-app" data-own-dom></div>   （只给容器）
+src/modules/scan.js（scanner-app 段） →  window.ScanApp.mount() / navigate(route) （往里渲染）
 ```
 
 要点：

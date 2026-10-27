@@ -35,12 +35,17 @@ if (!scanJs.includes("'<div id=\"scan-app\"")) problems.push('scan.js 不再渲�
 if (!/window\.ScanApp\.(navigate|mount)/.test(scanJs)) problems.push('scan.js 没有调用 ScanApp');
 checked.push('scan.js → #scan-app 容器 + ScanApp 挂载');
 
-const appJs = fs.readFileSync(path.join(ROOT, 'src/scan-center/app.js'), 'utf8');
-if (!appJs.includes("document.getElementById('scan-app')")) problems.push('app.js 没有写入 #scan-app');
-if (!appJs.includes('window.ScanApp')) problems.push('app.js 没有暴露 window.ScanApp');
-if (/location\.hash/.test(appJs)) problems.push('app.js 仍在读 location.hash（路由应交给平台）');
-if (/getElementById\(\s*['"]root['"]\s*\)/.test(appJs)) problems.push('app.js 仍在找 #root 容器');
-checked.push('app.js → window.ScanApp + #scan-app');
+// 扫描器本体已并入 scan.js（scanner-app 段），契约检查只针对该段的文本，
+// 不检查 review24 等平台侧段落（refine() 读 location.hash 是合法的时序判断）。
+const marker = "AppParts['scan/scanner-app']";
+const at = scanJs.indexOf(marker);
+if (at < 0) problems.push('scan.js 里没有 scanner-app 段');
+const appJs = at < 0 ? '' : scanJs.slice(at);
+if (!appJs.includes("document.getElementById('scan-app')")) problems.push('scanner-app 段没有写入 #scan-app');
+if (!appJs.includes('window.ScanApp')) problems.push('scanner-app 段没有暴露 window.ScanApp');
+if (/location\.hash/.test(appJs)) problems.push('scanner-app 段仍在读 location.hash（路由应交给平台）');
+if (/getElementById\(\s*['"]root['"]\s*\)/.test(appJs)) problems.push('scanner-app 段仍在找 #root 容器');
+checked.push('scanner-app 段 → window.ScanApp + #scan-app');
 
 console.log('已检查 ' + checked.length + ' 项');
 console.log(problems.length ? '问题 ' + problems.length + ' 处：\n  ' + problems.join('\n  ') : '全部通过');

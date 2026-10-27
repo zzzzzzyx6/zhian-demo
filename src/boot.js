@@ -108,6 +108,7 @@
     'dashboard/dashboard-b',
     'exercise/task-review-refinement',
     'scan/review24',
+    'scan/scanner-app',
     'exercise/exercise-product-refinement',
     'core/finish',
     'core/startup',
