@@ -2960,16 +2960,17 @@ const A=window.App,X=A.attack,E=A.escape;
 const R=A.rangeExperience={instances:new Map(),paused:false,selected:'target'};
 R.task=()=>A.octoberRefinement.latestTask();
 R.slot=t=>`<div class="range-slot" data-range-task="${E(t?.id||'')}"></div>`;
-R.nodes=t=>[{id:'red',kind:'red',name:'红队 · 攻击生成',detail:t?.engine?.roles?.attacker?.name||t?.engine?.attacker||'本地攻击模板'},
- {id:'target',kind:'target',name:'靶标：'+(t?X.targetFor(t)?.name||t.targetSnapshot?.name||t.targetName||'未记录':'等待任务'),detail:''},
- {id:'blue',kind:'blue',name:'蓝队 · 安全防护',detail:t&&X.guardFlow(t).enabled?X.blueLabel(t.defense):'当前任务未启用防护'},
- {id:'purple',kind:'purple',name:'裁判 · 结果判定',detail:t?.engine?.roles?.judge?.name||t?.engine?.judge||'等待配置'}];
+R.nodes=t=>{const policy=t?.runSnapshot?.policy||t?.runSnapshot?.policySnapshot||t?.policySnapshot||{};return [{id:'red',kind:'red',name:'红队',detail:policy.name||policy.title||'自定义攻击策略'},
+ {id:'target',kind:'target',name:'靶标',detail:t?X.targetFor(t)?.name||t.targetSnapshot?.name||t.targetName||'未记录':'等待任务'},
+ {id:'blue',kind:'blue',name:'蓝队',detail:t&&X.guardFlow(t).enabled?X.blueLabel(t.defense):'当前任务未启用防护'},
+ {id:'purple',kind:'purple',name:'裁判',detail:t?.engine?.roles?.judge?.name||t?.engine?.judge||'等待配置'}];};
 R.sceneData=t=>({targets:t?[{id:'target',name:X.targetFor(t)?.name||'目标模型'}]:[],activeId:t?.status==='running'?'target':null,defense:!!(t&&X.guardFlow(t).enabled),selected:R.selected,paused:R.paused||t?.status!=='running'});
 R.action=function(action){for(const item of R.instances.values()){
  if(action==='pause'){R.paused=!R.paused;break;}
  if(action==='reset')item.scene?.reset();if(action==='top')item.scene?.reset('top');if(action==='rotate')item.scene?.rotate(.3);if(action==='in')item.scene?.zoom(.85);if(action==='out')item.scene?.zoom(1.15);
  }R.sync();};
 R.select=function(id){R.selected=id;R.sync();};
+R.nodePopup=function(id,taskId){const t=X.db.tasks.find(row=>row.id===taskId)||R.task(),node=R.nodes(t).find(n=>n.id===id);if(!node)return;R.selected=id;R.sync();const descriptions={red:'当前演练采用的攻击策略',target:'本次演练的受测对象',blue:'当前启用的安全防护方案',purple:'负责结果判定的裁判配置'};A.modal(node.name,`<div class="range-node-popup"><span>${descriptions[id]}</span><strong>${E(node.detail)}</strong></div>`,'<button class="btn" onclick="App.closeModal()">关闭</button>');};
 R.make=function(){
  const root=document.createElement('div');root.className='range-3d range-product';
  root.innerHTML='<div class="range-3d-canvas" tabindex="0" role="region" aria-label="三维演练场，拖拽旋转、滚轮缩放，方向键旋转，加减键缩放"></div><div class="range-3d-status"></div><div class="range-3d-labels"></div><div class="range-node-detail" aria-live="polite"></div><div class="range-3d-tools" role="toolbar" aria-label="三维视角">'+[['reset','复位']].map(([key,name])=>`<button type="button" data-control="${key}" onclick="App.rangeExperience.action('${key}')">${name}</button>`).join('')+'</div><div class="range-3d-caption"><span>拖动旋转 · 滚轮缩放 · 点击节点</span></div>';
@@ -2983,7 +2984,7 @@ R.sync=function(){
  const slots=[...document.querySelectorAll('.range-slot')],active=new Set();
  for(const slot of slots){const key=slot.dataset.rangeTask||'empty';active.add(key);let item=R.instances.get(key);if(!item){item=R.make();R.instances.set(key,item);slot.appendChild(item.root);item.start();}else if(item.root.parentNode!==slot)slot.appendChild(item.root);
  const t=X.db.tasks.find(t=>t.id===key),nodes=R.nodes(t);item.task=t;
- const labels=item.root.querySelector('.range-3d-labels');labels.innerHTML=nodes.map(n=>`<button class="range-3d-label ${n.kind} ${R.selected===n.id?'selected':''}" data-map-id="${n.id}" title="${E(n.name)}" onclick="App.rangeExperience.select('${n.id}')">${E(n.name)}</button>`).join('');
+ const labels=item.root.querySelector('.range-3d-labels');labels.innerHTML=nodes.map(n=>`<button class="range-3d-label ${n.kind} ${R.selected===n.id?'selected':''}" data-map-id="${n.id}" title="查看${E(n.name)}" onclick="App.rangeExperience.nodePopup('${n.id}','${E(key)}')">${E(n.name)}</button>`).join('');
  const selected=nodes.find(n=>n.id===R.selected)||nodes[1];item.root.querySelector('.range-node-detail').innerHTML=selected.id==='target'?`<span>${E(t?.name||'等待任务')}</span><strong>${E(selected.name)}</strong>`:`<span>${E(selected.name)}</span><strong>${E(selected.detail)}</strong>`;
  if(item.scene){const live=t?.status==='running';item.root.querySelector('.range-3d-status').innerHTML=`<i class="${live?'active':''}"></i>${!t?'等待创建演练任务':live?(t.simulated?'演示任务运行中':'任务运行中'):'任务已结束 · 拓扑回看'}`;item.scene.update(R.sceneData(t));}
  }

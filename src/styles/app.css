@@ -4008,3 +4008,115 @@ body #app.platform-shell #view .dashboard-b .db-exercise .db-card-data{display:f
 body #app.platform-shell #view .dashboard-b .db-exercise .db-card-data>.db-reminders,
 body #app.platform-shell #view .dashboard-b .db-scan .db-card-data>.db-reminders{width:100%;box-sizing:border-box}
 body #app.platform-shell #view .dashboard-b .db-protection>.db-module-body>.db-card-data.db-product-reminders{display:flex!important;grid-template-columns:none!important;flex-direction:column!important;align-items:stretch!important;min-width:0}
+
+/* Security posture dashboard: aligned summary, canvas and event system. */
+body #app.platform-shell #view .dashboard-b .db-top-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(440px,1fr);gap:16px;margin-bottom:18px}
+body #app.platform-shell #view .dashboard-b .db-platform-overview{height:166px;padding:15px 18px;box-sizing:border-box;border:1px solid #b9cfdf;border-radius:8px;background:#fff!important;box-shadow:0 10px 24px #173d5c12}
+body #app.platform-shell #view .dashboard-b .db-platform-overview>header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:10px}
+body #app.platform-shell #view .dashboard-b .db-platform-overview>header>div{display:flex;align-items:baseline;gap:10px}
+body #app.platform-shell #view .dashboard-b .db-platform-overview>header>div:before{content:'';display:block;width:3px;height:16px;border-radius:2px;background:#78c6e7;box-shadow:0 0 10px #78c6e766}
+body #app.platform-shell #view .dashboard-b .db-platform-overview>header span{color:#1f3348!important;font-size:14px;font-weight:600}
+body #app.platform-shell #view .dashboard-b .db-platform-overview>header small{color:#748a9e;font-size:10px}
+body #app.platform-shell #view .dashboard-b .db-platform-overview .db-period{border-color:#2d607f;background:#214f70!important;color:#edf8ff;box-shadow:inset 0 1px #ffffff12;color-scheme:dark}
+body #app.platform-shell #view .dashboard-b .db-platform-overview .db-period option{background:#fff;color:#29475f}
+body #app.platform-shell #view .dashboard-b .db-platform-overview dl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));overflow:hidden;margin:0;border:1px solid #d6e0e7;border-radius:6px;background:#e3e8ec!important}
+body #app.platform-shell #view .dashboard-b .db-platform-overview dl>div{min-width:0;padding:16px 15px 10px;border-right:1px solid #d2dce4}
+body #app.platform-shell #view .dashboard-b .db-platform-overview dl>div:last-child{border-right:0}
+body #app.platform-shell #view .dashboard-b .db-platform-overview dl>div:first-child{padding-left:15px}
+body #app.platform-shell #view .dashboard-b .db-platform-overview dt{display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#315a78!important;font-size:10px}
+body #app.platform-shell #view .dashboard-b .db-overview-metric-icon{display:grid;place-items:center;width:24px;height:24px;flex:0 0 24px;border:1px solid #9eb8cb;border-radius:5px;background:#d6e2ea;color:#214f70}
+body #app.platform-shell #view .dashboard-b .db-overview-metric-icon .icon{display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+body #app.platform-shell #view .dashboard-b .db-platform-overview dd{margin:0;padding-left:32px;color:#214f70!important;font-size:24px;font-weight:600}
+body #app.platform-shell #view .dashboard-b .db-platform-overview dd small{margin-left:4px;color:#58768d!important;font-size:10px;font-weight:400}
+body #app.platform-shell #view .dashboard-b .db-risk-section{min-width:0;margin:0}
+body #app.platform-shell #view .dashboard-b .db-risk-compact{grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:166px}
+body #app.platform-shell #view .dashboard-b .db-card-head{height:58px;min-height:58px;padding:14px 16px!important}
+body #app.platform-shell #view .dashboard-b .db-section-number{display:none!important}
+
+body #app.platform-shell #view .dashboard-b .db-unified-canvas{position:relative;display:block!important;height:252px;min-height:252px;margin:0 10px;overflow:hidden;border:1px solid #d5e3ee;border-radius:8px;background:#f2f7fb;box-sizing:border-box}
+body #app.platform-shell #view .dashboard-b .db-live-stage.db-unified-canvas{padding:0}
+body #app.platform-shell #view .dashboard-b .db-unified-canvas .db-scan-canvas{container-type:inline-size;width:100%;height:100%;border:0;border-radius:0;padding-right:130px;box-sizing:border-box;background:radial-gradient(circle at 40% 45%,#dceeff,#f8fbff 66%)}
+body #app.platform-shell #view .dashboard-b .db-unified-canvas .db-canvas-stats{position:absolute;z-index:5;top:10px;right:10px;bottom:10px;width:120px;height:auto;min-height:0;padding:10px;border:1px solid #dbe6f0;border-radius:7px;background:#fffffff2;box-shadow:0 8px 20px #294f7414;backdrop-filter:blur(5px)}
+body #app.platform-shell #view .dashboard-b .db-canvas-stats h3{color:#345b7c!important;font-size:10px!important}
+body #app.platform-shell #view .dashboard-b .db-canvas-stats>div{border-color:#e2eaf1!important;color:#71869a!important}
+body #app.platform-shell #view .dashboard-b .db-canvas-stats b{color:#315d82!important}
+body #app.platform-shell #view .dashboard-b .db-pipeline-nodes{right:130px;justify-content:center;gap:3px;padding:0 1%}
+body #app.platform-shell #view .dashboard-b .db-pipeline-rail{right:142px;left:4%}
+body #app.platform-shell #view .dashboard-b .db-pipeline-node{width:36px;height:64px;gap:4px;padding:0 2px;box-sizing:border-box;font-size:7px;text-align:center}
+body #app.platform-shell #view .dashboard-b .db-pipeline-node i{width:19px;height:19px}
+body #app.platform-shell #view .dashboard-b .db-pipeline-node span{line-height:1.3;white-space:nowrap}
+body #app.platform-shell #view .dashboard-b .db-pipeline-node.done{border-color:#b7d7d6;background:#f2faf9;color:#4c8988}
+body #app.platform-shell #view .dashboard-b .db-pipeline-node.done i{border-color:#8ebfbc;background:#e4f3f1;color:#43817f}
+body #app.platform-shell #view .dashboard-b .db-canvas-log{right:140px}
+body #app.platform-shell #view .dashboard-b .db-protection-live .db-protection-scene{width:100%;height:100%;margin:0;padding-right:130px;box-sizing:border-box;border-radius:0}
+body #app.platform-shell #view .dashboard-b .db-protection-live .db-protection-scene svg{width:calc(100% - 130px);height:205px;margin:24px 130px 0 0}
+body #app.platform-shell #view .dashboard-b .db-exercise-live .db-exercise-scene{height:100%;margin:0;padding-right:136px}
+body #app.platform-shell #view .dashboard-b .db-exercise-live :is(.range-slot,.range-product){height:250px!important;min-height:250px!important;border-radius:0}
+body #app.platform-shell #view .dashboard-b .range-node-detail{display:none}
+body #app.platform-shell #view .dashboard-b .range-3d-label{min-width:42px;justify-content:center;font-size:10px!important}
+
+body #app.platform-shell #view .dashboard-b .db-progress-box{height:64px;min-height:64px;box-sizing:border-box}
+body #app.platform-shell #view .dashboard-b .db-progress-compact{display:flex;flex-direction:column;justify-content:center}
+body #app.platform-shell #view .dashboard-b .db-time-range{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px}
+body #app.platform-shell #view .dashboard-b .db-time-fields{display:flex;min-width:0;align-items:center;gap:5px}
+body #app.platform-shell #view .dashboard-b .db-time-fields label{display:flex;align-items:center;gap:4px;color:#74889b;font-size:8px}
+body #app.platform-shell #view .dashboard-b .db-time-fields input{width:82px;height:27px;padding:2px 3px;border:1px solid #d8e4ee;border-radius:5px;background:#fff;color:#466781;font-size:8px;box-sizing:border-box}
+body #app.platform-shell #view .dashboard-b .db-time-range>div:last-child{display:flex;align-items:baseline;gap:6px;white-space:nowrap;color:#73889b;font-size:9px}
+body #app.platform-shell #view .dashboard-b .db-time-range>div:last-child b{color:#35766e;font-size:16px}
+
+body #app.platform-shell #view .dashboard-b .db-product-overview{padding-top:14px!important}
+body #app.platform-shell #view .dashboard-b .db-overview-title{height:20px;margin-bottom:5px}
+body #app.platform-shell #view .dashboard-b .db-product-overview .db-metrics{display:grid!important;grid-auto-flow:column!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;height:66px;box-sizing:border-box;padding:10px 0}
+body #app.platform-shell #view .dashboard-b .db-exercise .db-card-data{gap:0!important}
+body #app.platform-shell #view .dashboard-b .db-exercise .db-metrics{margin:0!important;padding:10px 0!important;border:0!important;border-top:1px solid #e5edf5!important}
+body #app.platform-shell #view .dashboard-b .db-product-overview .db-metrics dd{display:flex;align-items:baseline;gap:3px;white-space:nowrap}
+body #app.platform-shell #view .dashboard-b .db-product-overview .db-metrics small{display:inline!important;margin:0!important}
+body #app.platform-shell #view .dashboard-b .db-overview-chart{height:55px;min-height:55px;box-sizing:border-box}
+body #app.platform-shell #view .dashboard-b .db-overview-chart .db-legend{margin:9px 0 0}
+body #app.platform-shell #view .dashboard-b .db-scenario-bars{display:grid;align-content:center;gap:4px;padding:1px 0}
+body #app.platform-shell #view .dashboard-b .db-scenario-bars>div{display:grid;grid-template-columns:50px minmax(0,1fr) 22px;align-items:center;gap:7px;color:#71869a;font-size:8px}
+body #app.platform-shell #view .dashboard-b .db-scenario-bars>div>i{display:block;height:5px;overflow:hidden;border-radius:4px;background:#e7edf4}
+body #app.platform-shell #view .dashboard-b .db-scenario-bars>div>i>b{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#829cc8,#6f8ab8)}
+body #app.platform-shell #view .dashboard-b .db-scenario-bars strong{color:#506c88;font-size:9px;text-align:right}
+body #app.platform-shell #view .dashboard-b .db-reminders{margin-top:10px}
+body #app.platform-shell #view .dashboard-b .db-risk-event{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:7px;width:100%;min-height:46px;padding:7px 8px;border:1px solid #ead9bf;border-radius:6px;background:#fff8ed;color:#765c3d;text-align:left}
+body #app.platform-shell #view .dashboard-b .db-risk-event i{display:grid;place-items:center;width:18px;height:18px;border-radius:4px;background:#f0ddc0;font-size:11px;font-style:normal}
+body #app.platform-shell #view .dashboard-b .db-risk-event strong{display:block;overflow:hidden;color:inherit;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+body #app.platform-shell #view .dashboard-b .db-risk-event small{display:block;overflow:hidden;margin-top:2px;color:inherit;font-size:9px;opacity:.78;text-overflow:ellipsis;white-space:nowrap}
+body #app.platform-shell #view .dashboard-b .db-risk-event>span:last-child{font-size:9px;white-space:nowrap}
+body #app.platform-shell #view .dashboard-b .db-risk-event.critical{border-color:#e7b7b1;background:#fff0ee;color:#914d49}
+body #app.platform-shell #view .dashboard-b .db-risk-event.critical i{background:#f2d0cc}
+body #app.platform-shell #view .dashboard-b .db-risk-event.high{border-color:#ead09d;background:#fff7e5;color:#86602e}
+body #app.platform-shell #view .dashboard-b .db-risk-event.high i{background:#f1dfb9}
+body #app.platform-shell #view .dashboard-b .db-risk-event.medium,body #app.platform-shell #view .dashboard-b .db-risk-event.general{border-color:#d7e2eb;background:#f4f8fb;color:#546f87}
+body #app.platform-shell #view .dashboard-b .db-risk-event.medium i,body #app.platform-shell #view .dashboard-b .db-risk-event.general i{background:#e1eaf1}
+body #app.platform-shell #view .dashboard-b .db-protection-strip{margin-top:7px}
+body #app.platform-shell #view .dashboard-b .db-inline-note{margin:7px 0 9px}
+body #app.platform-shell #view .dashboard-b .db-protection .db-reminders{margin-top:0}
+.range-node-popup{display:flex;flex-direction:column;gap:8px;padding:8px 2px 12px}.range-node-popup span{color:#74869a;font-size:12px}.range-node-popup strong{color:#294c6c;font-size:17px;font-weight:600}.modal-panel:has(.range-node-popup){max-width:420px}
+body #app.platform-shell #view .dashboard-b :is(.db-risk-alerts,.db-todo-roll)>header .db-link{border:0!important;background:transparent!important;box-shadow:none!important}
+body #app.platform-shell #view .dashboard-b .db-todo-viewport{overflow-x:hidden;overflow-y:auto;mask-image:none;scroll-behavior:smooth;scrollbar-width:none}
+body #app.platform-shell #view .dashboard-b .db-todo-viewport::-webkit-scrollbar{width:0;height:0}
+body #app.platform-shell #view .dashboard-b .db-todo-track{animation:none!important;transform:none!important}
+body #app.platform-shell #view .dashboard-b .db-orchestrator{left:14px;transform:none}
+body #app.platform-shell #view .dashboard-b .db-protection-live .db-protection-scene{padding-right:0}
+body #app.platform-shell #view .dashboard-b .db-protection-live .db-protection-scene svg{width:calc(100% - 130px);margin-right:130px}
+
+body #app.platform-shell #view .dashboard-b .db-pipeline-window{position:absolute;left:14px;right:140px;top:46px;bottom:52px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none}
+body #app.platform-shell #view .dashboard-b .db-pipeline-window::-webkit-scrollbar{display:none}
+body #app.platform-shell #view .dashboard-b .db-pipeline-track{position:relative;width:max-content;min-width:100%;height:100%}
+body #app.platform-shell #view .dashboard-b .db-pipeline-nodes{position:relative!important;inset:auto!important;display:flex;align-items:center;justify-content:space-between;width:max-content;min-width:100%;height:100%;gap:20px;padding:0 24px;box-sizing:border-box}
+body #app.platform-shell #view .dashboard-b .db-pipeline-node{width:82px;min-width:82px;height:70px;padding:0 6px;font-size:9px}
+body #app.platform-shell #view .dashboard-b .db-pipeline-node i{width:27px;height:27px}
+body #app.platform-shell #view .dashboard-b .db-pipeline-rail{left:36px;right:36px;top:50%}
+body #app.platform-shell #view .dashboard-b .db-pipeline-scroll{position:absolute;z-index:4;left:24px;right:152px;bottom:39px;width:calc(100% - 176px);height:14px;margin:0;padding:0;border:0!important;background:transparent!important;box-shadow:none!important;cursor:grab;appearance:none}
+body #app.platform-shell #view .dashboard-b .db-pipeline-scroll:active{cursor:grabbing}
+body #app.platform-shell #view .dashboard-b .db-pipeline-scroll[hidden]{display:none}
+body #app.platform-shell #view .dashboard-b .db-pipeline-scroll::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:#bfd4e5}
+body #app.platform-shell #view .dashboard-b .db-pipeline-scroll::-webkit-slider-thumb{width:28px;height:8px;margin-top:-2.5px;border:0;border-radius:5px;background:#5e96bf;box-shadow:0 1px 5px #315f8338;appearance:none}
+body #app.platform-shell #view .dashboard-b .db-pipeline-scroll::-moz-range-track{height:3px;border:0;border-radius:3px;background:#bfd4e5}
+body #app.platform-shell #view .dashboard-b .db-pipeline-scroll::-moz-range-thumb{width:28px;height:8px;border:0;border-radius:5px;background:#5e96bf;box-shadow:0 1px 5px #315f8338}
+
+@media(min-width:1051px){body #app.platform-shell #view .dashboard-b .db-core-card{height:790px!important;min-height:790px!important}body #app.platform-shell #view .dashboard-b .db-protection>.db-module-body{display:contents!important}}
+@media(max-width:1050px){body #app.platform-shell #view .dashboard-b .db-top-grid{grid-template-columns:1fr}body #app.platform-shell #view .dashboard-b .db-platform-overview{height:auto}body #app.platform-shell #view .dashboard-b .db-core-grid{grid-template-columns:1fr!important}body #app.platform-shell #view .dashboard-b .db-core-card{min-height:0!important}body #app.platform-shell #view .dashboard-b .db-unified-canvas .db-canvas-stats{width:156px}body #app.platform-shell #view .dashboard-b .db-unified-canvas .db-scan-canvas{padding-right:166px}body #app.platform-shell #view .dashboard-b .db-pipeline-window{right:176px}body #app.platform-shell #view .dashboard-b .db-pipeline-scroll{right:188px;width:calc(100% - 212px)}body #app.platform-shell #view .dashboard-b .db-canvas-log{right:176px}body #app.platform-shell #view .dashboard-b .db-protection-live .db-protection-scene{padding-right:0}body #app.platform-shell #view .dashboard-b .db-protection-live .db-protection-scene svg{width:calc(100% - 166px);height:242px;margin:5px 166px 0 0}body #app.platform-shell #view .dashboard-b .db-exercise-live .db-exercise-scene{padding-right:172px}}
+@media(max-width:600px){body #app.platform-shell #view .dashboard-b .db-platform-overview dl{grid-template-columns:1fr 1fr}body #app.platform-shell #view .dashboard-b .db-platform-overview dl>div:nth-child(2){border-right:0}body #app.platform-shell #view .dashboard-b .db-top-grid{display:block}body #app.platform-shell #view .dashboard-b .db-risk-section{margin-top:14px}body #app.platform-shell #view .dashboard-b .db-time-range{height:auto;align-items:stretch;flex-direction:column}body #app.platform-shell #view .dashboard-b .db-time-fields input{width:108px}}
