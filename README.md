@@ -82,6 +82,7 @@ node inspect.js                          # 打印外壳与关键容器的实际�
 node probe.js '.some-selector'           # 检查某选择器是否真的渲染出来
 node boot-check.js                       # 模拟 sessionStorage 可用时的首屏渲染（真实浏览器行为）
 node paths.js                            # 校验 html 与扫描器里所有相对路径（无构建，移动目录必跑）
+node scan-usage.js                       # 走全路由统计某组 API 的调用次数，判断还有没有活路径
 ```
 
 改动结构、合并文件、删死代码这类「不该改变呈现」的操作，用指纹比对证明零差异。
