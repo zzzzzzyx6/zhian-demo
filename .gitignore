@@ -12,3 +12,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 *.swp
+
+# 校验工具的生成产物
+scripts/verify/dom-classes.json

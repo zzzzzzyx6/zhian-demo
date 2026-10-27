@@ -22,10 +22,24 @@ src/modules/          平台代码，按栏目聚合
   evaluation.js       评估与报告
   assets.js           资产中心、风险中心、平台管理
 src/styles/app.css    全站样式
-src/data/datasets.js  内置演示数据（题库、场景标注、预设）
+src/data/datasets.js  内置演示数据（题库、场景标注、预设，来源见下）
 src/vendor/           第三方代码（3D 园区引擎），非本项目编写
 scan-center/          独立漏洞扫描器，主平台以新窗口 / iframe 方式打开
 ```
+
+## 第三方代码与数据来源
+
+演示数据不手捏：题库与场景标注来自公开数据集，文件内 `*Provenance` 常量记录了上游仓库、
+commit、文件哈希与许可证，可直接核对。
+
+| 文件 | 内容 | 上游 | 许可 |
+|---|---|---|---|
+| `src/vendor/range-engine.js` | 3D 园区引擎（改编自 lijing-ai-range v0.12.0，内含 three.js r180） | — | AGPL-3.0 / three.js 为 MIT |
+| `src/data/datasets.js` | AdvBench 有害行为题库（`AdvBenchProvenance`） | `llm-attacks/llm-attacks` @ `a62d130` | MIT |
+| `src/data/datasets.js` | Salad-Data 安全题库抽样（`SaladBankProvenance`） | `OpenSafetyLab/Salad-Data` @ `d21a325` | Apache-2.0 |
+
+> `src/vendor/range-engine.js` 为 AGPL-3.0，仅用于演示；对外分发前请确认整体许可策略。
+
 
 ## 代码段机制（改代码前必读）
 
@@ -66,6 +80,7 @@ node fingerprint.js                      # 打印 29 条路由的 DOM 指纹
 node fingerprint.js --against baseline.json   # 与基线比对，有差异则退出码 1
 node inspect.js                          # 打印外壳与关键容器的实际显示状态
 node probe.js '.some-selector'           # 检查某选择器是否真的渲染出来
+node boot-check.js                       # 模拟 sessionStorage 可用时的首屏渲染（真实浏览器行为）
 ```
 
 改动结构、合并文件、删死代码这类「不该改变呈现」的操作，用指纹比对证明零差异。

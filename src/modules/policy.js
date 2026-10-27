@@ -873,7 +873,6 @@ const select=P.selectState;
 P.selectState=function(section,item,tab,id){if(section==='protection'&&item==='knowledge'){id=tab;section='policy';item='defense';tab='knowledge';}const result=select.call(P,section,item,tab,id);if(result&&section==='policy'&&item==='defense'&&tab==='knowledge'){D.tab='knowledge';K.tab=id==='replies'?'replies':'words';K.query='';}return result;};
 const chrome=P.renderChrome;
 P.renderChrome=function(){const result=chrome.apply(P,arguments);if(P.state.section==='policy'&&P.state.item==='defense'&&D.tab==='knowledge')history.replaceState(null,'','#policy/defense/knowledge/'+K.tab);return result;};
-A.centers.render=P.renderChrome;
 const render=CP.render;
 CP.render=function(){if(D.tab!=='knowledge')return render.apply(CP,arguments);return '<div class="defense-product lean-operations dc-page">'+K.knowledge()+'</div>';};
 const knowledge=K.knowledge;
@@ -1055,6 +1054,6 @@ W.migrate=function(){if(!S.db)return;W.stripAnswers(A.data);A.data.guardReplyTem
 const start=A.start;A.start=function(){const result=start.apply(A,arguments);W.migrate();A.save();if(A.session)A.render();return result;};
 const go=P.go;P.go=function(section,item,tab,id){const target='#'+[section,item,tab,id].filter(v=>v!==undefined&&v!==null&&v!=='').map(encodeURIComponent).join('/');if(location.hash===target&&!document.querySelector('.overlay.open')){A.render();return;}return go.apply(P,arguments);};
 const select=P.selectState;P.selectState=function(section,item,tab,id){if(section==='policy'&&item==='defense'&&tab==='knowledge')id='words';return select.call(P,section,item,tab,id);};
-const chrome=P.renderChrome;P.renderChrome=function(){const result=chrome.apply(P,arguments);const host=document.getElementById('center-sidebar');if(host){for(const button of host.querySelectorAll('button'))if(button.textContent==='知识库')button.textContent='词库';}if(P.state.section==='policy'&&D.tab==='knowledge'){document.title='词库 · AI安全平台';}return result;};A.centers.render=P.renderChrome;
+const chrome=P.renderChrome;P.renderChrome=function(){const result=chrome.apply(P,arguments);const host=document.getElementById('center-sidebar');if(host){for(const button of host.querySelectorAll('button'))if(button.textContent==='知识库')button.textContent='词库';}if(P.state.section==='policy'&&D.tab==='knowledge'){document.title='词库 · AI安全平台';}return result;};
 })();
 };

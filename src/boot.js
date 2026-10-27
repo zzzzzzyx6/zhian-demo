@@ -15,7 +15,7 @@
     'exercise/attack-ia',
     'exercise/bank-builder',
     'exercise/agent-presets',
-    'core/center-shell',
+    'core/platform-render',
     'exercise/experience-refinement',
     'exercise/task-design-refinement',
     'exercise/workflow-coordination',

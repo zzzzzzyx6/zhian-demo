@@ -928,7 +928,7 @@ P.menus.protection.splice(2,0,['review','复核工作台','file']);
 P.sidebar=function(){
  if(P.state.section!=='evaluation')return sidebar.call(P);
  const scan=R.domain==='scan',current=R.view|| (P.state.item==='reports'?'reports':'tasks'),items=scan?[['tasks','扫描任务'],['reports','扫描报告'],['results','扫描结果']]:[['tasks','演练任务'],['reports','演练报告'],['results','演练结果'],['datasets','评测数据集']];
- return `<div class="platform-side-title"><strong>${scan?'安全扫描':'模型演练'}</strong>${btn(A.icon('chevron',15),'App.centers.toggle()','platform-collapse')}</div><nav id="center-navigation" aria-label="${scan?'安全扫描':'模型演练'}侧边栏">${items.map(([id,name])=>btn(name,`App.platform.go('${R.domain}','${id}')`,'platform-side-item '+(current===id?'active':''))).join('')}${scan&&current==='tasks'?`<div class="platform-subnav">${[['code-scan','代码扫描'],['app-scan','软件包扫描'],['web-scan','Web 扫描']].map(([id,name])=>btn(name,`App.platform.go('scan','tasks','${id}')`,'platform-subitem '+(P.scanTab===id?'active':''))).join('')}</div>`:''}</nav><div class="platform-side-footer">AI 安全平台</div>`;
+ return `<div class="platform-side-title"><strong>${scan?'安全扫描':'模型演练'}</strong>${btn(A.icon('chevron',15),'App.platform.toggleSidebar()','platform-collapse')}</div><nav id="center-navigation" aria-label="${scan?'安全扫描':'模型演练'}侧边栏">${items.map(([id,name])=>btn(name,`App.platform.go('${R.domain}','${id}')`,'platform-side-item '+(current===id?'active':''))).join('')}${scan&&current==='tasks'?`<div class="platform-subnav">${[['code-scan','代码扫描'],['app-scan','软件包扫描'],['web-scan','Web 扫描']].map(([id,name])=>btn(name,`App.platform.go('scan','tasks','${id}')`,'platform-subitem '+(P.scanTab===id?'active':''))).join('')}</div>`:''}</nav><div class="platform-side-footer">AI 安全平台</div>`;
 };
 P.renderChrome=function(){
  chrome.call(P);
@@ -939,7 +939,6 @@ P.renderChrome=function(){
   
  }
 };
-A.centers.render=P.renderChrome;
 for(const [owner,key,domain] of [[X,'open','exercise'],[A.scanProduct,'open','scan']]){
  const original=owner[key];owner[key]=function(){R.view='';R.domain=domain;return original.apply(this,arguments);};
 }
