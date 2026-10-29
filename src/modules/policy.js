@@ -455,8 +455,7 @@ B.confirmIndustry=function(){const d=B.draft;if(!d?.addingIndustry)return false;
 const saveBank=B.saveDraft;
 B.saveDraft=function(){if(B.draft?.addingIndustry){B.draft.message='请先确认添加行业，或选择已有行业';B.edit();return false;}return saveBank.apply(B,arguments);};
 // A question bank is populated from uploaded files only.
-B.pickTasks=B.extractStart=B.extractConfirm=B.extractRender=B.extractSave=function(){A.toast('请通过上传 JSON 文件添加题目');return false;};
-B.catalogTable=function(){return B.catalogRows().map(b=>`<tr><td><button class="link-btn" data-bank="${E(b.id)}" onclick="App.banks.open(this.dataset.bank)">${E(b.name)}</button></td><td><span class="bank-source ${b.builtin?'builtin':'custom'}">${b.builtin?'系统':'自建'}</span></td><td>${E(B.industryLabel(b.industry))}</td><td>${b.items.length.toLocaleString()}</td><td><div class="lo-actions">${b.builtin?'':`<button class="link-btn" data-bank="${E(b.id)}" onclick="App.banks.create(this.dataset.bank)">编辑</button>`}<button class="link-btn" data-bank="${E(b.id)}" onclick="App.banks.export(this.dataset.bank)">导出</button>${A.entryManagement.button('bank',b.id)}</div></td></tr>`).join('')||'<tr><td colspan="5" class="empty">没有符合条件的攻击题库</td></tr>';};
+B.pickTasks=B.extractStart=B.extractConfirm=B.extractRender=B.catalogTable=function(){return B.catalogRows().map(b=>`<tr><td><button class="link-btn" data-bank="${E(b.id)}" onclick="App.banks.open(this.dataset.bank)">${E(b.name)}</button></td><td><span class="bank-source ${b.builtin?'builtin':'custom'}">${b.builtin?'系统':'自建'}</span></td><td>${E(B.industryLabel(b.industry))}</td><td>${b.items.length.toLocaleString()}</td><td><div class="lo-actions">${b.builtin?'':`<button class="link-btn" data-bank="${E(b.id)}" onclick="App.banks.create(this.dataset.bank)">编辑</button>`}<button class="link-btn" data-bank="${E(b.id)}" onclick="App.banks.export(this.dataset.bank)">导出</button>${A.entryManagement.button('bank',b.id)}</div></td></tr>`).join('')||'<tr><td colspan="5" class="empty">没有符合条件的攻击题库</td></tr>';};
 
 P.parameterFor=function(entry){
  const fields=schema(entry.id),method=P.method(entry.id);
@@ -480,7 +479,6 @@ P.toggleMethod=function(id,checked){
 };
 P.bankQuery='';P.bankIndustry='';
 P.bankChoicesHTML=function(){const q=P.bankQuery.trim().toLowerCase(),rows=B.db.filter(b=>(!q||b.name.toLowerCase().includes(q))&&(!P.bankIndustry||B.industryLabel(b.industry)===P.bankIndustry));return rows.map(b=>`<label><input type="checkbox" ${P.draft.bankIds.includes(b.id)?'checked':''} data-bank="${E(b.id)}" onchange="App.policies.toggleBank(this.dataset.bank,this.checked)"><span>${E(b.name)}</span><small>${b.items.length} 题</small></label>`).join('')||'<p class="series-empty">暂无匹配题库</p>';};
-P.filterBanks=function(key,value){if(!['bankQuery','bankIndustry'].includes(key))return;P[key]=value;const host=document.getElementById('policy-bank-choices');if(host)host.innerHTML=P.bankChoicesHTML();};
 const edit=P.edit;
 P.edit=function(){P.bankQuery='';P.bankIndustry='';return edit.apply(P,arguments);};
 P.editor=function(){
@@ -704,14 +702,10 @@ P.judgementFor=function(source,task){
  const safetyRules=saved?.promptTemplate&&!saved.promptTemplate.includes('{{安全规则}}')?'':saved?.rule??saved?.safetyRules??J.defaultRules;
  return {...base,rule:safetyRules,safetyRules,promptTemplate:saved?.promptTemplate??J.template,promptVersion:saved?.promptVersion||'openrt-platform-judge-v1',scoreRange:[1,5],outputSchema:{reason:'string',score:'integer:1..5'}};
 };
-P.setSafetyRules=function(value){if(P.draft?.judgement){P.draft.judgement.safetyRules=value;P.draft.judgement.rule=value;}};
 J.expandedTemplate=j=>j.promptTemplate.replace('{{安全规则}}',()=>j.safetyRules||j.rule||J.defaultRules);
 P.setJudgePrompt=function(value){if(P.draft?.judgement)Object.assign(P.draft.judgement,{promptTemplate:value,rule:'',safetyRules:''});};
-P.resetJudgeTemplate=function(){if(!P.draft)return;const value=J.template.replace('{{安全规则}}',()=>J.defaultRules);P.setJudgePrompt(value);const input=document.getElementById('policy-judge-template');if(input)input.value=value;};
 J.fixedJudgement=function(source){return {...P.judgementFor(source),rule:J.defaultRules,safetyRules:J.defaultRules,promptTemplate:J.template,promptVersion:'openrt-fixed-judge-v1',threshold:5};};
-P.judgeEditor=function(j){Object.assign(j,J.fixedJudgement({judgement:j}));return '';};
 J.closePreview=function(){if(!J.previewDialog)return;const dialog=J.previewDialog;J.previewDialog=null;dialog.close();dialog.remove();J.previewFocus?.focus?.();};
-P.previewJudge=function(){const j=P.judgementFor(P.draft),error=J.validate(j);if(error){const el=document.getElementById('policy-editor-error');if(el)el.textContent=error;return;}J.closePreview();J.previewFocus=document.activeElement;const dialog=document.createElement('dialog');dialog.className='oj-preview-dialog';dialog.setAttribute('aria-label','裁判输入预览');dialog.innerHTML=`<div class="modal-header"><h2>裁判输入预览</h2><button type="button" class="close-btn" aria-label="关闭裁判输入预览" onclick="App.openrtJudge.closePreview()">${A.icon('close',20)}</button></div><div class="modal-body"><pre class="oj-preview">${E(J.render(j,'请说明如何安全地保管个人资料。','请限制访问权限，并使用加密存储。'))}</pre></div><div class="modal-footer"><button type="button" class="btn" onclick="App.openrtJudge.closePreview()">返回编辑</button></div>`;dialog.addEventListener('cancel',e=>{e.preventDefault();J.closePreview();});dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();J.closePreview();}else if(e.key==='Tab')e.stopPropagation();});document.body.appendChild(dialog);J.previewDialog=dialog;dialog.showModal();};
 const validate=P.validate;
 P.validate=function(d,publishing=true){const error=validate.call(P,d,publishing);if(error||!publishing)return error;return J.validate(P.judgementFor(d));};
 J.backendConfig=function(source,task){const j=P.judgementFor(source,task),error=J.validate(j);if(error)throw new Error(error);if(!j.modelId)throw new Error('请在攻防任务中选择裁判模型');return {registry:'llm_judge',model_id:j.modelId,prompt_template:j.promptTemplate,safety_rules:j.safetyRules,success_threshold:j.threshold,strict_output:true};};
@@ -720,7 +714,7 @@ P.freeze=function(d,version){const result=freeze.call(P,d,version);result.judgem
 const summary=P.summary;
 P.summary=function(s){return summary.call(P,s).replace(/<details class="strategy-rule-summary"><summary>查看判定规则<\/summary>[\s\S]*?<\/details>/,'');};
 const reportSnapshot=A.taskReports.snapshotHTML;
-A.taskReports.snapshotHTML=function(task,exported=false){const body=reportSnapshot.apply(this,arguments),j=A.taskReports.judgement(task);if(!j.promptTemplate)return body;const prompt=`<pre class="oj-preview" style="white-space:pre-wrap;overflow-wrap:anywhere">${E(J.expandedTemplate(j))}</pre>`;return body+(exported?`<section class="task-report-judge-prompt"><h3>裁判提示词快照</h3>${prompt}</section>`:`<details class="task-report-judge-prompt"><summary>裁判提示词快照</summary>${prompt}</details>`);};
+A.taskReports.snapshotHTML=function(task,exported=false){const body=reportSnapshot.apply(this,arguments),j=A.taskReports.judgement(task);if(!j.promptTemplate)return body;const prompt=`<pre class="oj-preview pre-any">${E(J.expandedTemplate(j))}</pre>`;return body+(exported?`<section class="task-report-judge-prompt"><h3>裁判提示词快照</h3>${prompt}</section>`:`<details class="task-report-judge-prompt"><summary>裁判提示词快照</summary>${prompt}</details>`);};
 const launch=X.launchTask;
 X.launchTask=function(){const t=launch.apply(X,arguments);if(!t)return t;t.engine.judgeConfig=J.backendConfig(t.policySnapshot,t);for(const binding of t.engine.bindings||[])binding.judgeConfig=copy(t.engine.judgeConfig);A.save();return t;};
 })();
@@ -815,7 +809,7 @@ X.launchTask=function(){const t=launch.apply(X,arguments);if(!t)return t;const m
 const taskValidation=X.taskValidation;
 X.taskValidation=function(w){const error=taskValidation.call(X,w);if(error)return error;const s=w.policySnapshot;if(!s)return '';if(s.methods.some(m=>m.id==='FigStep')&&!M.hasCapability(w.model,'vision'))return 'FigStep 需要支持图片理解的靶标，请在模型用途中确认服务能力';if(w.step===3)for(const m of s.methods)for(const slot of X.methodSlots(m)){const id=w.methodModelBindings?.[m.id]?.[slot.key];if(!M.candidates(slot.role).some(v=>v.id===id))return (m.name||m.id)+'：请选择已连通且配置对应用途的'+slot.label;}return '';};
 // Existing methods remain readable; creating or importing custom methods is unavailable.
-P.newTemplate=P.templateForm=P.saveTemplate=P.importTemplate=function(){A.toast('暂不支持自定义攻击方法');return false;};
+P.newTemplate=P.templateForm=P.saveTemplate=function(){A.toast('暂不支持自定义攻击方法');return false;};
 })();
 };
 
@@ -1054,6 +1048,5 @@ W.migrate=function(){if(!S.db)return;W.stripAnswers(A.data);A.data.guardReplyTem
 const start=A.start;A.start=function(){const result=start.apply(A,arguments);W.migrate();A.save();if(A.session)A.render();return result;};
 const go=P.go;P.go=function(section,item,tab,id){const target='#'+[section,item,tab,id].filter(v=>v!==undefined&&v!==null&&v!=='').map(encodeURIComponent).join('/');if(location.hash===target&&!document.querySelector('.overlay.open')){A.render();return;}return go.apply(P,arguments);};
 const select=P.selectState;P.selectState=function(section,item,tab,id){if(section==='policy'&&item==='defense'&&tab==='knowledge')id='words';return select.call(P,section,item,tab,id);};
-const chrome=P.renderChrome;P.renderChrome=function(){const result=chrome.apply(P,arguments);const host=document.getElementById('center-sidebar');if(host){for(const button of host.querySelectorAll('button'))if(button.textContent==='知识库')button.textContent='词库';}if(P.state.section==='policy'&&D.tab==='knowledge'){document.title='词库 · AI安全平台';}return result;};
 })();
 };

@@ -229,10 +229,14 @@ P.sync=function(){
 P.restoreRoute=function(){const p=location.hash.slice(1).split('/').map(v=>{try{return decodeURIComponent(v);}catch(e){return v;}});if(p[0]==='attack')P.selectState('evaluation','attack','arena');else if(!p[0])P.selectState('workspace','home');else if(!P.selectState(p[0],p[1]||'home',p[2],p[3]))P.selectState('workspace','home');};
 P.empty=title=>A.heading('',title,'')+'<section class="platform-empty card"><div class="platform-empty-symbol">'+I('layers',32)+'</div><p>暂无内容</p></section>';
 P.header=function(){return '<button class="platform-brand" onclick="App.platform.go(\'workspace\',\'home\')" aria-label="AI安全平台安全态势"><strong>AI安全平台</strong></button><nav class="platform-top-nav" aria-label="平台主导航">'+sections.filter(([id])=>id!=='management').map(([id,label])=>'<button class="'+(P.state.section===id?'active':'')+'" onclick="App.platform.go(\''+id+'\')">'+label+'</button>').join('')+'</nav><div class="platform-header-actions"><button class="platform-icon-button" aria-label="平台设置" title="平台设置" onclick="App.platform.go(\'management\',\'model-roles\')">'+I('settings',20)+'</button>'+(A.platformNotifications?.buttonHTML()||'<button class="platform-icon-button" aria-label="消息通知" onclick="App.platformNotifications.open()">'+I('bell',20)+'</button>')+'<button class="platform-account" aria-label="账号与退出登录" title="账号与退出登录" onclick="App.account()"><span class="avatar">'+I('user',17)+'</span><span class="account-name">'+E(A.session?.user||'安全管理员')+'</span></button></div>';};
+// 侧边栏共享外壳：标题 + 导航 + 页脚。各中心的侧边栏只提供菜单项，不再各自拼装外壳。
+P.sideShell=function(title,nav){
+ return '<div class="platform-side-title"><strong>'+title+'</strong></div><nav id="center-navigation" aria-label="'+title+'侧边栏">'+nav+'</nav><div class="platform-side-footer"><span>AI 安全平台</span></div>';
+};
 P.sidebar=function(){
  const section=P.state.section;if(['workspace','risk'].includes(section))return '';const def=sections.find(s=>s[0]===section);
  const child=(label,action,active)=>'<button class="platform-subitem '+(active?'active':'')+'" onclick="'+action+'">'+label+'</button>';
- return '<div class="platform-side-title"><strong>'+def[1]+'</strong><button id="center-toggle" class="platform-collapse" aria-controls="center-navigation" aria-expanded="'+!A.data.ui?.sidebarCollapsed+'" aria-label="'+(A.data.ui?.sidebarCollapsed?'展开':'收起')+'侧边栏" title="'+(A.data.ui?.sidebarCollapsed?'展开':'收起')+'侧边栏" onclick="App.platform.toggleSidebar()">'+I('chevron',15)+'</button></div><nav id="center-navigation" aria-label="'+def[1]+'侧边栏">'+menus[section].map(([id,label,icon])=>{
+ const nav=menus[section].map(([id,label,icon])=>{
   const comparing=section==='evaluation'&&['compare','objects'].includes(A.evaluation?.reportTab)&&!X.selected&&!A.evaluation?.scanReportId;
   const active=section==='evaluation'&&id==='compare'?P.state.item==='reports'&&comparing:section==='evaluation'&&id==='reports'?P.state.item==='reports'&&!comparing:P.state.item===id,group=section==='evaluation'&&id==='scan'?'scan':section==='policy'&&id==='policies'?'policy':section==='policy'&&id==='defense'?'defense':null,expanded=group?P[group+'Open']:false;
   const action=group?"App.platform.toggleGroup('"+group+"')":"App.platform.go('"+section+"','"+id+"')";
@@ -246,15 +250,14 @@ P.sidebar=function(){
   if(group==='policy'&&expanded)html+='<div class="platform-subnav">'+policyTabs.filter(t=>t[0]!=='strategies').map(([tab,name])=>child(name,"App.platform.go('policy','policies','"+tab+"')",active&&A.policies.section===tab)).join('')+'</div>';
   if(group==='defense'&&expanded)html+='<div class="platform-subnav">'+[['basics','基础策略'],['rules','规则库'],['knowledge','词库']].map(([tab,name])=>child(name,"App.platform.go('policy','defense','"+tab+"')",active&&A.defensePolicies.tab===tab)).join('')+'</div>';
   return (section==='assets'&&['applications','models'].includes(id)?'<div class="platform-asset-group">'+(id==='applications'?'业务应用':'技术资产')+'</div>':'')+html;
- }).join('')+'</nav><div class="platform-side-footer"><span>AI 安全平台</span></div>';
+ }).join('');
+ return P.sideShell(def[1],nav);
 };
 P.toggleGroup=function(group){const section=['policy','defense'].includes(group)?'policy':'evaluation',item=group==='policy'?'policies':group;if(P.state.section===section&&P.state.item===item){P[group+'Open']=!P[group+'Open'];P.renderChrome();}else{P[group+'Open']=true;P.go(section,item);}};
 P.toggleResources=function(group){if(!['policy','defense'].includes(group))return;P[group+'Open']=!P[group+'Open'];P.renderChrome();};
 P.toggleScan=()=>P.toggleGroup('scan');P.toggleAttack=()=>P.toggleGroup('attack');P.account=()=>A.account();
-// 侧边栏折叠：唯一入口，侧边栏与内容区共用同一状态
-P.toggleSidebar=function(){A.data.ui ||= {};A.data.ui.sidebarCollapsed=!A.data.ui.sidebarCollapsed;A.save();P.renderChrome();document.getElementById('center-toggle')?.focus();};
 P.renderChrome=function(){
- P.sync();const app=document.getElementById('app'),dashboard=['workspace','risk'].includes(P.state.section);app.classList.add('platform-shell');app.classList.toggle('has-center-nav',!dashboard);app.classList.toggle('dashboard-layout',dashboard);app.classList.toggle('nav-collapsed',!dashboard&&!!A.data.ui?.sidebarCollapsed);
+ P.sync();const app=document.getElementById('app'),dashboard=['workspace','risk'].includes(P.state.section);app.classList.add('platform-shell');app.classList.toggle('has-center-nav',!dashboard);app.classList.toggle('dashboard-layout',dashboard);
  for(const [id,html] of [['platform-header',P.header()],['center-sidebar',P.sidebar()]]){const host=document.getElementById(id);if(A.updateHTML)A.updateHTML(host,html);else if(host.innerHTML!==html)host.innerHTML=html;}document.getElementById('center-sidebar').hidden=dashboard;
  let leaf=P.title(),hash=P.state.section+'/'+P.state.item;
  if(P.state.section==='evaluation'&&P.state.item==='attack'){leaf=X.tab==='create'?'新建演练任务':X.selected?'演练任务详情':attackTabs.find(t=>t[0]===P.lastAttackTab)?.[1];hash='evaluation/attack/'+P.lastAttackTab+(X.selected?'/'+encodeURIComponent(X.selected):X.tab==='create'?'/create':X.tab==='arena'&&X.arena.taskId&&X.db.tasks.some(t=>t.id===X.arena.taskId&&!t.deletedAt)?'/'+encodeURIComponent(X.arena.taskId):'');}
@@ -298,7 +301,10 @@ AppParts['core/data-display'] = function () {
 (function(){
 'use strict';
 const A=window.App,E=A.escape;
-const D=A.dataDisplay={colors:{blue:'#4779b5',teal:'#348875',amber:'#d59a38',red:'#c45568',gray:'#a6b2c1'}};
+const D=A.dataDisplay={colors:{blue:'#4779b5',teal:'#348875',amber:'#d59a38',red:'#c45568',gray:'#a6b2c1',violet:'#6d70b2',slate:'#95a5c3'}};
+D.verdict={Safe:D.colors.teal,Controversial:D.colors.amber,Unsafe:D.colors.red,Unknown:D.colors.gray};
+D.severity={critical:'#b42335',high:'#ed8a24',medium:'#edca51',low:'#6c9fca',info:'#9aa9bb',unknown:'#b8c3d1'};
+D.kinds={applications:D.colors.blue,models:D.colors.violet,code:D.colors.teal,packages:D.colors.slate,web:D.colors.amber};
 D.states=[['running','进行中',D.colors.blue],['done','已完成',D.colors.teal],['error','执行异常','#d76a42'],['stopped','已终止',D.colors.amber],['pending','待执行',D.colors.gray]];
 D.counts=tasks=>D.states.map(([id,label,color])=>({id,label,color,value:tasks.filter(t=>(D.states.some(s=>s[0]===t.status)?t.status:'pending')===id).length}));
 D.ring=function(rows,{value,label,description='',className=''}={}){
@@ -309,6 +315,9 @@ D.ring=function(rows,{value,label,description='',className=''}={}){
 D.legend=(rows,action)=>`<div class="ds-legend">${rows.map(r=>{const content=`<i style="background:${r.color}"></i><span>${E(r.label)}</span><strong>${r.value}</strong>`;return action?`<button type="button" onclick="${action(r)}">${content}</button>`:`<div>${content}</div>`;}).join('')}</div>`;
 D.facts=rows=>`<dl class="ds-facts">${rows.map(([label,value])=>`<div><dt>${E(label)}</dt><dd>${E(value)}</dd></div>`).join('')}</dl>`;
 D.progress=function(done,total,state='running'){const pct=total?Math.max(0,Math.min(100,Math.round(done/total*100))):0,tone=D.states.find(s=>s[0]===state)?.[2]||D.colors.blue;return `<span class="ds-progress is-${A.escape(state)}" style="--progress-color:${tone}" role="progressbar" aria-label="已处理 ${done} / ${total}" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}"><span><i style="width:${pct}%"></i></span><b>${done} / ${total}</b></span>`;};
+D.empty=(text,hint='')=>`<div class="empty">${A.icon('box',26)}<p>${A.escape(text)}</p>${hint?`<p class="hint">${A.escape(hint)}</p>`:''}</div>`;
+D.card=(title,body,actions='')=>`<section class="card">${title?`<div class="card-head"><h3 class="card-title">${title}</h3>${actions?`<div class="page-actions">${actions}</div>`:''}</div>`:''}<div class="card-body">${body}</div></section>`;
+D.emptyRow=(colspan,text)=>`<tr><td class="empty" colspan="${A.escape(String(colspan))}">${A.escape(text)}</td></tr>`;
 D.table=function(columns,rows,empty='暂无匹配记录',className=''){
  return `<div class="table-wrap ds-table-wrap"><table class="ds-table ${className}"><thead><tr>${columns.map(c=>`<th scope="col" class="${c.number?'ds-number':''}">${E(c.label)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${columns.map(c=>`<td class="${c.number?'ds-number':''} ${c.className||''}">${c.cell(r)}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${columns.length}" class="empty">${E(empty)}</td></tr>`}</tbody></table></div>`;
 };

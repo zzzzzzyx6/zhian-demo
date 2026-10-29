@@ -92,14 +92,11 @@ if(code){if(!asset.versions.some(v=>v.id===version.id))asset.versions.push(versi
 d.targetId=asset.id;const task=baseCreate.apply(S,arguments);if(task){if(code){task.versionId=version.id;task.targetMaterial={...task.targetMaterial,...copy(version),version:version.label};if(!version.fixtureType){task.fixtureType=null;task.targetMaterial.fixtureType=null;}}else{task.targetMaterial.path=url.href;task.config.scope=String(d.scope||'').trim()||url.pathname+url.search;}task.targetSnapshot=copy(asset);asset.updatedAt=time();G.audit(created?'asset.create':'asset.update',asset.id,(created?'登记资产：':'扫描资产：')+asset.name,{assetId:asset.id,taskId:task.id});A.save();}return task;};
 S.startForAsset=function(kind,id,newVersion=false){S.tab=kind==='code'?'code-scan':'web-scan';S.newTask();S.intakeChange('targetId',id);if(newVersion){S.intakeChange('materialMode','new');}S.form();};
 S.retest=function(id){const t=S.tasks().find(t=>t.id===id);if(!t||t.type==='app-scan')return baseRetest.apply(S,arguments);if(!['done','stopped','error'].includes(t.status))return false;S.startForAsset(t.type==='code-scan'?'code':'web',t.targetId);S.draft.name=t.name+' · 复测';S.draft.parentId=t.id;if(t.type==='code-scan'){const a=S.assets(t.type).find(a=>a.id===t.targetId);S.draft.versionId=t.versionId||a?.versions.find(v=>v.path===t.targetMaterial?.path&&v.label===t.targetMaterial?.version)?.id||'';}else S.draft.url=t.targetMaterial?.path||S.draft.url;S.form();return true;};
-G.assetHistory=function(kind,id){S.init();const a=A.data.businessAssets[kind].find(a=>a.id===id);if(!a)return;const tasks=S.tasks().filter(t=>t.targetId===id).sort((a,b)=>b.created.localeCompare(a.created));const versions=kind==='code'?`<h3>代码版本</h3><div class="table-wrap"><table><thead><tr><th>版本</th><th>来源</th><th>材料状态</th><th>操作</th></tr></thead><tbody>${a.versions.slice().reverse().map(v=>`<tr><td>${E(v.label)}<small>${E(v.note||'')}</small></td><td>${v.source==='upload'?'本地上传':'服务器路径'}<small>${E(v.name||'')}</small></td><td>${v.available===false?'不可用':'可用'}</td><td><button class="link-btn" data-id="${E(a.id)}" data-version="${E(v.id)}" ${v.available===false?'disabled':''} onclick="App.closeDrawer();App.scanProduct.startForAsset('code',this.dataset.id);App.scanProduct.draft.versionId=this.dataset.version;App.scanProduct.form()">发起扫描</button></td></tr>`).join('')}</tbody></table></div>`:'';A.drawer(a.name,`${versions}<h3>扫描历史</h3><div class="table-wrap"><table><thead><tr><th>任务</th><th>${kind==='code'?'版本':'检查地址'}</th><th>状态</th><th>时间</th></tr></thead><tbody>${tasks.map(t=>`<tr><td><button class="link-btn" data-id="${E(t.id)}" onclick="App.closeDrawer();App.scanProduct.open(this.dataset.id)">${E(t.name)}</button></td><td>${E(kind==='code'?t.targetMaterial?.version||'—':t.targetMaterial?.path||a.url)}</td><td>${S.status(t)}</td><td>${E(t.created)}</td></tr>`).join('')||'<tr><td colspan="4">暂无扫描任务</td></tr>'}</tbody></table></div>`,`<button class="btn" onclick="App.closeDrawer()">关闭</button>`);};
 G.assetsHTML=function(item){
  S.init();const code=item!=='web',assets=A.data.businessAssets[code?'code':'web'];
  return A.heading('',code?'代码资产':'Web 资产','')+`<section class="card"><div class="table-wrap"><table class="pg-assets-table"><thead><tr><th>名称</th>${code?'':'<th>地址</th>'}<th>创建时间</th></tr></thead><tbody>${assets.map(a=>`<tr><td>${E(a.name)}</td>${code?'':`<td class="pg-wrap">${E(a.url||'—')}</td>`}<td>${E(a.createdAt?C.time(a.createdAt):'—')}</td></tr>`).join('')||`<tr><td colspan="${code?2:3}" class="empty">暂无${code?'代码':'Web'}资产</td></tr>`}</tbody></table></div></section>`;
 };
-G.renameAsset=function(kind,id){const a=A.data.businessAssets[kind].find(a=>a.id===id);if(!a)return;G.renameDraft={kind,id,name:a.name};A.modal('编辑资产名称',`<div class="field"><label for="asset-rename">资产名称 *</label><input id="asset-rename" maxlength="80" value="${E(a.name)}" oninput="App.platformGovernance.renameDraft.name=this.value"></div><p id="asset-rename-error" class="error-message"></p>`,`<button class="btn" onclick="App.closeModal()">取消</button><button class="btn primary" onclick="App.platformGovernance.saveRename()">保存</button>`);};
 G.saveRename=function(){const d=G.renameDraft,list=A.data.businessAssets[d.kind],a=list.find(a=>a.id===d.id),name=d.name.trim();if(!name||name.length>80||list.some(v=>v.id!==d.id&&v.name.toLowerCase()===name.toLowerCase())){document.getElementById('asset-rename-error').textContent='名称不能为空、超过 80 字或与已有资产重复。';return false;}a.name=name;G.audit('asset.update',a.id,'更新资产名称：'+name,{assetId:a.id});A.save();A.closeModal();A.render();return true;};
-S.editMaterial=function(){const d=S.draft,app=S.assets('app-scan').find(a=>a.id===d?.targetId);if(!app)return;d.upload=null;d.reading=false;S.uploadToken=null;S.materialDraft={name:'',kind:'source',version:''};A.drawer('上传扫描制品',`<div class="field"><label for="scan-material-name">制品名称 *</label><input id="scan-material-name" maxlength="80" oninput="App.scanProduct.materialDraft.name=this.value"></div><div class="field"><label for="scan-material-kind">制品类型</label><select id="scan-material-kind" onchange="App.scanProduct.materialDraft.kind=this.value"><option value="source">应用代码</option><option value="binary">软件包</option></select></div><div class="field"><label for="scan-package">制品文件 *</label><input id="scan-package" type="file" accept=".zip,.tar,.gz,.tgz" onchange="App.scanProduct.readPackage(this)"><small id="scan-file-status">支持 ZIP、TAR、TAR.GZ，最大 200 MB</small></div><div class="field"><label for="scan-material-version">版本名称 *</label><input id="scan-material-version" maxlength="120" required oninput="App.scanProduct.materialDraft.version=this.value"></div><p id="scan-material-error" class="error-message" role="alert"></p>`,`<button class="btn" onclick="App.closeDrawer()">取消</button><button class="btn primary" onclick="App.scanProduct.saveMaterial()">保存并选用</button>`);};
 S.saveMaterial=function(){const d=S.materialDraft,w=S.draft,app=S.assets('app-scan').find(a=>a.id===w?.targetId);if(!app||!d)return false;const issue=!d.name.trim()||d.name.length>80?'请填写不超过 80 字的制品名称。':w.reading?'文件校验尚未完成。':!w.upload?'请选择制品文件并等待校验完成。':!['source','binary'].includes(d.kind)?'请选择有效的制品类型。':!String(d.version||'').trim()||String(d.version).trim().length>120?'请填写 1–120 字的版本名称。':'';if(issue){document.getElementById('scan-material-error').textContent=issue;return false;}const material={id:uid('material'),name:d.name.trim(),kind:d.kind,version:d.version.trim(),path:'/uploads/'+uid('material')+'/src',fileName:w.upload.name,sha256:w.upload.sha256,source:'upload'};app.scanMaterials=app.scanMaterials||[];app.scanMaterials.push(material);w.materialId=material.id;w.upload=null;A.save();A.closeDrawer();S.form();return material;};
 
 })();
@@ -130,7 +127,7 @@ Q.mountScan=function(){
  else window.ScanApp.mount();
 };
 Q.scanGo=function(route){Q.scanRoute=route;if(window.ScanApp)window.ScanApp.navigate(route);Q.syncScanSidebar();};
-Q.scanSidebar=function(){const items=[['/','总览','grid'],['/targets','被测对象','box'],['/scan/code','代码安全','code'],['/scan/app','应用安全','box'],['/scan/web','Web 安全','link'],['/models','模型管理','settings']];const active=Q.scanRoute.startsWith('/projects/')?'':Q.scanRoute.startsWith('/targets/')?'/targets':Q.scanRoute;return '<div class="platform-side-title"><strong>安全扫描</strong><button class="platform-collapse" onclick="App.platform.toggleSidebar()">'+A.icon('chevron',15)+'</button></div><nav id="center-navigation" aria-label="安全扫描侧边栏">'+items.map(([route,label,icon],i)=>(i===2?'<div class="r24-nav-group">漏洞扫描</div>':i===5?'<div class="r24-nav-group">系统配置</div>':'')+'<button class="platform-side-item '+(route===active?'active':'')+'" data-route="'+route+'" onclick="App.review24.scanGo(this.dataset.route)">'+A.icon(icon,18)+'<span>'+label+'</span></button>').join('')+'</nav><div class="platform-side-footer">AI 安全平台</div>';};
+Q.scanSidebar=function(){const items=[['/','总览','grid'],['/targets','被测对象','box'],['/scan/code','代码安全','code'],['/scan/app','应用安全','box'],['/scan/web','Web 安全','link'],['/models','模型管理','settings']];const active=Q.scanRoute.startsWith('/projects/')?'':Q.scanRoute.startsWith('/targets/')?'/targets':Q.scanRoute;return P.sideShell('安全扫描',items.map(([route,label,icon],i)=>(i===2?'<div class="r24-nav-group">漏洞扫描</div>':i===5?'<div class="r24-nav-group">系统配置</div>':'')+'<button class="platform-side-item '+(route===active?'active':'')+'" data-route="'+route+'" onclick="App.review24.scanGo(this.dataset.route)">'+A.icon(icon,18)+'<span>'+label+'</span></button>').join(''));};
 Q.syncScanSidebar=function(){if(scan()){const side=document.getElementById('center-sidebar');if(side)side.innerHTML=Q.scanSidebar();}};
 const chrome=P.renderChrome;
 P.renderChrome=function(){const v=chrome.apply(this,arguments);const on=scan();document.getElementById('app')?.classList.toggle('review24-scanner',on);if(on)Q.mountScan();return v;};
@@ -175,9 +172,8 @@ function refine(html){const host=document.createElement('div');host.innerHTML=ht
  return host.innerHTML;
 }
 A.modules.attack.render=function(){P.sync();if(scan())return Q.scanHTML();return refine(render.apply(this,arguments));};
-// Remove retired identity management from navigation and prevent stale deep links.
-if(P.menus.management)P.menus.management=P.menus.management.filter(x=>!(/身份|权限/.test(x[1])));
-const sidebar=P.sidebar;P.sidebar=function(){if(scan())return Q.scanSidebar();const root=document.createElement('div');root.innerHTML=sidebar.apply(this,arguments);for(const b of root.querySelectorAll('button')){if(/身份与权限/.test(b.textContent))b.remove();else if(b.textContent.trim()==='演练结果')b.textContent='对象结果';}return root.innerHTML;};
+// 扫描域使用自己的侧边栏；其余域沿用平台侧边栏（文案修正已在定义处完成）。
+const sidebar=P.sidebar;P.sidebar=function(){if(scan())return Q.scanSidebar();return sidebar.apply(this,arguments);};
 const pm=P.menus.protection;if(pm){const i=pm.findIndex(x=>x[0]==='records'),j=pm.findIndex(x=>x[0]==='review');if(i>=0&&j>=0)[pm[i],pm[j]]=[pm[j],pm[i]];}
 // Deterministic mock timestamps are assigned only to undated task records, never assets.
 function seedTaskTimes(){let changed=false;for(const [i,t] of [...(X.db?.tasks||[]),...(A.scanProduct.db?.tasks||[])].entries())if(!A.listConsistency.created(t)){t.created='2026-10-'+String(19+i%4).padStart(2,'0')+' 10:'+String(i%60).padStart(2,'0')+':00';changed=true;}if(changed)A.save();}
@@ -618,7 +614,7 @@ AppParts['scan/scanner-app'] = function () {
       '<li>开始时间：<span class="mono">' + fmtAbs(project.started_at) + '</span></li></ul>' +
       '<h3>5.2 致谢</h3>' +
       '<p>本报告由 <b>书安 A3S</b> 智能体生成。所有漏洞均经过大模型多轮推理与运行时探针双重确认。如需复测，请到该任务页点击“重新扫描”。</p>' +
-      '<div style="margin-top:48px;padding-top:18px;border-top:1px dashed var(--line);color:var(--text-faint);font-size:11.5px;font-family:IBM Plex Mono,monospace">' +
+      '<div style="margin-top:48px;padding-top:18px;border-top:1px dashed var(--line);color:var(--text-faint);font-size:11.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">' +
       '— END OF REPORT —<br/>Generated by 书安 v2.4.0 · build a3c1f02 · ' + fmtAbs(project.started_at) + '</div>' +
       '</div>';
   }
@@ -655,7 +651,7 @@ AppParts['scan/scanner-app'] = function () {
         esc(l.msg) + '</div>';
     }).join('');
     return '<div class="card"><div class="card-h">' +
-      '<div style="display:flex;align-items:center;gap:10px"><h3>实时日志</h3>' +
+      '<div class="flex"><h3>实时日志</h3>' +
       (project.status === 'running' ? '<span class="status running"><span class="pulse"></span>streaming</span>' : '') +
       '<span class="muted xs mono">' + (logLines || []).length + ' 行 · ' + fmtBytes(logSize) + '</span></div>' +
       '<div style="display:flex;gap:8px;align-items:center">' +
@@ -1118,7 +1114,7 @@ AppParts['scan/scanner-app'] = function () {
       return '<a href="#/projects/' + encodeURIComponent(p.id) + '" style="display:grid;grid-template-columns:16px 1fr 120px 80px 90px;gap:12px;align-items:center;' +
         'padding:12px 18px;' + (last ? '' : 'border-bottom:1px solid var(--line);') + 'cursor:pointer;font-size:13px;text-decoration:none;color:inherit">' +
         '<span class="status ' + p.status + '"><span class="pulse"></span></span>' +
-        '<div style="min-width:0"><div class="b" style="color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(p.name) + '</div>' +
+        '<div class="minw0"><div class="b" style="color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(p.name) + '</div>' +
         '<div class="mono xs muted" style="margin-top:2px">' + esc(p.id) + '</div></div>' +
         '<span class="badge ' + statusBadge(p.status) + '">' + esc(p.status) + '</span>' +
         '<span class="muted xs">' + fmtRelTime(p.started_at) + '</span>' +
@@ -1165,7 +1161,7 @@ AppParts['scan/scanner-app'] = function () {
       '</div>' +
       '<div class="grid" style="grid-template-columns:1.4fr 1fr;gap:18px">' +
       '<div class="stack" style="gap:18px">' +
-      '<div class="card"><div class="card-h"><div style="display:flex;align-items:center;gap:10px"><h3>正在运行</h3>' +
+      '<div class="card"><div class="card-h"><div class="flex"><h3>正在运行</h3>' +
       (running.length ? '<span class="status running"><span class="pulse"></span>' + running.length + ' 个任务</span>' : '') +
       '</div><a class="btn sm ghost" href="#/projects">查看全部 ' + icon('chevron', 12) + '</a></div>' +
       '<div class="card-b">' + runningCard + '</div></div>' +
@@ -1210,7 +1206,7 @@ AppParts['scan/scanner-app'] = function () {
     if (!totalFindings) badges += '<span class="badge b-ok">无发现</span>';
     return '<a class="project-row" href="#/projects/' + encodeURIComponent(p.id) + '" style="text-decoration:none;color:inherit">' +
       '<div class="glyph">' + esc(initial) + '</div>' +
-      '<div style="min-width:0">' +
+      '<div class="minw0">' +
       '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
       '<span class="b" style="font-size:15px;color:var(--text);white-space:nowrap">' + esc(p.name) + '</span>' +
       '<span class="muted xs mono">' + esc(p.id) + '</span>' +
@@ -1596,7 +1592,7 @@ AppParts['scan/scanner-app'] = function () {
       var patchesCount = remediationNode && remediationNode.summary ? (remediationNode.summary.patched != null ? remediationNode.summary.patched : remediationNode.summary.total) : null;
 
       return '<div class="card"><div class="card-h">' +
-        '<div style="display:flex;align-items:center;gap:10px"><h3>工作流</h3>' +
+        '<div class="flex"><h3>工作流</h3>' +
         (overall === 'running' ? '<span class="status running"><span class="pulse"></span>live</span>' : '') +
         '</div>' +
         '<span class="muted xs mono">' + esc(OVERALL_LABEL[overall] || overall) + ' · ' + doneCount + '/' + totalCount + ' 节点完成' +
@@ -1679,10 +1675,10 @@ AppParts['scan/scanner-app'] = function () {
     }
 
     return '<div class="card"><div class="card-h">' +
-      '<div style="display:flex;align-items:center;gap:10px"><h3>工作流拓扑</h3>' +
+      '<div class="flex"><h3>工作流拓扑</h3>' +
       (overall === 'running' ? '<span class="status running"><span class="pulse"></span>live</span>' : '') +
       '</div>' +
-      '<div style="display:flex;align-items:center;gap:10px">' +
+      '<div class="flex">' +
       '<div class="seg" role="tablist" aria-label="拓扑视图切换">' +
       '<button type="button" role="tab" data-sv="agent" class="' + (view === 'agent' ? 'on' : '') + '">Agent</button>' +
       '<button type="button" role="tab" data-sv="stage" class="' + (view === 'stage' ? 'on' : '') + '">阶段</button>' +
@@ -1761,10 +1757,10 @@ function WorkflowTopologyCards(job) {
     }
 
     return '<div class="card"><div class="card-h">' +
-      '<div style="display:flex;align-items:center;gap:10px"><h3>工作流拓扑</h3>' +
+      '<div class="flex"><h3>工作流拓扑</h3>' +
       (overall === 'running' ? '<span class="status running"><span class="pulse"></span>live</span>' : '') +
       '</div>' +
-      '<div style="display:flex;align-items:center;gap:10px">' +
+      '<div class="flex">' +
       '<div class="seg" role="tablist" aria-label="拓扑视图切换">' +
       '<button type="button" role="tab" data-sv="agent" class="' + (view === 'agent' ? 'on' : '') + '">Agent</button>' +
       '<button type="button" role="tab" data-sv="stage" class="' + (view === 'stage' ? 'on' : '') + '">阶段</button>' +
@@ -1823,7 +1819,7 @@ function buildWfDetail(node) {
   function ConfigRow(label, value, mono) {
     var v = value || '—';
     return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0">' +
-      '<span class="muted xs" style="flex-shrink:0;font-family:IBM Plex Mono,monospace;letter-spacing:.06em;text-transform:uppercase">' + esc(label) + '</span>' +
+      '<span class="muted xs" style="flex-shrink:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase">' + esc(label) + '</span>' +
       '<span class="b xs ' + (mono ? 'mono' : '') + ' config-val" title="' + esc(v) + '" style="text-align:right;color:var(--text);flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">' + esc(v) + '</span></div>';
   }
   function cweTag(cwe) {
@@ -1903,7 +1899,7 @@ function buildWfDetail(node) {
       '<div class="card scan-config-card"><div class="card-h"><h3>任务信息</h3></div><div class="card-b stack-sm">' +
       ConfigRow('任务 ID', project.id, true) +
       ConfigRow('扫描模式', sceneMode(project) + (project.phase_label && project.phase_label !== sceneMode(project) ? ' · ' + project.phase_label : '')) +
-      '<div style="display:flex;gap:10px;min-width:0;margin-top:2px"><span class="muted xs" style="flex-shrink:0;font-family:IBM Plex Mono,monospace;letter-spacing:.06em;text-transform:uppercase">备注</span><span class="b xs" style="color:var(--text);flex:1 1 auto;min-width:0;line-height:1.5;word-break:break-word">' + esc(project.description || '—') + '</span></div>' +
+      '<div style="display:flex;gap:10px;min-width:0;margin-top:2px"><span class="muted xs" style="flex-shrink:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase">备注</span><span class="b xs" style="color:var(--text);flex:1 1 auto;min-width:0;line-height:1.5;word-break:break-word">' + esc(project.description || '—') + '</span></div>' +
       ConfigRow('路径', project.target, true) +
       ConfigRow('开始', fmtAbs(project.started_at), true) +
       (project.duration ? ConfigRow('耗时', fmtDuration(project.duration), true) : '') +
@@ -2101,8 +2097,8 @@ function WorkflowMap(job) {
       var statusCls = v.type === 'finding' || v.status === 'promoted' ? 'b-ok' : v.status === 'rejected' ? 'b-neutral' : 'b-brand';
       var clickAttr = v.type === 'finding' ? ' data-find="' + esc(v.id) + '"' : ' data-cand="' + esc(v.id) + '"';
       return '<div class="task-row vuln-row2"' + clickAttr + '>' +
-        '<div style="min-width:0"><div class="b" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(v.title) + '</div></div>' +
-        '<div style="min-width:0"><span class="muted xs" style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(cweLabel(v.cat, v.cwe)) + '</span></div>' +
+        '<div class="minw0"><div class="b" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(v.title) + '</div></div>' +
+        '<div class="minw0"><span class="muted xs" style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(cweLabel(v.cat, v.cwe)) + '</span></div>' +
         '<div><span class="badge ' + sevColor(v.sev) + '">' + esc(v.sev) + '</span></div>' +
         '<div><span class="b mono brand-text">' + (v.confidence * 100).toFixed(0) + '%</span></div>' +
         '<div><span class="badge ' + statusCls + '">' + esc(statusLabel) + '</span></div>' +
@@ -2400,7 +2396,7 @@ function WorkflowMap(job) {
   }
 
   function drawerSection(title, inner) {
-    return '<section><h3 style="margin:0 0 10px;font-size:13px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;font-family:IBM Plex Mono,monospace">' +
+    return '<section><h3 style="margin:0 0 10px;font-size:13px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">' +
       esc(title) + '</h3>' + inner + '</section>';
   }
 
@@ -2432,7 +2428,7 @@ function WorkflowMap(job) {
       return '<label style="display:flex;gap:10px;padding:12px;border:1px solid ' + (STATE.np.phase === p.id ? 'var(--brand)' : 'var(--line)') +
         ';border-radius:8px;background:' + (STATE.np.phase === p.id ? 'var(--brand-softer)' : 'var(--bg-elev)') + ';cursor:pointer;align-items:flex-start;height:100%;box-sizing:border-box;margin:0">' +
         '<input type="radio" name="phase" data-np-phase="' + p.id + '" ' + (STATE.np.phase === p.id ? 'checked' : '') + ' style="margin-top:2px;accent-color:var(--brand)"/>' +
-        '<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+        '<div class="flex-fill"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
         '<span class="b sm">' + esc(p.label) + '</span>' +
         (p.rec ? '<span class="badge b-brand">推荐</span>' : '') + '</div>' +
         '<ul class="mode-points">' + p.points.map(function (pt) { return '<li>' + esc(pt) + '</li>'; }).join('') + '</ul></div></label>';
@@ -2448,7 +2444,7 @@ function WorkflowMap(job) {
       ? sec('扫描模式') +
         '<label style="display:flex;gap:10px;padding:12px;border:1px solid var(--brand);border-radius:8px;background:var(--brand-softer);align-items:flex-start;margin:0">' +
         '<span style="flex-shrink:0;color:var(--brand);margin-top:2px">' + icon('check', 14) + '</span>' +
-        '<div style="flex:1;min-width:0"><div class="b sm" style="margin-bottom:6px">站点基线检测</div>' +
+        '<div class="flex-fill"><div class="b sm" style="margin-bottom:6px">站点基线检测</div>' +
         '<ul class="mode-points">' +
         '<li>内置非破坏性基线探测，A3S 参与裁决</li>' +
         '<li>覆盖 TLS / 响应头 / Cookie / CORS / 暴露路径</li>' +
@@ -2492,7 +2488,7 @@ function WorkflowMap(job) {
         (STATE.np.targetName
           ? '<div class="target-picked">' +
             '<span style="flex-shrink:0;color:var(--brand)">' + icon('file', 16) + '</span>' +
-            '<div style="flex:1;min-width:0"><div class="b xs" style="color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(STATE.np.targetName) + '</div>' +
+            '<div class="flex-fill"><div class="b xs" style="color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(STATE.np.targetName) + '</div>' +
             '<div class="muted xs" style="margin-top:2px">' + esc(STATE.np.targetKind) + (STATE.np.targetFiles > 1 ? ' · ' + STATE.np.targetFiles + ' 个文件' : '') + '</div></div>' +
             '<span class="badge b-ok">已就绪</span></div>'
           : '');
@@ -2505,7 +2501,7 @@ function WorkflowMap(job) {
       '<select class="select" data-np="target_id">' + '<option value="">新建对象（不关联已有档案）</option>' + POSTURE.targets.filter(function(t){ return catId === 'web' ? t.type.indexOf('Web') !== -1 : t.type.indexOf('Web') === -1; }).map(function(t){ return '<option value="' + esc(t.id) + '"' + (STATE.np.target_id === t.id ? ' selected' : '') + '>' + esc(t.name) + ' · ' + esc(t.identity) + '</option>'; }).join('') + '</select>' +
       '<div class="target-picked" id="np-rel-chip" style="' + (relTarget ? '' : 'display:none') + '">' +
       '<span style="flex-shrink:0;color:var(--brand)">' + icon('project', 16) + '</span>' +
-      '<div style="flex:1;min-width:0"><div class="b xs" style="color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(relTarget ? relTarget.name : '') + '</div>' +
+      '<div class="flex-fill"><div class="b xs" style="color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(relTarget ? relTarget.name : '') + '</div>' +
       '<div class="muted xs" style="margin-top:2px">' + esc(relTarget ? relTarget.identity : '') + '</div></div>' +
       '<span class="badge b-ok">已关联</span></div>' +
       '<div class="muted xs" style="margin-top:6px;line-height:1.7">选择已有对象后，本次扫描会归并到该对象的长期态势与漏洞生命周期。</div></div>';
