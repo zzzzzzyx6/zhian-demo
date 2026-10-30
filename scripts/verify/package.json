@@ -1,13 +1,19 @@
 {
   "name": "zhian-demo-verify",
   "private": true,
-  "description": "回归比对工具的唯一开发依赖；不影响 index.html 的构建与使用。",
+  "description": "源码、样式及页面回归检查；所有依赖仅用于开发，不影响离线 demo。",
   "scripts": {
     "fingerprint": "node fingerprint.js",
-    "baseline": "node fingerprint.js --dump baseline.json",
-    "check": "node fingerprint.js --against baseline.json"
+    "baseline": "node fingerprint.js --dump current-baseline.local.json",
+    "check": "node check.js",
+    "compare": "node fingerprint.js --against baseline.json",
+    "format": "prettier --write ../../src/modules ../../src/boot.js ../../src/styles *.js",
+    "format:check": "prettier --check ../../src/modules ../../src/boot.js ../../src/styles *.js"
   },
   "devDependencies": {
-    "jsdom": "^24.1.0"
+    "acorn": "8.15.0",
+    "jsdom": "^24.1.0",
+    "postcss": "8.5.6",
+    "prettier": "3.6.2"
   }
 }

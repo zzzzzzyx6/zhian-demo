@@ -22,15 +22,15 @@
 ### 字体
 | Token | 栈 | 用途 |
 |---|---|---|
-| 无 token，统一栈 | `-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif` | 全部正文/按钮/标题 |
-| 无 token，统一栈 | `ui-monospace,SFMono-Regular,Menlo,Consolas,monospace` | 日志/代码/ID/严重度标签 |
+| `--font-sans` | `-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif` | 全部正文/按钮/标题 |
+| `--font-mono` | `ui-monospace,SFMono-Regular,Menlo,Consolas,monospace` | 日志/代码/ID/严重度标签 |
 
 - **禁止**引入新字体栈。Inter / IBM Plex / Bahnschrift / DIN 系列已全量清除，一律不得再写。
-- 全局只剩两条栈：平台正文栈、系统等宽栈（`ui-monospace,SFMono-Regular,Menlo,Consolas,monospace`）。
+- CSS 内需要指定字体时只写 `var(--font-sans)` / `var(--font-mono)`；导出报告等独立文档 `<style>` 无法引用变量，写同名字面量。
 
 ### 排版阶梯（唯一，--type-* / --weight-* / --lh-*）
 
-**字号**（全平台仅此 9 档 + 数字 4 档，CSS 内字面量字号已归零）
+**字号**（全平台仅此 9 档 + 数字 4 档；新写 CSS 一律引用 token，存量字面量字号逐步替换）
 
 | Token | 值 | 角色 |
 |---|---|---|
@@ -117,9 +117,9 @@ primary = `--primary` 底白字；danger = 透明底 critical 色字。
 | `D.emptyRow(colspan,text)` | 表格行内空态（td.empty） | ✅ 已建（新代码强制，存量渐进接入） |
 | `D.toolbar()` | 筛选栏 | 待建（R2） |
 | `D.card(title,body,actions)` | 卡片（card-head/card-body 结构） | ✅ 已建（存量渐进接入） |
-| `P.sideShell(title,nav)` | 侧边栏外壳 | ✅ 唯一外壳 |
+| `P.sideShell(title,nav)` | 侧边栏外壳（标题 + 折叠按钮 + 导航 + 页脚） | ✅ 唯一外壳；折叠状态 `A.data.ui.sidebarCollapsed`，入口 `P.toggleSidebar` |
 
-### 图表语义色板（单套，权威定义在 core.js `D`）
+### 图表语义色板（单套，权威定义在 core/data-display.js `D`）
 | 语义 | 值 | 说明 |
 |---|---|---|
 | `D.colors` | blue `#4779b5` · teal `#348875` · amber `#d59a38` · red `#c45568` · gray `#a6b2c1` · violet `#6d70b2` · slate `#95a5c3` | 基础七色 |
@@ -134,8 +134,8 @@ primary = `--primary` 底白字；danger = 透明底 critical 色字。
 `.flex`（flex+居中+gap10）· `.flip-y`（180° 翻转）· `.minw0` · `.flex-fill`（flex:1+min-width:0）· `.pre-any`（pre-wrap+anywhere）。高频静态内联 style 必须替换为工具类；一次性定位微调（margin-top 等）允许内联。
 
 ### 字体栈（唯一）
-- 正文/标题：`-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif`（body 继承，禁止另设 font-family）
-- 等宽：`ui-monospace,SFMono-Regular,Menlo,Consolas,monospace`（`.mono` / code-block / 报告正文）
+- 正文/标题：`-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif`（即 `--font-sans`，body 继承，禁止另设 font-family）
+- 等宽：`ui-monospace,SFMono-Regular,Menlo,Consolas,monospace`（`.mono` / code-block / 报告正文），即 `--font-mono`
 - 已清除：Inter、IBM Plex、Bahnschrift/DIN、独立 "Segoe UI" 等旁支字体栈。
 
 ### 筛选栏
@@ -149,7 +149,7 @@ primary = `--primary` 底白字；danger = 透明底 critical 色字。
 - `D.ring/D.legend/D.facts/D.progress` 用于统计可视化，勿重复实现。
 
 ### 样式归属
-- 页面样式一律进 `app.css`（如 attack-module 段，已从 exercise.js 迁出）；模块 JS 内仅允许：①导出报告的独立文档 `<style>`（下载文件需自带样式）②`${...\}` 动态插值。
+- 页面样式一律进 `app.css`（如 attack-module 段，已从 exercise/attack.js 迁出）；模块 JS 内仅允许：①导出报告的独立文档 `<style>`（下载文件需自带样式）②`${...\}` 动态插值。
 
 ## 4. 数据层准入
 `src/data/` 只收**字面量快照**（机器生成/外部导入、可整体替换、零逻辑）；依赖模块逻辑的程序化种子写在所属模块 `init` 内。

@@ -1,0 +1,6 @@
+src/data/
+src/vendor/
+scripts/verify/node_modules/
+.pnpm-store/
+scripts/verify/*.local.json
+scripts/verify/baseline.json

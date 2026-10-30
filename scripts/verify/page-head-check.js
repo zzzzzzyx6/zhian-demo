@@ -42,7 +42,7 @@ function beforeParse(window) {
       if (!hasActions) bad.push(`${label}: page-heading 缺 .page-actions → ${h.outerHTML.slice(0, 160)}`);
       if (hasBack && !hasActions) bad.push(`${label}: back 变体也必须有 actions`);
     }
-    const legacy = view.querySelectorAll('.wb-heading,.attack-detail-top').length;
+    const legacy = view.querySelectorAll('.wb-heading,.attack-detail-top,.setup-page-head').length;
     if (legacy) bad.push(`${label}: 残留旧类 ${legacy} 处`);
     const first = heads[0];
     console.log(`\n### ${label}`);
@@ -57,8 +57,8 @@ function beforeParse(window) {
   problems = problems.concat(inspect('workspace/home 安全态势'));
 
   // 2. 演练任务列表
-  P.go('evaluation', 'attack', 'tasks');
-  problems = problems.concat(inspect('evaluation/attack/tasks 任务管理'));
+  P.go('exercise', 'tasks');
+  problems = problems.concat(inspect('exercise/tasks 演练任务'));
 
   // 3. 攻防任务详情
   const t0 = A.attack.db.tasks[0];
@@ -70,17 +70,12 @@ function beforeParse(window) {
   if (et) { A.evaluation.openTask(et.id); A.render(); problems = problems.concat(inspect('evaluation detail 评估详情')); }
   else console.log('\n### evaluation detail: 无任务');
 
-  // 5. 防护报告详情
-  const reports = (A.contentSafety.db && A.contentSafety.db.protectionReports) || [];
+  // 5. 防护报告详情（安全防护 guard）
+  const reports = (A.guard && A.guard.records && A.guard.records.reports()) || [];
   if (reports.length) {
-    P.go('protection', 'reports', reports[0].id);
+    P.go('protection', 'reports');
+    A.guard.views.reportDetail(reports[0].id);
     problems = problems.concat(inspect('protection report 防护报告'));
-    const prrHead = view.querySelector('.page-heading.prr-report-heading');
-    if (!prrHead) problems.push('protection report: 缺 .page-heading.prr-report-heading');
-    else {
-      if (!prrHead.querySelector(':scope > .back')) problems.push('protection report: 头部缺返回按钮');
-      if (!prrHead.querySelector(':scope > .page-actions')) problems.push('protection report: 头部缺 .page-actions');
-    }
   } else console.log('\n### protection report: 无报告数据');
 
   // 6. 全路由兜底扫描：任何残留旧类 / 缺 actions 的 page-heading

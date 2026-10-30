@@ -1,44 +1,48 @@
 # -*- coding: utf-8 -*-
-"""统计各模块文件里登记的代码段：数量、体积、以及方法被覆盖的次数（补丁链深度）。"""
-import os, re, json
+"""静态检查入口、代码段登记和启动表；不执行产品代码，无第三方依赖。"""
+from pathlib import Path
+from collections import Counter
+import re
+import sys
 
-ROOT = r'C:\Users\huangchenghao\Desktop\zhian-demo\src'
-files = sorted(os.path.join(dp, f) for dp, dn, fn in os.walk(ROOT) for f in fn if f.endswith('.js'))
+ROOT = Path(__file__).resolve().parents[2]
+PART = re.compile(r"AppParts\[['\"]([^'\"]+)['\"]\]\s*=")
 
-print('=== 代码段分布 ===')
-seg_total = 0
-for p in files:
-    if 'vendor' in p or p.endswith('boot.js'):
-        continue
-    t = open(p, encoding='utf-8').read()
-    segs = list(re.finditer(r'AppParts\[[\'"]([^\'"]+)[\'"]\]\s*=', t))
-    if not segs:
-        continue
-    seg_total += len(segs)
-    print('\n%s  (%d KB, %d 段)' % (os.path.relpath(p, ROOT).replace('\\', '/'), os.path.getsize(p) // 1024, len(segs)))
-    rows = []
-    for i, m in enumerate(segs):
-        end = segs[i + 1].start() if i + 1 < len(segs) else len(t)
-        rows.append((end - m.start(), m.group(1)))
-    for size, name in sorted(rows, reverse=True)[:6]:
-        print('   %7d B  %s' % (size, name))
-    if len(rows) > 6:
-        print('   …其余 %d 段，合计 %d B' % (len(rows) - 6, sum(s for s, _ in sorted(rows)[:-6])))
-print('\n代码段合计', seg_total)
 
-print('\n=== 同名方法被重复定义最多的（补丁链） ===')
-counts = {}
-for p in files:
-    if 'vendor' in p:
-        continue
-    t = open(p, encoding='utf-8').read()
-    for m in re.finditer(r'\b([A-Za-z_$][\w$]*)\.([A-Za-z_]\w*)\s*=(?![=>])', t):
-        ns, prop = m.group(1), m.group(2)
-        if ns in ('AppParts', 'window', 'const', 'let', 'var'):
-            continue
-        if prop in ('onclick', 'innerHTML', 'value', 'style', 'className', 'textContent', 'dataset'):
-            continue
-        counts.setdefault(prop, []).append(os.path.basename(p))
-top = sorted(counts.items(), key=lambda kv: -len(kv[1]))[:22]
-for prop, fs in top:
-    print('  %-24s %2d 次  %s' % (prop, len(fs), ', '.join(sorted(set(fs)))))
+def main():
+    html = (ROOT / 'index.html').read_text(encoding='utf-8-sig')
+    refs = re.findall(r'(?:src|href)="([^"]+)"', html)
+    local = [r for r in refs if not re.match(r'(?:https?:|data:|#|mailto:)', r)]
+    problems = [f'入口引用不存在：{r}' for r in local if not (ROOT / r).is_file()]
+    registered = []
+    print('模块文件 / KiB / 代码段数')
+    for path in sorted((ROOT / 'src/modules').rglob('*.js')):
+        parts = PART.findall(path.read_text(encoding='utf-8-sig'))
+        rel = path.relative_to(ROOT).as_posix()
+        print(f'{rel}: {path.stat().st_size / 1024:.1f} / {len(parts)}')
+        if rel not in local:
+            problems.append(f'模块未由入口加载：{rel}')
+        expected = path.relative_to(ROOT / 'src/modules').with_suffix('').as_posix()
+        if parts != [expected]:
+            problems.append(f'模块应只登记与文件路径一致的代码段：{rel}')
+        registered.extend(parts)
+    boot = (ROOT / 'src/boot.js').read_text(encoding='utf-8-sig')
+    order = re.findall(r"^\s*'([^']+)',", boot, re.M)
+    for label, names in [('登记', registered), ('启动', order)]:
+        for name, count in Counter(names).items():
+            if count > 1:
+                problems.append(f'{label}重复：{name}（{count} 次）')
+    for name in sorted(set(order) - set(registered)):
+        problems.append(f'启动段不存在：{name}')
+    print(f'\n登记 {len(registered)} 段，启动 {len(order)} 段')
+    for name in sorted(set(registered) - set(order)):
+        problems.append(f'代码段未进入启动表：{name}')
+    print('\n本工具只检查登记与引用，不推断死代码或方法覆盖链深度。')
+    for problem in problems:
+        print('错误：' + problem)
+    print(f'结构检查：{len(problems)} 个错误')
+    return bool(problems)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

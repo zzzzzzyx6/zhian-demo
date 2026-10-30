@@ -7,47 +7,22 @@
 // 目录重组、补丁调整这类"不该改变呈现"的改动，用 --against 证明零差异。
 // 依赖 jsdom（唯一开发依赖）：cd scripts/verify && npm install
 const { JSDOM, VirtualConsole } = require('jsdom');
-const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const util = require('util');
 
 // 固定时间与随机数，否则生成的 id（如 risk-event-xxx）会让指纹每次都变。
-const FIXED_TIME = Date.UTC(2026, 9, 26, 10, 0, 0);
-const ROOT = path.resolve(__dirname, '..', '..');
-const FILE = path.join(ROOT, 'index.html');
-const URL_ = 'file:///' + FILE.replace(/\\/g, '/');
+const { FILE, URL_, beforeParse, routes: routeList } = require('./environment');
 
-function beforeParse(window) {
-  const RealDate = window.Date;
-  class FixedDate extends RealDate {
-    constructor(...args) { if (args.length === 0) super(FIXED_TIME); else super(...args); }
-    static now() { return FIXED_TIME; }
-  }
-  window.Date = FixedDate;
-  let seed = 42;
-  window.Math.random = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
-  // jsdom 在 file:// 下按规范拒绝 replaceState；浏览器接受，这里吞掉差异。
-  const hist = window.history;
-  // jsdom 在 file:// 下会拒绝 replaceState，而 location.hash 因此永不更新；
-  // 记下「本想要写的地址」，用它判断路由是否算得对。
-  window.__routes = [];
-  window.history.replaceState = function (...a) {
-    try { hist.replaceState.apply(hist, a); } catch (e) {}
-    window.__routes.push(String(a[2] || ''));
-  };
-  // 浏览器自带 TextEncoder/TextDecoder，jsdom 24 的 window 上没有（存储编码用得到）。
-  for (const name of ['TextEncoder', 'TextDecoder']) {
-    if (!window[name]) window[name] = util[name];
-  }
-}
-
-const norm = (h) => h.replace(/risk-event-[a-z0-9]+/g, 'ID').replace(/\s+/g, ' ').trim();
+const norm = (h) =>
+  h
+    .replace(/risk-event-[a-z0-9]+/g, 'ID')
+    .replace(/\s+/g, ' ')
+    .trim();
 const sha = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
 
 (async () => {
   if (!fs.existsSync(FILE)) {
-    console.error('找不到 index.html，先跑 python scripts/build.py');
+    console.error('找不到项目入口 index.html，请在完整项目中运行校验工具');
     process.exit(2);
   }
   const errs = [];
@@ -55,15 +30,24 @@ const sha = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12
   vc.on('jsdomError', (e) => errs.push((e.detail && e.detail.message) || e.message));
 
   const dom = await JSDOM.fromFile(FILE, {
-    runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true,
-    url: URL_, beforeParse, virtualConsole: vc,
+    runScripts: 'dangerously',
+    resources: 'usable',
+    pretendToBeVisual: true,
+    url: URL_,
+    beforeParse,
+    virtualConsole: vc,
   });
   const w = dom.window;
   await new Promise((r) => w.addEventListener('load', r));
   await new Promise((r) => setTimeout(r, 1200));
 
-  const A = w.App, doc = w.document, P = A.platform;
-  const grab = (sel) => { const el = doc.querySelector(sel); return el ? norm(el.innerHTML) : 'MISSING'; };
+  const A = w.App,
+    doc = w.document,
+    P = A.platform;
+  const grab = (sel) => {
+    const el = doc.querySelector(sel);
+    return el ? norm(el.innerHTML) : 'MISSING';
+  };
 
   const shot = {
     page: A.page,
@@ -74,20 +58,15 @@ const sha = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12
     chrome: {},
   };
 
-  const routes = [];
-  for (const [section] of P.sections) {
-    const m = P.menus[section] || [];
-    if (m.length) m.forEach(([item]) => routes.push([section, item]));
-    else routes.push([section, 'home']);
-  }
-  // 二级 tab 不在 menus 里，单独补上，否则这些页面测不到。
-  for (const r of [['evaluation', 'scan', 'code-scan'], ['evaluation', 'scan', 'app-scan'], ['evaluation', 'scan', 'web-scan'],
-    ['evaluation', 'attack', 'tasks'], ['evaluation', 'reports', 'compare'], ['policy', 'policies', 'strategies'],
-    ['policy', 'policies', 'methods'], ['policy', 'policies', 'content']]) routes.push(r);
-
+  const routes = routeList(P);
   for (const r of routes) {
     w.__routes.length = 0;
-    try { P.go(...r); } catch (e) { shot.routes[r.join('/')] = 'THREW ' + e.message; continue; }
+    try {
+      P.go(...r);
+    } catch (e) {
+      shot.routes[r.join('/')] = 'THREW ' + e.message;
+      continue;
+    }
     shot.routes[r.join('/')] = grab('#view');
     // 顶部导航、侧边栏、标题与地址都是按路由变化的通用外壳，必须逐路由比对，
     // 否则只看到首屏那一次渲染，导航改写出错也发现不了。
@@ -103,9 +82,19 @@ const sha = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12
   const args = process.argv.slice(2);
   const dumpAt = args.indexOf('--dump');
   const againstAt = args.indexOf('--against');
-  const errors = errs.filter((e) => !/getContext|scrollTo/.test(e));
+  // getContext/scrollTo：jsdom 不实现的视觉 API。Could not parse CSS stylesheet：
+  // jsdom 的 CSS 解析器对导出模板里的内联 <style> 报的噪声，不影响路由 DOM 比对。
+  const errors = errs.filter((e) => !/getContext|scrollTo|Could not parse CSS stylesheet/.test(e));
+  for (const [route, html] of Object.entries(shot.routes)) {
+    if (html === 'MISSING' || html.startsWith('THREW ')) errors.push(route + ': ' + html);
+  }
 
   if (dumpAt >= 0) {
+    if (errors.length) {
+      console.error('基线未写入：页面存在运行期错误或路由未正常渲染');
+      errors.forEach((e) => console.error('  ! ' + e));
+      process.exit(1);
+    }
     fs.writeFileSync(args[dumpAt + 1], JSON.stringify(shot, null, 1), 'utf-8');
     console.log(`已导出基线：${args[dumpAt + 1]}（路由 ${Object.keys(shot.routes).length} 条）`);
     process.exit(0);
@@ -115,7 +104,8 @@ const sha = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12
     const base = JSON.parse(fs.readFileSync(args[againstAt + 1], 'utf-8'));
     const keys = new Set([...Object.keys(base.routes), ...Object.keys(shot.routes)]);
     const diffs = [...keys].filter((k) => base.routes[k] !== shot.routes[k]);
-    const baseChrome = base.chrome || {}, shotChrome = shot.chrome || {};
+    const baseChrome = base.chrome || {},
+      shotChrome = shot.chrome || {};
     for (const k of new Set([...Object.keys(baseChrome), ...Object.keys(shotChrome)])) {
       for (const part of ['header', 'sidebar', 'hash', 'title']) {
         if ((baseChrome[k] || {})[part] !== (shotChrome[k] || {})[part]) diffs.push(k + ' ' + part);
@@ -126,7 +116,10 @@ const sha = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12
     }
     console.log(`路由 ${keys.size} 条，差异 ${diffs.length} 处`);
     for (const k of diffs) console.log('  ✗ ' + k);
-    if (errors.length) { console.log('运行期错误：'); errors.forEach((e) => console.log('  ! ' + e)); }
+    if (errors.length) {
+      console.log('运行期错误：');
+      errors.forEach((e) => console.log('  ! ' + e));
+    }
     process.exit(diffs.length || errors.length ? 1 : 0);
   }
 
@@ -137,4 +130,7 @@ const sha = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12
   console.log(`\n共 ${Object.keys(shot.routes).length} 条路由；运行期错误 ${errors.length} 条`);
   errors.forEach((e) => console.log('  ! ' + e));
   process.exit(errors.length ? 1 : 0);
-})().catch((e) => { console.error('工具本身出错：', e); process.exit(2); });
+})().catch((e) => {
+  console.error('工具本身出错：', e);
+  process.exit(2);
+});

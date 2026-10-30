@@ -1,5 +1,4 @@
 // 烘焙数据：由在线控制台 localhost:8765 的真实接口快照生成，供静态 demo 使用。
-// 准入标准：仅收「字面量快照」（整体替换、零逻辑）；程序化种子写在所属模块 init 内。
 // 与后端完全解耦，所有页面只读这份数据。
 window.DEMO_DATA = {
   "generatedAt": "2026-09-17T07:14:23.371Z",
@@ -12,7 +11,7 @@ window.DEMO_DATA = {
       "created_at": 1792640000.0,
       "phase": "full",
       "phase_label": "本地候选 + A3S 确认",
-      "target_type": "源码目录",
+      "target_type": "代码目录",
       "target": "C:\\workspace\\payment-gateway\\main",
       "model_config": "",
       "status": "running",
@@ -40,7 +39,7 @@ window.DEMO_DATA = {
       "created_at": 1789379411.7825096,
       "phase": "detect",
       "phase_label": "本地候选 + A3S 确认",
-      "target_type": "源码目录",
+      "target_type": "代码目录",
       "target": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_174732_2c360f\\src",
       "model_config": "",
       "status": "succeeded",
@@ -1154,7 +1153,7 @@ window.DEMO_DATA = {
       "created_at": 1789378863.7815218,
       "phase": "detect",
       "phase_label": "本地候选 + A3S 确认",
-      "target_type": "源码目录",
+      "target_type": "代码目录",
       "target": "C:\\Users\\huangchenghao\\Downloads\\InternShannon-Vulnerability-Detect-dev-pub\\InternShannon-Vulnerability-Detect-dev-pub\\uploads\\20260914_173107_f48600\\src",
       "model_config": "",
       "status": "succeeded",
@@ -9195,7 +9194,7 @@ window.DEMO_DATA = {
         {
           "t": "stage",
           "lvl": "info",
-          "msg": "目标画像智能体输出 - 软件身份：{'name': '20260914_174732_2c360f', 'version': '未知', 'version_evidence': [], 'confidence': 0.4}；软件类型：源码目录"
+          "msg": "目标画像智能体输出 - 软件身份：{'name': '20260914_174732_2c360f', 'version': '未知', 'version_evidence': [], 'confidence': 0.4}；软件类型：代码目录"
         },
         {
           "t": "stage",
@@ -9215,7 +9214,7 @@ window.DEMO_DATA = {
         {
           "t": "stage",
           "lvl": "info",
-          "msg": "环境建立智能体启动 - 目标：建立最小可复现、可观测、可清理的验证环境，并准备可复用的测试输入驱动。；边界：不发现漏洞、不验证漏洞、不执行 fuzz 发现、不修改业务源码；只规划和脚本化后续测试/fuzz 输入。"
+          "msg": "环境建立智能体启动 - 目标：建立最小可复现、可观测、可清理的验证环境，并准备可复用的测试输入驱动。；边界：不发现漏洞、不验证漏洞、不执行 fuzz 发现、不修改业务代码；只规划和脚本化后续测试/fuzz 输入。"
         },
         {
           "t": "",
@@ -9725,7 +9724,7 @@ window.DEMO_DATA = {
         {
           "t": "stage",
           "lvl": "info",
-          "msg": "目标画像智能体输出 - 软件身份：{'name': '20260914_173107_f48600', 'version': '未知', 'version_evidence': [], 'confidence': 0.4}；软件类型：源码目录"
+          "msg": "目标画像智能体输出 - 软件身份：{'name': '20260914_173107_f48600', 'version': '未知', 'version_evidence': [], 'confidence': 0.4}；软件类型：代码目录"
         },
         {
           "t": "stage",
@@ -9745,7 +9744,7 @@ window.DEMO_DATA = {
         {
           "t": "stage",
           "lvl": "info",
-          "msg": "环境建立智能体启动 - 目标：建立最小可复现、可观测、可清理的验证环境，并准备可复用的测试输入驱动。；边界：不发现漏洞、不验证漏洞、不执行 fuzz 发现、不修改业务源码；只规划和脚本化后续测试/fuzz 输入。"
+          "msg": "环境建立智能体启动 - 目标：建立最小可复现、可观测、可清理的验证环境，并准备可复用的测试输入驱动。；边界：不发现漏洞、不验证漏洞、不执行 fuzz 发现、不修改业务代码；只规划和脚本化后续测试/fuzz 输入。"
         },
         {
           "t": "",

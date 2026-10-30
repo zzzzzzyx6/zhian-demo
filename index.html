@@ -1,29 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#fafbfc">
-<title>智安 · AI 安全平台</title>
-<link rel="stylesheet" href="src/styles/app.css">
-<link rel="stylesheet" href="src/styles/scan-app.css">
-</head>
-<body>
-<div id="app" class="app-shell"><header id="platform-header"></header><aside id="center-sidebar" class="center-sidebar" aria-label="当前栏目导航"></aside>
-<button type="button" class="demo-reset" onclick="App.confirmResetDemo()" aria-label="恢复初始数据"><svg class="icon" width="15" height="15" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.4-6.4L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.4 6.4L3 16M3 21v-5h5"/></svg>恢复初始数据</button>
-<div class="main-shell">
-<main id="view" class="main-content"></main></div></div>
-<div id="modal" class="overlay" onclick="if(event.target===this)App.closeModal()"></div><div id="drawer" class="overlay drawer-overlay" onclick="if(event.target===this)App.closeDrawer()"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
-<script src="src/data/datasets.js"></script>
-<script src="src/data/scan-data.js"></script>
-<script src="src/vendor/range-engine.js"></script>
-<script src="src/modules/core.js"></script>
-<script src="src/modules/exercise.js"></script>
-<script src="src/modules/policy.js"></script>
-<script src="src/modules/evaluation.js"></script>
-<script src="src/modules/protection.js"></script>
-<script src="src/modules/scan.js"></script>
-<script src="src/modules/assets.js"></script>
-<script src="src/modules/dashboard.js"></script>
-<script src="src/boot.js"></script>
-</body></html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#fafbfc" />
+    <title>智安 · AI 安全平台</title>
+    <link rel="stylesheet" href="src/styles/app.css" />
+    <link rel="stylesheet" href="src/styles/scan-app.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell"
+      ><header id="platform-header"></header
+      ><aside id="center-sidebar" class="center-sidebar" aria-label="当前栏目导航"></aside>
+      <button
+        type="button"
+        id="sidebar-reveal"
+        class="sidebar-reveal"
+        aria-label="展开侧边栏"
+        title="展开侧边栏"
+        onclick="App.platform.toggleSidebar()"
+        ><svg class="icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6l6 6-6 6" /></svg
+        ></button>
+      <button
+        type="button"
+        class="demo-reset"
+        onclick="App.confirmResetDemo()"
+        aria-label="恢复初始数据"
+        ><svg class="icon" width="15" height="15" viewBox="0 0 24 24">
+          <path
+            d="M3 12a9 9 0 0 1 15.4-6.4L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.4 6.4L3 16M3 21v-5h5"
+          /></svg
+        >恢复初始数据</button
+      >
+      <div class="main-shell"> <main id="view" class="main-content"></main></div
+    ></div>
+    <div id="modal" class="overlay" onclick="if(event.target===this)App.closeModal()"></div
+    ><div
+      id="drawer"
+      class="overlay drawer-overlay"
+      onclick="if(event.target===this)App.closeDrawer()"
+    ></div
+    ><div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="src/data/datasets.js"></script>
+    <script src="src/data/scan-data.js"></script>
+    <script src="src/vendor/range-engine.js"></script>
+    <script src="src/modules/core/core.js"></script>
+    <script src="src/modules/core/storage-codec.js"></script>
+    <script src="src/modules/core/platform-render.js"></script>
+    <script src="src/modules/core/ui-copy.js"></script>
+    <script src="src/modules/core/platform-shell.js"></script>
+    <script src="src/modules/core/data-display.js"></script>
+    <script src="src/modules/core/platform-notifications.js"></script>
+    <script src="src/modules/core/entry-management.js"></script>
+    <script src="src/modules/core/structured-lists.js"></script>
+    <script src="src/modules/core/interaction-stability.js"></script>
+    <script src="src/modules/core/list-presentation.js"></script>
+    <script src="src/modules/core/list-consistency.js"></script>
+    <script src="src/modules/core/finish.js"></script>
+    <script src="src/modules/core/startup.js"></script>
+    <script src="src/modules/exercise/attack.js"></script>
+    <script src="src/modules/exercise/attack-setup.js"></script>
+    <script src="src/modules/exercise/banks.js"></script>
+    <script src="src/modules/exercise/attack-arena.js"></script>
+    <script src="src/modules/exercise/blue-strategy.js"></script>
+    <script src="src/modules/exercise/attack-ia.js"></script>
+    <script src="src/modules/exercise/bank-builder.js"></script>
+    <script src="src/modules/exercise/experience-refinement.js"></script>
+    <script src="src/modules/exercise/task-design-refinement.js"></script>
+    <script src="src/modules/exercise/workflow-coordination.js"></script>
+    <script src="src/modules/exercise/scene-tags.js"></script>
+    <script src="src/modules/exercise/report-insights.js"></script>
+    <script src="src/modules/exercise/model-access-guard.js"></script>
+    <script src="src/modules/exercise/model-series.js"></script>
+    <script src="src/modules/exercise/input-guard.js"></script>
+    <script src="src/modules/exercise/asset-navigation.js"></script>
+    <script src="src/modules/exercise/demo-presentation.js"></script>
+    <script src="src/modules/exercise/range-integration.js"></script>
+    <script src="src/modules/exercise/exercise-fixtures.js"></script>
+    <script src="src/modules/exercise/task-review-refinement.js"></script>
+    <script src="src/modules/exercise/exercise-product-refinement.js"></script>
+    <script src="src/modules/exercise/exercise-results.js"></script>
+    <script src="src/modules/policy/method-params-unify.js"></script>
+    <script src="src/modules/policy/attack-method-catalogue.js"></script>
+    <script src="src/modules/policy/attack-policies.js"></script>
+    <script src="src/modules/policy/strategy-workspace.js"></script>
+    <script src="src/modules/policy/model-role-management.js"></script>
+    <script src="src/modules/policy/policy-usability.js"></script>
+    <script src="src/modules/policy/model-capabilities.js"></script>
+    <script src="src/modules/policy/openrt-judge.js"></script>
+    <script src="src/modules/policy/openrt-methods.js"></script>
+    <script src="src/modules/policy/policy-selection.js"></script>
+    <script src="src/modules/policy/review-polish.js"></script>
+    <script src="src/modules/evaluation/task-report-templates.js"></script>
+    <script src="src/modules/evaluation/evaluation-center.js"></script>
+    <script src="src/modules/evaluation/evaluation-records.js"></script>
+    <script src="src/modules/evaluation/assessment-integration.js"></script>
+    <script src="src/modules/evaluation/report-layout.js"></script>
+    <script src="src/modules/evaluation/report-eligibility.js"></script>
+    <script src="src/modules/evaluation/evaluation-overview.js"></script>
+    <script src="src/modules/evaluation/report-api-refinement.js"></script>
+    <script src="src/modules/evaluation/october-refinement.js"></script>
+    <script src="src/modules/evaluation/evaluation-datasets.js"></script>
+    <script src="src/modules/guard/guard.js"></script>
+    <script src="src/modules/guard/guard-policy-views.js"></script>
+    <script src="src/modules/guard/guard-ops-views.js"></script>
+    <script src="src/modules/scan/scan-product.js"></script>
+    <script src="src/modules/scan/asset-intake.js"></script>
+    <script src="src/modules/scan/review24.js"></script>
+    <script src="src/modules/scan/scanner-app.js"></script>
+    <script src="src/modules/assets/platform-governance.js"></script>
+    <script src="src/modules/assets/application-assets.js"></script>
+    <script src="src/modules/assets/lean-data.js"></script>
+    <script src="src/modules/assets/lean-assets.js"></script>
+    <script src="src/modules/assets/lean-operations.js"></script>
+    <script src="src/modules/assets/lean-platform.js"></script>
+    <script src="src/modules/assets/risk-demo.js"></script>
+    <script src="src/modules/assets/model-intake-refinement.js"></script>
+    <script src="src/modules/assets/risk-classification.js"></script>
+    <script src="src/modules/assets/risk-tags.js"></script>
+    <script src="src/modules/dashboard/platform-overview.js"></script>
+    <script src="src/modules/dashboard/dashboard-cases.js"></script>
+    <script src="src/modules/dashboard/dashboard-workbench.js"></script>
+    <script src="src/modules/dashboard/dashboard-b.js"></script>
+    <script src="src/boot.js"></script> </body
+></html>
