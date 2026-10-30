@@ -229,9 +229,9 @@ P.sync=function(){
 P.restoreRoute=function(){const p=location.hash.slice(1).split('/').map(v=>{try{return decodeURIComponent(v);}catch(e){return v;}});if(p[0]==='attack')P.selectState('evaluation','attack','arena');else if(!p[0])P.selectState('workspace','home');else if(!P.selectState(p[0],p[1]||'home',p[2],p[3]))P.selectState('workspace','home');};
 P.empty=title=>A.heading('',title,'')+'<section class="platform-empty card"><div class="platform-empty-symbol">'+I('layers',32)+'</div><p>暂无内容</p></section>';
 P.header=function(){return '<button class="platform-brand" onclick="App.platform.go(\'workspace\',\'home\')" aria-label="AI安全平台安全态势"><strong>AI安全平台</strong></button><nav class="platform-top-nav" aria-label="平台主导航">'+sections.filter(([id])=>id!=='management').map(([id,label])=>'<button class="'+(P.state.section===id?'active':'')+'" onclick="App.platform.go(\''+id+'\')">'+label+'</button>').join('')+'</nav><div class="platform-header-actions"><button class="platform-icon-button" aria-label="平台设置" title="平台设置" onclick="App.platform.go(\'management\',\'model-roles\')">'+I('settings',20)+'</button>'+(A.platformNotifications?.buttonHTML()||'<button class="platform-icon-button" aria-label="消息通知" onclick="App.platformNotifications.open()">'+I('bell',20)+'</button>')+'<button class="platform-account" aria-label="账号与退出登录" title="账号与退出登录" onclick="App.account()"><span class="avatar">'+I('user',17)+'</span><span class="account-name">'+E(A.session?.user||'安全管理员')+'</span></button></div>';};
-// 侧边栏共享外壳：标题 + 导航 + 页脚。各中心的侧边栏只提供菜单项，不再各自拼装外壳。
+// 侧边栏共享外壳：标题 + 导航。平台名由顶部 header 的 platform-brand 承载，侧边栏不再重复。
 P.sideShell=function(title,nav){
- return '<div class="platform-side-title"><strong>'+title+'</strong></div><nav id="center-navigation" aria-label="'+title+'侧边栏">'+nav+'</nav><div class="platform-side-footer"><span>AI 安全平台</span></div>';
+ return '<div class="platform-side-title"><strong>'+title+'</strong></div><nav id="center-navigation" aria-label="'+title+'侧边栏">'+nav+'</nav>';
 };
 P.sidebar=function(){
  const section=P.state.section;if(['workspace','risk'].includes(section))return '';const def=sections.find(s=>s[0]===section);

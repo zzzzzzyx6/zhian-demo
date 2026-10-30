@@ -330,7 +330,7 @@ H.openDefenseResources=function(){
 };
 H.render=function(){
  const s=H.snapshot();
- return `<div class="platform-dashboard ph-workbench"><header class="wb-heading"><div><h1>安全态势</h1></div><div>${button('恢复初始数据','App.resetDemo()','wb-reset')}</div></header>${H.homeResources(s)}${H.homeFollowup(s)}<div class="wb-main-grid">${H.homeEvaluation(s)}${H.homeProtection(s)}</div></div>`;
+ return `<div class="platform-dashboard ph-workbench"><div class="page-heading"><div><h1>安全态势</h1></div><div class="page-actions">${button('恢复初始数据','App.resetDemo()','wb-reset')}</div></div>${H.homeResources(s)}${H.homeFollowup(s)}<div class="wb-main-grid">${H.homeEvaluation(s)}${H.homeProtection(s)}</div></div>`;
 };
 })();
 };

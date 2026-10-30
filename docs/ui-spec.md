@@ -25,11 +25,34 @@
 | 无 token，统一栈 | `-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif` | 全部正文/按钮/标题 |
 | 无 token，统一栈 | `ui-monospace,SFMono-Regular,Menlo,Consolas,monospace` | 日志/代码/ID/严重度标签 |
 
-- **禁止**引入新字体栈。Inter / IBM Plex 系列未加载字体文件，一律不得再写。
-- `Bahnschrift/DIN Alternate`（数字大字）保留：系统字体、零成本、数字表现力。
+- **禁止**引入新字体栈。Inter / IBM Plex / Bahnschrift / DIN 系列已全量清除，一律不得再写。
+- 全局只剩两条栈：平台正文栈、系统等宽栈（`ui-monospace,SFMono-Regular,Menlo,Consolas,monospace`）。
 
-### 字号阶梯（--type-*）
-`--type-page:24px` 页面主标题 · `--type-module:18px` 模块标题 · `--type-section:15px` 区块标题 · `--type-nav:14px` 导航/按钮 · `--type-body:13px` 正文 · `--type-support:12px` 辅助
+### 排版阶梯（唯一，--type-* / --weight-* / --lh-*）
+
+**字号**（全平台仅此 9 档 + 数字 4 档，CSS 内字面量字号已归零）
+
+| Token | 值 | 角色 |
+|---|---|---|
+| `--type-page` | 24px | 页面主标题（h1 / .page-heading h1） |
+| `--type-module` | 18px | 模块/区块标题（h2） |
+| `--type-block` | 16px | 卡片标题（h3 / .card-title） |
+| `--type-section` | 15px | 小节/副标题 |
+| `--type-nav` | 14px | 导航、选项卡 |
+| `--type-body` | 13px | 正文、按钮、表格、输入 |
+| `--type-support` | 12px | 辅助文字、徽章、表头小字 |
+| `--type-caption` | 11px | 微标签、角标 |
+| `--type-micro` | 10px | 极小标注 |
+| `--type-metric-xl` / `-hero` / `-metric` / `-small` | 32 / 28 / 24 / 18px | 数字指标四档（环形图、KPI、评分） |
+
+**字重**：仅 3 档——`--weight-body:400`（正文）/ `--weight-medium:500`（强调、表头）/ `--weight-strong:600`（标题）。550/620/650/700/300 已全量归并。
+
+**行高**：仅 5 档——`--lh-page:1.3` / `--lh-title:1.4` / `--lh-tight:1.5` / `--lh-body:1.65` / `--lh-num:1.2`。
+
+**文本色**：仅 3 级——`--text:#253449`（主）/ `--muted:#64748b`（次）/ `--text-faint:#8493a6`（弱）。
+> 历史坑：`:root` 曾重复定义 `--text` 达 4 次（#172b4d/#16263e/#263b52/#293744），导致各页面文字颜色不同。现已全部收口为单一值。
+
+**私有色板已取缔**：`db-*` / `dp-*` / `ds-*` / `ep-*` / `la-*` / `ph-*` / `wb-*` / `brand-*` 等 8 套模块私有 ink/muted/line/blue 变量，全部改为指向 `--text` / `--muted` / `--line` / `--primary`。语义风险色 `--rc-*`、严重度色 `--sig-*` 保留。
 
 ### 形状与控件
 | Token | 值 | 用途 |
@@ -44,8 +67,8 @@
 ### 按钮 .btn
 | 属性 | Default | Hover | Disabled |
 |---|---|---|---|
-| 高度 | `--list-control-height`（sm 28 / lg 40） | — | — |
-| 字号 | 14px（sm 12 / lg 15） | — | — |
+| 高度 | `--list-control-height`（页内紧凑按钮可 28/30px） | — | — |
+| 字号 | `--type-body`（13px） | — | — |
 | 圆角 | `--ui-radius` | — | — |
 | 底色 | surface | subtle | opacity .5 |
 | 边框 | `--line-strong` | brand | — |
@@ -53,17 +76,35 @@
 primary = `--primary` 底白字；danger = 透明底 critical 色字。
 
 ### 卡片 .card
-表面 `--ui-surface` · 边框 `--ui-line` · 圆角 `--ui-radius` · 无阴影（扫描器 `--shadow-card:none` 同步）。
+表面 `--ui-surface` · 边框 `--ui-line` · 圆角 `--ui-radius`（**唯一值**，10/12px 旁支已收口） · 无阴影。
+**卡片头**全平台同规格：`padding:16px 20px` · `min-height:56px` · `border-bottom:1px solid var(--line)` · 标题 `--type-block/600`。含 `.card-head` / `.db-card-head` / `.pd-card-heading` / `.api-section-head`。
 
 ### 徽章 .badge
-高 22px · 字号 12px · 圆角 3px。扫描器严重度徽章保留 mono + uppercase（语义标签）。
+字号 `--type-support`（12px） · 圆角 4px · padding 2px 7px。扫描器严重度徽章保留 mono + uppercase（语义标签）。
 
-### 标签页
-平台级 `.tab`：14px / padding 10px 17px。页内小型切换器（扫描器 `.tab` 28px）：仅限区块内切换，不做平台级导航。
+### 标签页 / 分段控件
+**唯一形态 = 下划线式**：容器 `border-bottom:1px solid var(--line)`、**无背景无边框无圆角**（禁止胶囊容器）；项 `padding:11px 0`，激活态 `color:var(--primary)` + `box-shadow:inset 0 -2px 0 var(--primary)`。
+适用 `.tabs` / `.dp-tabs` / `.ec-tabs` / `.cs-segment` / `.cp-record-tabs` / `.connection-kind-tabs` / `.lp-report-tabs`。平台级主导航走 Header 的 `.platform-top-nav`，不属于此列。
 
 ### 空状态 / 表格
 - 空态文案统一「暂无 X」；容器 `.empty`（栅格居中）。
-- 表格容器一律 `.table-wrap`；新页面表格**必须**用 `D.table()` 原语（core data-display 段），禁止再手写 tbody 模板。
+- 表格容器一律 `.table-wrap`；`th/td` 统一 `padding:12px 16px`、字号 `--type-body`，`th` 底 `#f8fafc`、字重 500。
+- 新页面表格**必须**用 `D.table()` 原语（core data-display 段），禁止再手写 tbody 模板。
+
+## 2.1 页面二级行（Header 之下）
+
+> 规则：**Header 承载平台级 Tab；Header 之下只允许一行页面头**，承载标题 + 操作按钮 + 筛选/搜索。窄屏才允许折行。
+
+| 层 | 选择器 | 规格 |
+|---|---|---|
+| 页面头行 | `.page-heading` | `flex` + `space-between` + `gap:16px` + `flex-wrap:wrap` + `min-height:var(--list-control-height)` + `margin-bottom:20px`；**无 padding / 无边框 / 无背景** |
+| 操作区 | `.page-heading > .page-actions` | `gap:10px` + `flex-wrap` + `margin-left:auto` + `justify-content:flex-end` |
+| 筛选行 | `.page-heading > .toolbar`（含 `.la-list-toolbar`） | 与操作区**同行右侧**；`padding:0`、无边框无背景（在页面头内不制造第二层卡片） |
+| 列表卡片内筛选行 | `.card > .toolbar` / `.la-list-toolbar` | `padding:14px 20px` + `min-height:56px` + `border-bottom:1px solid var(--line)` |
+| 内嵌扫描器应用头 | `.scan-app .page-head` | `padding:16px 20px` + `min-height:56px`（与平台页面头同一高度节奏） |
+
+- 禁止给页面头行套独立卡片容器（历史上 `.la-list-toolbar` 的 `min-height:78px + border-bottom` 造成"第二层卡片"观感，已收口）。
+- 禁止各页面自定义页面头高度（历史上 `.page-heading` 有 flex/block 三个冲突定义，已由权威层 `!important` 统一）。
 
 ## 3. 复用约定（JS 侧）
 
@@ -120,3 +161,7 @@ primary = `--primary` 底白字；danger = 透明底 critical 色字。
 - ❌ 图表/状态用色另造近似色值（一律走 `D.colors/D.verdict/D.severity/D.states/D.kinds` 槽位）
 - ❌ 无引用的死函数/死类留存（删除前用裸词全项目计数验证 ≤1 次出现）
 - ❌ 硬编码色值用于可主题化表面（用语义 token）
+- ❌ CSS 内写死 `font-size` 字面量（一律走 `--type-*` 阶梯；已归零，勿再引入）
+- ❌ 使用 300/550/620/650/700 字重（只保留 400/500/600）
+- ❌ 模块私造 `--xx-ink/--xx-muted/--xx-line/--xx-blue` 色板（一律指向 `--text/--muted/--line/--primary`）
+- ❌ 页面头行套卡片容器、或把操作区与筛选行拆成上下两行
