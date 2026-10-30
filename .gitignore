@@ -1,8 +1,12 @@
 # 依赖
 node_modules/
 
-# 本地工作记录（项目记忆、备份，不入库）
+# 项目本地数据：工作记忆与剪枝快照（git 历史本身即备份，不入库）
 .workbuddy/
+scripts/.snapshot/
+
+# 校验工具生成产物（baseline.json 是比对基线，需入库；dom-classes.json 是每次刷新的产出）
+scripts/verify/dom-classes.json
 
 # Python 缓存
 __pycache__/
@@ -12,6 +16,3 @@ __pycache__/
 .DS_Store
 Thumbs.db
 *.swp
-
-# 校验工具的生成产物
-scripts/verify/dom-classes.json
